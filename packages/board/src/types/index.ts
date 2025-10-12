@@ -472,6 +472,8 @@ export type ActivityType =
   | 'LABEL_REMOVED'
   | 'DEPENDENCY_ADDED'
   | 'DEPENDENCY_REMOVED'
+  | 'ATTACHMENT_ADDED'
+  | 'ATTACHMENT_REMOVED'
 
 /**
  * Activity log entry
@@ -493,6 +495,34 @@ export interface Activity {
   newValue?: any
   /** Additional metadata */
   metadata?: Record<string, any>
+}
+
+// ============================================================================
+// FILE ATTACHMENT TYPES
+// ============================================================================
+
+/**
+ * File attachment on a card
+ */
+export interface Attachment {
+  /** Unique identifier */
+  id: string
+  /** Card ID */
+  cardId: string
+  /** File name */
+  name: string
+  /** File size in bytes */
+  size: number
+  /** MIME type */
+  type: string
+  /** File URL or data URI */
+  url: string
+  /** Upload timestamp */
+  uploadedAt: Date | string
+  /** User who uploaded */
+  uploadedBy: string
+  /** Thumbnail URL (for images) */
+  thumbnailUrl?: string
 }
 
 // ============================================================================

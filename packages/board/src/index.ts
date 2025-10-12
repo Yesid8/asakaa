@@ -17,6 +17,10 @@ export {
   withErrorBoundary,
   CommandPalette,
   CardDetailModal,
+  AttachmentUploader,
+  VelocityChart,
+  BurnDownChart,
+  DistributionCharts,
 } from './components'
 export type {
   ColumnProps,
@@ -29,6 +33,13 @@ export type {
   ErrorBoundaryProps,
   CommandPaletteProps,
   CardDetailModalProps,
+  AttachmentUploaderProps,
+  VelocityChartProps,
+  VelocityDataPoint,
+  BurnDownChartProps,
+  BurnDownDataPoint,
+  DistributionChartsProps,
+  DistributionDataPoint,
 } from './components'
 
 // AI Components
@@ -70,6 +81,7 @@ export type {
   Comment,
   Activity,
   ActivityType,
+  Attachment,
 } from './types'
 
 // Utilities

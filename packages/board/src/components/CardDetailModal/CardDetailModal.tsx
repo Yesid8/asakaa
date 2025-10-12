@@ -5,7 +5,8 @@
 
 import { useState, useCallback } from 'react'
 import { Portal } from '../Portal'
-import type { Card, User, Comment, Activity, Insight, AssigneeSuggestion } from '../../types'
+import { AttachmentUploader } from '../Attachments'
+import type { Card, User, Comment, Activity, Insight, AssigneeSuggestion, Attachment } from '../../types'
 import './card-detail-modal.css'
 
 export interface CardDetailModalProps {
@@ -36,11 +37,23 @@ export interface CardDetailModalProps {
   /** AI insights for this card */
   aiInsights?: Insight[]
 
+  /** Attachments for this card */
+  attachments?: Attachment[]
+
   /** Add comment callback */
   onAddComment?: (cardId: string, content: string) => void
 
   /** Delete comment callback */
   onDeleteComment?: (commentId: string) => void
+
+  /** Upload attachments callback */
+  onUploadAttachments?: (cardId: string, files: File[]) => Promise<void> | void
+
+  /** Delete attachment callback */
+  onDeleteAttachment?: (attachmentId: string) => void
+
+  /** Current user ID */
+  currentUserId?: string
 
   /** AI: Suggest assignee */
   onSuggestAssignee?: (card: Card) => Promise<AssigneeSuggestion[]>
@@ -52,7 +65,7 @@ export interface CardDetailModalProps {
   onEstimateEffort?: (card: Card) => Promise<{ hours: number; confidence: number }>
 }
 
-type TabType = 'details' | 'comments' | 'activity' | 'ai'
+type TabType = 'details' | 'comments' | 'activity' | 'attachments' | 'ai'
 
 export function CardDetailModal({
   card,
@@ -64,11 +77,15 @@ export function CardDetailModal({
   comments = [],
   activities = [],
   aiInsights = [],
+  attachments = [],
   onAddComment,
   onDeleteComment,
+  onUploadAttachments,
+  onDeleteAttachment,
   onSuggestAssignee,
   onGenerateSubtasks,
   onEstimateEffort,
+  currentUserId = 'user-1',
 }: CardDetailModalProps) {
   const [activeTab, setActiveTab] = useState<TabType>('details')
   const [isEditing, setIsEditing] = useState(false)
@@ -330,6 +347,26 @@ export function CardDetailModal({
               Activity
               {activities.length > 0 && (
                 <span className="card-detail-tab-badge">{activities.length}</span>
+              )}
+            </button>
+
+            <button
+              onClick={() => setActiveTab('attachments')}
+              className={`card-detail-tab ${activeTab === 'attachments' ? 'active' : ''}`}
+            >
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
+                <path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48" />
+              </svg>
+              Attachments
+              {attachments.length > 0 && (
+                <span className="card-detail-tab-badge">{attachments.length}</span>
               )}
             </button>
 
@@ -605,6 +642,7 @@ export function CardDetailModal({
                             {activity.type.includes('ASSIGNED') && '👤'}
                             {activity.type.includes('PRIORITY') && '🎯'}
                             {activity.type.includes('LABEL') && '🏷️'}
+                            {activity.type.includes('ATTACHMENT') && '📎'}
                           </div>
                           <div className="card-detail-activity-content">
                             <div className="card-detail-activity-text">
@@ -641,6 +679,21 @@ export function CardDetailModal({
                     <span>Activity will appear here</span>
                   </div>
                 )}
+              </div>
+            )}
+
+            {/* ATTACHMENTS TAB */}
+            {activeTab === 'attachments' && (
+              <div className="card-detail-attachments">
+                <AttachmentUploader
+                  cardId={card.id}
+                  attachments={attachments}
+                  onUpload={onUploadAttachments ? (files) => onUploadAttachments(card.id, files) : undefined}
+                  onDelete={onDeleteAttachment}
+                  currentUserId={currentUserId}
+                  maxSizeMB={10}
+                  maxFiles={20}
+                />
               </div>
             )}
 
