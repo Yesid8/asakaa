@@ -10,8 +10,14 @@ import {
   useAI,
   GeneratePlanModal,
   AIUsageDashboard,
+  CommandPalette,
+  CardDetailModal,
   type User,
   type GeneratedPlan,
+  type Card,
+  type Comment,
+  type Activity,
+  type Insight,
 } from '@asakaa/board'
 import '@asakaa/board/styles.css'
 
@@ -46,6 +52,100 @@ const sampleUsers: User[] = [
     name: 'James Wilson',
     initials: 'JW',
     color: '#F59E0B',
+  },
+]
+
+// Sample comments for demo cards
+const sampleComments: Comment[] = [
+  {
+    id: 'comment-1',
+    cardId: 'card-5',
+    authorId: 'user-1',
+    content: 'Started working on the virtualization implementation. Using @tanstack/react-virtual for this.',
+    createdAt: '2025-10-25T10:30:00Z',
+  },
+  {
+    id: 'comment-2',
+    cardId: 'card-5',
+    authorId: 'user-2',
+    content: 'Great! I can help with testing once you have the first implementation ready.',
+    createdAt: '2025-10-25T14:20:00Z',
+  },
+  {
+    id: 'comment-3',
+    cardId: 'card-3',
+    authorId: 'user-1',
+    content: 'We should use Socket.io for the WebSocket implementation. It has good fallback support.',
+    createdAt: '2025-10-20T09:15:00Z',
+  },
+]
+
+// Sample activities for demo cards
+const sampleActivities: Activity[] = [
+  {
+    id: 'activity-1',
+    type: 'CARD_CREATED',
+    cardId: 'card-5',
+    userId: 'user-1',
+    timestamp: '2025-10-20T08:00:00Z',
+  },
+  {
+    id: 'activity-2',
+    type: 'USER_ASSIGNED',
+    cardId: 'card-5',
+    userId: 'user-1',
+    timestamp: '2025-10-22T10:00:00Z',
+    newValue: 'user-1',
+  },
+  {
+    id: 'activity-3',
+    type: 'PRIORITY_CHANGED',
+    cardId: 'card-5',
+    userId: 'user-1',
+    timestamp: '2025-10-23T14:30:00Z',
+    previousValue: 'HIGH',
+    newValue: 'URGENT',
+  },
+  {
+    id: 'activity-4',
+    type: 'CARD_MOVED',
+    cardId: 'card-5',
+    userId: 'user-2',
+    timestamp: '2025-10-24T09:00:00Z',
+    previousValue: 'col-todo',
+    newValue: 'col-progress',
+  },
+  {
+    id: 'activity-5',
+    type: 'COMMENT_ADDED',
+    cardId: 'card-5',
+    userId: 'user-1',
+    timestamp: '2025-10-25T10:30:00Z',
+  },
+]
+
+// Sample AI insights
+const sampleInsights: Insight[] = [
+  {
+    id: 'insight-1',
+    type: 'RISK_DELAY',
+    severity: 'HIGH',
+    title: 'Potential Delay Risk',
+    description: 'Card has dependencies that may cause delays. Consider addressing blocking issues first.',
+    confidence: 0.85,
+    suggestedAction: 'Review and resolve card-3 before continuing with this task',
+    relatedCardIds: ['card-3'],
+    timestamp: '2025-10-25T08:00:00Z',
+  },
+  {
+    id: 'insight-2',
+    type: 'OPPORTUNITY',
+    severity: 'MEDIUM',
+    title: 'Optimization Opportunity',
+    description: 'This task could be split into smaller subtasks for better parallelization.',
+    confidence: 0.72,
+    suggestedAction: 'Consider breaking down into: 1) Virtual scroll setup, 2) Performance testing, 3) Edge cases',
+    timestamp: '2025-10-25T08:00:00Z',
   },
 ]
 
@@ -208,6 +308,12 @@ export default function App() {
   const [isGeneratePlanModalOpen, setIsGeneratePlanModalOpen] = useState(false)
   const [isAIUsageDashboardOpen, setIsAIUsageDashboardOpen] = useState(false)
 
+  // Card Detail Modal State
+  const [selectedCard, setSelectedCard] = useState<Card | null>(null)
+  const [isCardDetailModalOpen, setIsCardDetailModalOpen] = useState(false)
+  const [comments, setComments] = useState<Comment[]>(sampleComments)
+  const [activities, setActivities] = useState<Activity[]>(sampleActivities)
+
   const { board, callbacks, helpers } = useKanbanState({
     initialBoard: demoBoard,
     onPersist: (updatedBoard) => {
@@ -262,6 +368,55 @@ export default function App() {
     }
 
     callbacks.onCardCreate?.(newCard)
+  }
+
+  // Handler for card click - open detail modal
+  const handleCardClick = (card: Card) => {
+    setSelectedCard(card)
+    setIsCardDetailModalOpen(true)
+  }
+
+  // Handler for card update from modal
+  const handleCardUpdateFromModal = (cardId: string, updates: Partial<Card>) => {
+    callbacks.onCardUpdate?.(cardId, updates)
+    // Update selected card to reflect changes
+    if (selectedCard && selectedCard.id === cardId) {
+      setSelectedCard({ ...selectedCard, ...updates })
+    }
+  }
+
+  // Handler for card delete from modal
+  const handleCardDelete = (cardId: string) => {
+    callbacks.onCardDelete?.(cardId)
+    setIsCardDetailModalOpen(false)
+    setSelectedCard(null)
+  }
+
+  // Handler for adding comment
+  const handleAddComment = (cardId: string, content: string) => {
+    const newComment: Comment = {
+      id: `comment-${Date.now()}`,
+      cardId,
+      authorId: 'user-1', // Current user
+      content,
+      createdAt: new Date().toISOString(),
+    }
+    setComments([...comments, newComment])
+
+    // Add activity
+    const newActivity: Activity = {
+      id: `activity-${Date.now()}`,
+      type: 'COMMENT_ADDED',
+      cardId,
+      userId: 'user-1',
+      timestamp: new Date().toISOString(),
+    }
+    setActivities([...activities, newActivity])
+  }
+
+  // Handler for deleting comment
+  const handleDeleteComment = (commentId: string) => {
+    setComments(comments.filter((c) => c.id !== commentId))
   }
 
   // Handler for AI-generated plan
@@ -415,6 +570,7 @@ export default function App() {
         <KanbanBoard
           board={board}
           callbacks={callbacks}
+          onCardClick={handleCardClick}
           availableUsers={sampleUsers}
           config={{
             showCardCount: true,
@@ -484,6 +640,65 @@ export default function App() {
         isOpen={isAIUsageDashboardOpen}
         onClose={() => setIsAIUsageDashboardOpen(false)}
         planTier="hobby"
+      />
+
+      {/* Command Palette */}
+      <CommandPalette
+        board={board}
+        availableUsers={sampleUsers}
+        onCreateCard={(columnId, title) => {
+          const columnCards = board.cards.filter((c) => c.columnId === columnId)
+          const maxPosition =
+            columnCards.length > 0
+              ? Math.max(...columnCards.map((c) => c.position))
+              : 0
+
+          callbacks.onCardCreate?.({
+            title,
+            description: '',
+            position: maxPosition + 1000,
+            columnId,
+            priority: 'MEDIUM',
+            labels: [],
+          })
+        }}
+        onNavigateToCard={(cardId) => {
+          const card = board.cards.find((c) => c.id === cardId)
+          if (card) {
+            handleCardClick(card)
+          }
+        }}
+        onSearch={(query) => {
+          console.log('Search:', query)
+          // TODO: Implement search filter
+        }}
+        onGeneratePlan={() => setIsGeneratePlanModalOpen(true)}
+        onPredictRisks={() => {
+          console.log('Predict risks')
+          // TODO: Implement risk prediction modal
+        }}
+        onOpenAIUsage={() => setIsAIUsageDashboardOpen(true)}
+      />
+
+      {/* Card Detail Modal */}
+      <CardDetailModal
+        card={selectedCard}
+        isOpen={isCardDetailModalOpen}
+        onClose={() => {
+          setIsCardDetailModalOpen(false)
+          setSelectedCard(null)
+        }}
+        onUpdate={handleCardUpdateFromModal}
+        onDelete={handleCardDelete}
+        availableUsers={sampleUsers}
+        comments={selectedCard ? comments.filter((c) => c.cardId === selectedCard.id) : []}
+        activities={selectedCard ? activities.filter((a) => a.cardId === selectedCard.id) : []}
+        aiInsights={selectedCard?.id === 'card-5' ? sampleInsights : []}
+        onAddComment={handleAddComment}
+        onDeleteComment={handleDeleteComment}
+        onSuggestAssignee={onSuggestAssignee}
+        onGenerateSubtasks={onGenerateSubtasks}
+        onEstimateEffort={onEstimateEffort}
       />
     </div>
   )

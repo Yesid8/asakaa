@@ -15,6 +15,8 @@ export {
   DependenciesSelector,
   ErrorBoundary,
   withErrorBoundary,
+  CommandPalette,
+  CardDetailModal,
 } from './components'
 export type {
   ColumnProps,
@@ -25,6 +27,8 @@ export type {
   UserAssignmentSelectorProps,
   DependenciesSelectorProps,
   ErrorBoundaryProps,
+  CommandPaletteProps,
+  CardDetailModalProps,
 } from './components'
 
 // AI Components
@@ -63,6 +67,9 @@ export type {
   CardSort,
   CardSortKey,
   User,
+  Comment,
+  Activity,
+  ActivityType,
 } from './types'
 
 // Utilities

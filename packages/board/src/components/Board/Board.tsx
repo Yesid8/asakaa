@@ -32,6 +32,7 @@ import { dragStateAtom } from '../../state/atoms'
 export function KanbanBoard({
   board,
   callbacks,
+  onCardClick,
   renderProps,
   config,
   availableUsers = [],
@@ -185,10 +186,9 @@ export function KanbanBoard({
   // Handle card click
   const handleCardClick = useCallback(
     (card: typeof board.cards[0]) => {
-      // Could trigger a modal or detail view
-      console.log('Card clicked:', card)
+      onCardClick?.(card)
     },
-    []
+    [onCardClick]
   )
 
   // Loading state
