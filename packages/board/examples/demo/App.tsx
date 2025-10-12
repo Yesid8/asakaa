@@ -8,10 +8,12 @@ import {
   KanbanBoard,
   useKanbanState,
   useAI,
+  useMultiSelect,
   GeneratePlanModal,
   AIUsageDashboard,
   CommandPalette,
   CardDetailModal,
+  BulkOperationsToolbar,
   type User,
   type GeneratedPlan,
   type Card,
@@ -167,6 +169,7 @@ const demoBoard = {
       position: 2000,
       cardIds: ['card-3', 'card-4'],
       wipLimit: 5,
+      wipLimitType: 'soft',
     },
     {
       id: 'col-progress',
@@ -174,6 +177,7 @@ const demoBoard = {
       position: 3000,
       cardIds: ['card-5', 'card-6'],
       wipLimit: 3,
+      wipLimitType: 'hard',
     },
     {
       id: 'col-review',
@@ -181,6 +185,7 @@ const demoBoard = {
       position: 4000,
       cardIds: ['card-7', 'card-8'],
       wipLimit: 3,
+      wipLimitType: 'soft',
     },
     {
       id: 'col-done',
@@ -327,6 +332,13 @@ export default function App() {
     },
   })
 
+  // Multi-select functionality
+  const {
+    selectedCardIds,
+    getSelectedCards,
+    clearSelection,
+  } = useMultiSelect()
+
   // AI Hook - Use real API or mock
   const {
     onGeneratePlan,
@@ -444,6 +456,41 @@ export default function App() {
     })
 
     console.log('AI-generated plan applied to board!')
+  }
+
+  // Handler for WIP limit exceeded
+  const handleWipLimitExceeded = (column: any, card: Card) => {
+    alert(
+      `❌ Cannot move "${card.title}" to "${column.title}".\n\nThis column has a HARD WIP limit of ${column.wipLimit} cards and is already full.`
+    )
+  }
+
+  // Handlers for bulk operations
+  const handleBulkUpdate = (cardIds: string[], updates: Partial<Card>) => {
+    cardIds.forEach((cardId) => {
+      callbacks.onCardUpdate?.(cardId, updates)
+    })
+    clearSelection()
+  }
+
+  const handleBulkDelete = (cardIds: string[]) => {
+    cardIds.forEach((cardId) => {
+      callbacks.onCardDelete?.(cardId)
+    })
+    clearSelection()
+  }
+
+  const handleBulkMove = (cardIds: string[], targetColumnId: string) => {
+    const targetColumnCards = board.cards.filter((c) => c.columnId === targetColumnId)
+    const maxPosition =
+      targetColumnCards.length > 0
+        ? Math.max(...targetColumnCards.map((c) => c.position))
+        : 0
+
+    cardIds.forEach((cardId, index) => {
+      callbacks.onCardMove?.(cardId, targetColumnId, maxPosition + (index + 1) * 1000)
+    })
+    clearSelection()
   }
 
   // Calculate stats for header
@@ -569,7 +616,10 @@ export default function App() {
       <div className="asakaa-board">
         <KanbanBoard
           board={board}
-          callbacks={callbacks}
+          callbacks={{
+            ...callbacks,
+            onWipLimitExceeded: handleWipLimitExceeded,
+          }}
           onCardClick={handleCardClick}
           availableUsers={sampleUsers}
           config={{
@@ -700,6 +750,31 @@ export default function App() {
         onGenerateSubtasks={onGenerateSubtasks}
         onEstimateEffort={onEstimateEffort}
       />
+
+      {/* Bulk Operations Toolbar */}
+      {selectedCardIds.length > 0 && (
+        <BulkOperationsToolbar
+          selectedCards={getSelectedCards()}
+          availableUsers={sampleUsers}
+          onClearSelection={clearSelection}
+          callbacks={{
+            onBulkUpdate: handleBulkUpdate,
+            onBulkDelete: handleBulkDelete,
+            onBulkMove: handleBulkMove,
+          }}
+          columns={board.columns.map((col) => ({ id: col.id, title: col.title }))}
+          availableLabels={[
+            'feature',
+            'bug',
+            'enhancement',
+            'ai',
+            'ui',
+            'backend',
+            'performance',
+            'documentation',
+          ]}
+        />
+      )}
     </div>
   )
 }

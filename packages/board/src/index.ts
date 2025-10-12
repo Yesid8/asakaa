@@ -21,6 +21,7 @@ export {
   VelocityChart,
   BurnDownChart,
   DistributionCharts,
+  BulkOperationsToolbar,
 } from './components'
 export type {
   ColumnProps,
@@ -40,6 +41,7 @@ export type {
   BurnDownDataPoint,
   DistributionChartsProps,
   DistributionDataPoint,
+  BulkOperationsToolbarProps,
 } from './components'
 
 // AI Components
@@ -47,12 +49,13 @@ export { GeneratePlanModal, AIUsageDashboard } from './components/AI'
 export type { GeneratePlanModalProps, AIUsageDashboardProps } from './components/AI'
 
 // Hooks
-export { useKanbanState, useAI } from './hooks'
+export { useKanbanState, useAI, useMultiSelect } from './hooks'
 export type {
   UseKanbanStateOptions,
   UseKanbanStateReturn,
   UseAIOptions,
   UseAIReturn,
+  UseMultiSelectReturn,
 } from './hooks'
 
 // Types

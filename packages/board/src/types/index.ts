@@ -77,6 +77,8 @@ export interface Column {
   // Optional configuration
   /** Work-in-progress limit */
   wipLimit?: number
+  /** WIP limit enforcement type: 'soft' = warning, 'hard' = block */
+  wipLimitType?: 'soft' | 'hard'
   /** Color for visual distinction */
   color?: string
   /** Custom metadata */
@@ -154,6 +156,12 @@ export interface BoardCallbacks {
     columnId: string,
     newPosition: number
   ) => void | Promise<void>
+
+  /** Called when WIP limit is exceeded (hard limit only) */
+  onWipLimitExceeded?: (
+    column: Column,
+    card: Card
+  ) => void
 }
 
 // ============================================================================
@@ -523,6 +531,234 @@ export interface Attachment {
   uploadedBy: string
   /** Thumbnail URL (for images) */
   thumbnailUrl?: string
+}
+
+// ============================================================================
+// CUSTOM FIELDS TYPES
+// ============================================================================
+
+/**
+ * Custom field types
+ */
+export type CustomFieldType =
+  | 'text'
+  | 'number'
+  | 'dropdown'
+  | 'date'
+  | 'checkbox'
+  | 'url'
+  | 'email'
+  | 'phone'
+
+/**
+ * Custom field definition
+ */
+export interface CustomField {
+  /** Unique identifier */
+  id: string
+  /** Field name */
+  name: string
+  /** Field type */
+  type: CustomFieldType
+  /** Options for dropdown type */
+  options?: string[]
+  /** Whether field is required */
+  required?: boolean
+  /** Default value */
+  defaultValue?: any
+  /** Validation rules */
+  validation?: {
+    min?: number
+    max?: number
+    regex?: string
+    message?: string
+  }
+  /** Show in card preview */
+  showInPreview?: boolean
+  /** Icon for the field */
+  icon?: string
+}
+
+/**
+ * Custom field value
+ */
+export interface CustomFieldValue {
+  /** Custom field ID */
+  fieldId: string
+  /** Value */
+  value: any
+}
+
+// ============================================================================
+// BULK OPERATIONS TYPES
+// ============================================================================
+
+/**
+ * Bulk operation types
+ */
+export type BulkOperationType =
+  | 'update_priority'
+  | 'assign_users'
+  | 'add_labels'
+  | 'remove_labels'
+  | 'move_column'
+  | 'delete'
+  | 'update_dates'
+  | 'update_custom_field'
+
+/**
+ * Bulk operation payload
+ */
+export interface BulkOperation {
+  /** Type of operation */
+  type: BulkOperationType
+  /** Card IDs to operate on */
+  cardIds: string[]
+  /** Operation-specific payload */
+  payload: any
+}
+
+/**
+ * Bulk operations callbacks
+ */
+export interface BulkOperationsCallbacks {
+  /** Called when bulk update is performed */
+  onBulkUpdate?: (cardIds: string[], updates: Partial<Card>) => void | Promise<void>
+  /** Called when bulk delete is performed */
+  onBulkDelete?: (cardIds: string[]) => void | Promise<void>
+  /** Called when bulk move is performed */
+  onBulkMove?: (cardIds: string[], targetColumnId: string) => void | Promise<void>
+}
+
+// ============================================================================
+// AUTOMATION RULES TYPES
+// ============================================================================
+
+/**
+ * Automation trigger types
+ */
+export type AutomationTriggerType =
+  | 'card_moved'
+  | 'card_created'
+  | 'card_updated'
+  | 'date_reached'
+  | 'field_changed'
+  | 'priority_changed'
+  | 'user_assigned'
+  | 'label_added'
+
+/**
+ * Automation condition operators
+ */
+export type AutomationConditionOperator =
+  | 'equals'
+  | 'not_equals'
+  | 'contains'
+  | 'not_contains'
+  | 'greater_than'
+  | 'less_than'
+  | 'is_empty'
+  | 'is_not_empty'
+
+/**
+ * Automation action types
+ */
+export type AutomationActionType =
+  | 'change_priority'
+  | 'assign_user'
+  | 'unassign_user'
+  | 'add_label'
+  | 'remove_label'
+  | 'move_card'
+  | 'set_custom_field'
+  | 'add_comment'
+  | 'send_notification'
+  | 'set_due_date'
+
+/**
+ * Automation trigger configuration
+ */
+export interface AutomationTrigger {
+  /** Trigger type */
+  type: AutomationTriggerType
+  /** Trigger-specific configuration */
+  config?: {
+    columnId?: string
+    fieldName?: string
+    oldValue?: any
+    newValue?: any
+    daysOffset?: number
+  }
+}
+
+/**
+ * Automation condition
+ */
+export interface AutomationCondition {
+  /** Field to check */
+  field: string
+  /** Comparison operator */
+  operator: AutomationConditionOperator
+  /** Value to compare against */
+  value?: any
+}
+
+/**
+ * Automation action
+ */
+export interface AutomationAction {
+  /** Action type */
+  type: AutomationActionType
+  /** Action-specific configuration */
+  config: {
+    priority?: Priority
+    userId?: string
+    label?: string
+    columnId?: string
+    customFieldId?: string
+    customFieldValue?: any
+    comment?: string
+    notificationMessage?: string
+    dueDate?: Date | string
+  }
+}
+
+/**
+ * Automation rule
+ */
+export interface AutomationRule {
+  /** Unique identifier */
+  id: string
+  /** Rule name */
+  name: string
+  /** Rule description */
+  description?: string
+  /** Whether rule is enabled */
+  enabled: boolean
+  /** Trigger that starts the automation */
+  trigger: AutomationTrigger
+  /** Conditions that must be met (all must pass) */
+  conditions?: AutomationCondition[]
+  /** Actions to execute when conditions are met */
+  actions: AutomationAction[]
+  /** Created timestamp */
+  createdAt?: Date | string
+  /** Last updated timestamp */
+  updatedAt?: Date | string
+  /** Last executed timestamp */
+  lastExecutedAt?: Date | string
+  /** Execution count */
+  executionCount?: number
+}
+
+/**
+ * Automation engine callbacks
+ */
+export interface AutomationCallbacks {
+  /** Called when automation rule is triggered */
+  onAutomationExecute?: (rule: AutomationRule, card: Card) => void | Promise<void>
+  /** Called when automation rule execution fails */
+  onAutomationError?: (rule: AutomationRule, error: Error) => void
 }
 
 // ============================================================================
