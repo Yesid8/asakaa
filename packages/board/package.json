@@ -1,6 +1,6 @@
 {
   "name": "@asakaa/board",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "type": "module",
   "description": "AI-native Kanban board component for React with WIP Limits and Bulk Operations. Built for performance and developer experience.",
   "author": "Asakaa",
