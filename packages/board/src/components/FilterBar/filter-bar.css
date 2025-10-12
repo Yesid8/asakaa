@@ -47,16 +47,17 @@
 
 /* Main Filters */
 .filter-bar__main {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-3);
-  align-items: center;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--space-4);
+  align-items: start;
 }
 
 .filter-bar__field {
   display: flex;
-  align-items: center;
+  flex-direction: column;
   gap: var(--space-2);
+  align-items: flex-start;
 }
 
 .filter-bar__label {
@@ -75,7 +76,7 @@
   border-radius: var(--radius-md);
   color: white;
   font-size: var(--font-sm);
-  min-width: 200px;
+  width: 100%;
   transition: all 0.2s;
 }
 
@@ -99,7 +100,7 @@
   font-size: var(--font-sm);
   cursor: pointer;
   transition: all 0.2s;
-  min-width: 120px;
+  width: 100%;
 }
 
 .filter-bar__select:hover {
@@ -124,15 +125,18 @@
 /* Multi-Select (Chips) */
 .filter-bar__multi-select {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: var(--space-2);
   flex-wrap: wrap;
+  width: 100%;
 }
 
 .filter-bar__multi-label {
   font-size: var(--font-xs);
   color: rgba(255, 255, 255, 0.6);
   font-weight: 500;
+  width: 100%;
+  margin-bottom: var(--space-1);
 }
 
 .filter-bar__chip {
