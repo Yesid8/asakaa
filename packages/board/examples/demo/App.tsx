@@ -3,10 +3,15 @@
  * Showcasing beautiful Kanban board with realistic project data
  */
 
+import { useState } from 'react'
 import {
   KanbanBoard,
   useKanbanState,
+  useAI,
+  GeneratePlanModal,
+  AIUsageDashboard,
   type User,
+  type GeneratedPlan,
 } from '@asakaa/board'
 import '@asakaa/board/styles.css'
 
@@ -199,6 +204,10 @@ const demoBoard = {
 }
 
 export default function App() {
+  // AI Modal States
+  const [isGeneratePlanModalOpen, setIsGeneratePlanModalOpen] = useState(false)
+  const [isAIUsageDashboardOpen, setIsAIUsageDashboardOpen] = useState(false)
+
   const { board, callbacks, helpers } = useKanbanState({
     initialBoard: demoBoard,
     onPersist: (updatedBoard) => {
@@ -210,6 +219,20 @@ export default function App() {
         timestamp: new Date().toISOString(),
       })
     },
+  })
+
+  // AI Hook - Use real API or mock
+  const {
+    onGeneratePlan,
+    onSuggestAssignee,
+    onPredictRisks,
+    onGenerateSubtasks,
+    onEstimateEffort,
+    isLoading: isAILoading,
+  } = useAI({
+    // For demo: use mock mode if no API key is set
+    // apiKey: import.meta.env.VITE_ANTHROPIC_API_KEY,
+    // provider: 'anthropic',
   })
 
   // Handler to add new column
@@ -241,6 +264,33 @@ export default function App() {
     callbacks.onCardCreate?.(newCard)
   }
 
+  // Handler for AI-generated plan
+  const handlePlanGenerated = (plan: GeneratedPlan) => {
+    console.log('AI Plan Generated:', plan)
+
+    // Clear current board
+    helpers.clearBoard()
+
+    // Add columns from generated plan
+    plan.columns.forEach((col) => {
+      helpers.addColumn({
+        title: col.title,
+        position: col.position,
+        wipLimit: col.wipLimit,
+      })
+    })
+
+    // Add cards from generated plan
+    plan.cards.forEach((card) => {
+      callbacks.onCardCreate?.({
+        ...card,
+        id: `card-${Date.now()}-${Math.random().toString(36).substring(7)}`,
+      })
+    })
+
+    console.log('AI-generated plan applied to board!')
+  }
+
   // Calculate stats for header
   const totalCards = board.cards.length
   const inProgressCards = board.cards.filter(
@@ -266,8 +316,59 @@ export default function App() {
               </div>
             </div>
 
-            {/* Stats */}
-            <div className="flex items-center gap-6">
+            {/* AI Actions & Stats */}
+            <div className="flex items-center gap-4">
+              {/* AI Buttons */}
+              <button
+                onClick={() => setIsGeneratePlanModalOpen(true)}
+                className="px-4 py-2 rounded-lg text-sm font-semibold transition-all hover:scale-105 active:scale-95 flex items-center gap-2"
+                style={{
+                  background: 'linear-gradient(135deg, #3B82F6 0%, #2563EB 100%)',
+                  color: '#ffffff',
+                }}
+              >
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M12 2L2 7L12 12L22 7L12 2Z"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  <path
+                    d="M2 17L12 22L22 17"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  <path
+                    d="M2 12L12 17L22 12"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+                Generate with AI
+              </button>
+
+              <button
+                onClick={() => setIsAIUsageDashboardOpen(true)}
+                className="px-4 py-2 rounded-lg text-sm font-semibold transition-all hover:bg-white/10 border border-white/20 text-white/90"
+              >
+                AI Usage
+              </button>
+
+              <div className="w-px h-10 bg-white/10" />
+
+              {/* Stats */}
               <div className="text-center">
                 <div className="text-2xl font-bold text-white">
                   {totalCards}
@@ -369,6 +470,21 @@ export default function App() {
           </div>
         </div>
       </footer>
+
+      {/* AI Modals */}
+      <GeneratePlanModal
+        isOpen={isGeneratePlanModalOpen}
+        onClose={() => setIsGeneratePlanModalOpen(false)}
+        onPlanGenerated={handlePlanGenerated}
+        onGeneratePlan={onGeneratePlan}
+        isLoading={isAILoading}
+      />
+
+      <AIUsageDashboard
+        isOpen={isAIUsageDashboardOpen}
+        onClose={() => setIsAIUsageDashboardOpen(false)}
+        planTier="hobby"
+      />
     </div>
   )
 }

@@ -27,6 +27,10 @@ export type {
   ErrorBoundaryProps,
 } from './components'
 
+// AI Components
+export { GeneratePlanModal, AIUsageDashboard } from './components/AI'
+export type { GeneratePlanModalProps, AIUsageDashboardProps } from './components/AI'
+
 // Hooks
 export { useKanbanState, useAI } from './hooks'
 export type {
@@ -72,6 +76,15 @@ export {
   CircuitBreaker,
 } from './utils'
 export type { RetryOptions, RetryResult } from './utils'
+
+// AI Utilities
+export { aiUsageTracker, formatCost } from './lib/ai/costs'
+export type {
+  AIOperation,
+  UsageStats,
+} from './lib/ai/costs'
+export { AI_MODELS, AI_FEATURES, RATE_LIMITS } from './lib/ai/config'
+export type { AIModelKey } from './lib/ai/config'
 
 // State (advanced usage)
 export {

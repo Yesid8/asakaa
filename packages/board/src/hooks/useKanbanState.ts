@@ -31,6 +31,7 @@ export interface UseKanbanStateReturn {
     addColumn: (column: Omit<Column, 'id' | 'cardIds'>) => string
     deleteCard: (cardId: string) => void
     deleteColumn: (columnId: string) => void
+    clearBoard: () => void
   }
 }
 
@@ -306,6 +307,20 @@ export function useKanbanState({
     [handleColumnCreate]
   )
 
+  // Helper function to clear board (for AI-generated plans)
+  const clearBoard = useCallback(() => {
+    setBoard((prev) => {
+      const updatedBoard = {
+        ...prev,
+        cards: [],
+        columns: [],
+      }
+
+      persistBoard(updatedBoard)
+      return updatedBoard
+    })
+  }, [persistBoard])
+
   const callbacks: BoardCallbacks = {
     onCardMove: handleCardMove,
     onCardUpdate: handleCardUpdate,
@@ -325,6 +340,7 @@ export function useKanbanState({
       addColumn,
       deleteCard: handleCardDelete,
       deleteColumn: handleColumnDelete,
+      clearBoard,
     },
   }
 }
