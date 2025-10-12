@@ -1,22 +1,25 @@
 /**
- * Bulk Operations Toolbar Styles
- * Premium glassmorphism design
+ * Bulk Operations Toolbar
+ * Using ASAKAA Design System v2.0
  */
 
-/* Floating toolbar - bottom center */
+/* ==========================================================================
+   FLOATING TOOLBAR
+   ========================================================================== */
+
 .asakaa-bulk-toolbar {
   position: fixed;
-  bottom: 24px;
+  bottom: var(--space-6);
   left: 50%;
   transform: translateX(-50%);
-  z-index: 9998;
-  animation: asakaa-slide-up 0.2s ease-out;
+  z-index: var(--z-fixed);
+  animation: slide-up var(--duration-fast) var(--ease-bounce);
 }
 
-@keyframes asakaa-slide-up {
+@keyframes slide-up {
   from {
     opacity: 0;
-    transform: translateX(-50%) translateY(20px);
+    transform: translateX(-50%) translateY(var(--space-5));
   }
   to {
     opacity: 1;
@@ -24,83 +27,115 @@
   }
 }
 
-/* Toolbar content - glassmorphism */
+/* Toolbar content - glassmorphism for floating element */
 .asakaa-bulk-toolbar-content {
-  @apply flex items-center gap-4 px-6 py-3;
-  @apply bg-white/90 backdrop-blur-xl;
-  @apply border border-gray-200/50;
-  @apply rounded-2xl shadow-2xl;
+  @apply flex items-center;
+  gap: var(--space-4);
+  padding: var(--space-3) var(--space-6);
   min-width: 400px;
+  backdrop-filter: blur(20px) saturate(180%);
+  background: rgba(20, 20, 20, var(--opacity-opaque));
+  border: 1px solid rgba(255, 255, 255, var(--opacity-faint));
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-glass-lg);
 }
 
-/* Dark mode */
-.dark .asakaa-bulk-toolbar-content {
-  @apply bg-gray-900/90 border-gray-700/50;
-}
+/* ==========================================================================
+   SELECTION COUNT
+   ========================================================================== */
 
-/* Selection count */
 .asakaa-bulk-toolbar-count {
-  @apply text-sm font-semibold text-gray-900;
-  @apply px-3 py-1 rounded-lg;
-  @apply bg-blue-500/10;
-  @apply border border-blue-500/20;
+  font-size: var(--font-sm);
+  font-weight: var(--font-semibold);
+  padding: var(--space-2) var(--space-3);
+  color: var(--color-text-primary);
+  background: rgba(59, 130, 246, var(--opacity-faint));
+  border: 1px solid rgba(59, 130, 246, var(--opacity-light));
+  border-radius: var(--radius-md);
 }
 
-.dark .asakaa-bulk-toolbar-count {
-  @apply text-gray-100;
-}
+/* ==========================================================================
+   ACTIONS CONTAINER
+   ========================================================================== */
 
-/* Actions container */
 .asakaa-bulk-toolbar-actions {
-  @apply flex items-center gap-2;
+  @apply flex items-center;
+  gap: var(--space-2);
 }
 
-/* Action button */
+/* ==========================================================================
+   ACTION BUTTONS
+   ========================================================================== */
+
 .asakaa-bulk-toolbar-button {
-  @apply px-4 py-2 rounded-lg;
-  @apply text-sm font-medium;
-  @apply text-gray-900;
-  @apply bg-gray-100/50;
-  @apply border border-gray-200/30;
-  @apply transition-all duration-200;
-  @apply hover:bg-blue-500/10;
-  @apply hover:border-blue-500/40;
-  @apply hover:scale-105;
-  @apply active:scale-95;
-  @apply flex items-center gap-2;
+  @apply flex items-center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  font-size: var(--font-sm);
+  font-weight: var(--font-medium);
+  color: var(--color-text-primary);
+  background: rgba(255, 255, 255, var(--opacity-subtle));
+  border: 1px solid rgba(255, 255, 255, var(--opacity-faint));
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--ease-smooth);
 }
 
-.dark .asakaa-bulk-toolbar-button {
-  @apply text-gray-100 bg-gray-800/50 border-gray-700/30;
+.asakaa-bulk-toolbar-button:hover {
+  background: rgba(59, 130, 246, var(--opacity-faint));
+  border-color: rgba(59, 130, 246, var(--opacity-medium));
+  transform: scale(1.02);  /* Subtle 2%, not 5% */
+}
+
+.asakaa-bulk-toolbar-button:active {
+  transform: scale(0.98);
 }
 
 .asakaa-bulk-toolbar-button:focus {
-  @apply outline-none ring-2 ring-blue-500/50;
+  @apply outline-none;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, var(--opacity-medium));
 }
 
-/* Danger button */
+.asakaa-bulk-toolbar-button:disabled {
+  opacity: var(--opacity-medium);
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Danger button variant */
 .asakaa-bulk-toolbar-button-danger {
-  @apply text-red-500;
-  @apply hover:bg-red-500/10;
-  @apply hover:border-red-500/40;
+  color: var(--color-error);
 }
 
-/* Dropdown menu */
+.asakaa-bulk-toolbar-button-danger:hover {
+  background: rgba(239, 68, 68, var(--opacity-faint));
+  border-color: rgba(239, 68, 68, var(--opacity-medium));
+}
+
+/* ==========================================================================
+   DROPDOWN MENU
+   ========================================================================== */
+
 .asakaa-bulk-menu {
-  @apply absolute bottom-full mb-2 left-0;
-  @apply min-w-[200px];
-  @apply bg-white backdrop-blur-xl;
-  @apply border border-gray-200/50;
-  @apply rounded-xl shadow-xl;
-  @apply py-2;
-  @apply z-10;
-  animation: asakaa-menu-appear 0.15s ease-out;
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  margin-bottom: var(--space-2);
+  min-width: 200px;
+  padding: var(--space-2);
+  backdrop-filter: blur(20px) saturate(180%);
+  background: rgba(20, 20, 20, var(--opacity-opaque));
+  border: 1px solid rgba(255, 255, 255, var(--opacity-faint));
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-glass-lg);
+  z-index: var(--z-dropdown);
+  animation: menu-appear var(--duration-instant) var(--ease-bounce);
 }
 
-@keyframes asakaa-menu-appear {
+@keyframes menu-appear {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(var(--space-2));
   }
   to {
     opacity: 1;
@@ -108,39 +143,52 @@
   }
 }
 
-.dark .asakaa-bulk-menu {
-  @apply bg-gray-900 border-gray-700/50;
-}
+/* ==========================================================================
+   MENU ITEMS
+   ========================================================================== */
 
-/* Menu item */
 .asakaa-bulk-menu-item {
-  @apply w-full px-4 py-2.5;
-  @apply text-sm text-left;
-  @apply text-gray-900;
-  @apply flex items-center gap-3;
-  @apply transition-colors duration-150;
-  @apply hover:bg-blue-500/10;
+  @apply w-full flex items-center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  font-size: var(--font-sm);
+  color: var(--color-text-primary);
+  text-align: left;
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background var(--duration-instant) var(--ease-smooth);
 }
 
-.dark .asakaa-bulk-menu-item {
-  @apply text-gray-100;
+.asakaa-bulk-menu-item:hover {
+  background: rgba(59, 130, 246, var(--opacity-faint));
 }
 
 .asakaa-bulk-menu-item:focus {
-  @apply outline-none bg-blue-500/10;
+  @apply outline-none;
+  background: rgba(59, 130, 246, var(--opacity-faint));
 }
 
-/* Priority dot in menu */
+/* Priority dot indicator */
 .asakaa-priority-dot {
-  @apply w-3 h-3 rounded-full;
+  width: var(--space-3);
+  height: var(--space-3);
+  border-radius: var(--radius-full);
+  flex-shrink: 0;
 }
 
-/* Responsive: smaller screens */
+/* ==========================================================================
+   RESPONSIVE
+   ========================================================================== */
+
 @media (max-width: 640px) {
   .asakaa-bulk-toolbar-content {
-    @apply flex-col gap-2 px-4 py-3;
+    @apply flex-col;
+    gap: var(--space-2);
+    padding: var(--space-4);
     min-width: auto;
-    max-width: calc(100vw - 32px);
+    max-width: calc(100vw - var(--space-8));
   }
 
   .asakaa-bulk-toolbar-count {
@@ -152,6 +200,7 @@
   }
 
   .asakaa-bulk-toolbar-button {
-    @apply px-3 py-1.5 text-xs;
+    padding: var(--space-2) var(--space-3);
+    font-size: var(--font-xs);
   }
 }

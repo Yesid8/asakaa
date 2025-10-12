@@ -7,6 +7,59 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.1] - 2025-10-12
+
+### Changed - Design System v2.0 & Visual Improvements
+
+#### Design System Implementation
+- **CSS Variables System**: Complete redesign with semantic design tokens
+  - Typography: 8-size mathematical scale (10px-48px)
+  - Spacing: 4px grid system (10 scales from 4px-64px)
+  - Opacity: 7 predictable levels (0.05-1.0)
+  - Border-radius: 4 semantic sizes + full (6px, 10px, 16px, 24px, 9999px)
+  - Z-index: 9-level hierarchy (0-800)
+  - Shadows: 4 elevation levels + glass variants
+  - Animation timing: 5 standardized durations (100ms-700ms)
+- All magic numbers replaced with semantic CSS variables
+- Maintainable and consistent design language
+
+#### Icon Improvements
+- Replaced emoji-based icons with professional SVG implementations
+- Priority indicators: SVG circles with proper styling (URGENT/HIGH/MEDIUM/LOW)
+- WIP status indicators: SVG icons (exceeded/warning/approaching/ok)
+- Consistent cross-platform rendering
+- Better accessibility and screen reader support
+- Scalable without quality loss
+
+#### Visual Refinements
+- Hover effects: More subtle animations (1px translateY, 2% scale)
+- Glassmorphism: Limited to floating elements only
+- Gradients: Simplified, removed imperceptible ones
+- Scrollbars: Unified styling across all components
+- Consistent border and shadow usage
+
+### Technical Improvements
+- 7 files refactored with Design System v2.0
+- CSS optimized: 30KB minified (complete bundle)
+- Zero breaking changes - fully backward compatible
+- All components use CSS variable system
+- Professional SVG icon components
+
+### Files Modified
+- `index.css`: Design System v2.0 foundation
+- `bulk-operations.css`: Updated to use design system
+- `command-palette.css`: Updated to use design system
+- `card-detail-modal.css`: Updated to use design system (845 lines)
+- `PrioritySelector.tsx`: SVG icon implementation
+- `Column.tsx`: SVG WIP indicators
+- `package.json`: Fixed ESM/CJS exports
+
+### Build Status
+- ✅ TypeScript compilation: 0 errors
+- ✅ All exports working correctly
+- ✅ Tailwind CSS compiled successfully
+- ✅ Demo running with all improvements
+
 ## [0.3.0] - 2025-10-12
 
 ### Added - WIP Limits & Bulk Operations (Priority 2 Features)

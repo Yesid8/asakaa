@@ -1,132 +1,271 @@
 /**
- * ASAKAA Board Styles
- * Premium Kanban board with modern visual effects
+ * ASAKAA Design System v2.0
+ * Apple-level design consistency
+ * Every pixel matters. Every decision is intentional.
  */
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* ============================================================================
+   DESIGN SYSTEM FOUNDATION
+   Mathematical scales for typography, spacing, colors, and timing
+   ============================================================================ */
+
+:root {
+  /* ========== TYPOGRAPHY SCALE ========== */
+  /* Mathematical progression: 10, 12, 14, 16, 20, 24, 32, 48 */
+  --font-2xs: 10px;      /* Micro text: metadata, caps labels */
+  --font-xs: 12px;       /* Secondary text: captions, hints */
+  --font-sm: 14px;       /* Body text: descriptions, content */
+  --font-base: 16px;     /* Default: inputs, standard text */
+  --font-lg: 20px;       /* Section titles, emphasis */
+  --font-xl: 24px;       /* Modal titles, headers */
+  --font-2xl: 32px;      /* Hero numbers, big emphasis */
+  --font-3xl: 48px;      /* Marketing, splash screens */
+
+  /* Font weights */
+  --font-normal: 400;
+  --font-medium: 500;
+  --font-semibold: 600;
+  --font-bold: 700;
+
+  /* ========== SPACING SCALE ========== */
+  /* Based on 4px grid system */
+  --space-1: 4px;        /* Micro spacing */
+  --space-2: 8px;        /* Tight spacing */
+  --space-3: 12px;       /* Compact spacing */
+  --space-4: 16px;       /* Base spacing */
+  --space-5: 20px;       /* Comfortable spacing */
+  --space-6: 24px;       /* Generous spacing */
+  --space-8: 32px;       /* Section spacing */
+  --space-10: 40px;      /* Large spacing */
+  --space-12: 48px;      /* Extra large spacing */
+  --space-16: 64px;      /* Hero spacing */
+
+  /* ========== OPACITY SCALE ========== */
+  /* Predictable and mathematical */
+  --opacity-subtle: 0.05;   /* Barely visible borders */
+  --opacity-faint: 0.10;    /* Faint dividers */
+  --opacity-light: 0.20;    /* Light backgrounds */
+  --opacity-medium: 0.40;   /* Medium backgrounds */
+  --opacity-strong: 0.60;   /* Strong backgrounds */
+  --opacity-opaque: 0.80;   /* Almost solid */
+  --opacity-full: 1.0;      /* Solid */
+
+  /* ========== BORDER RADIUS SCALE ========== */
+  /* Only 4 radios: small, medium, large, full */
+  --radius-sm: 6px;      /* Small elements: badges, tags */
+  --radius-md: 10px;     /* Medium elements: buttons, inputs */
+  --radius-lg: 16px;     /* Large elements: cards, modals */
+  --radius-xl: 24px;     /* Hero elements */
+  --radius-full: 9999px; /* Pills, circles */
+
+  /* ========== SHADOW SYSTEM ========== */
+  /* 4 levels of elevation */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.5);
+  --shadow-xl: 0 24px 64px rgba(0, 0, 0, 0.6);
+
+  /* Glass shadows (with subtle border) */
+  --shadow-glass-sm: 0 4px 12px rgba(0, 0, 0, 0.4),
+                      0 0 0 1px rgba(255, 255, 255, var(--opacity-subtle));
+  --shadow-glass-lg: 0 24px 64px rgba(0, 0, 0, 0.5),
+                      0 0 0 1px rgba(255, 255, 255, var(--opacity-faint));
+
+  /* ========== ANIMATION TIMING ========== */
+  --duration-instant: 100ms;    /* Micro-interactions */
+  --duration-fast: 200ms;       /* Button hovers, toggles */
+  --duration-base: 300ms;       /* Standard transitions */
+  --duration-slow: 500ms;       /* Modal entrances */
+  --duration-deliberate: 700ms; /* Complex animations */
+
+  /* Easing functions */
+  --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);  /* Material smooth */
+  --ease-bounce: cubic-bezier(0.16, 1, 0.3, 1); /* Springy */
+  --ease-sharp: cubic-bezier(0.4, 0, 0.6, 1);   /* Quick & precise */
+
+  /* ========== Z-INDEX HIERARCHY ========== */
+  --z-base: 0;        /* Normal flow */
+  --z-dropdown: 100;  /* Dropdowns, tooltips */
+  --z-sticky: 200;    /* Sticky headers */
+  --z-fixed: 300;     /* Fixed toolbars */
+  --z-overlay: 400;   /* Modal overlays */
+  --z-modal: 500;     /* Modal content */
+  --z-popover: 600;   /* Popovers above modals */
+  --z-toast: 700;     /* Notifications */
+  --z-tooltip: 800;   /* Tooltips (always on top) */
+
+  /* ========== COLOR SYSTEM ========== */
+  /* Base colors */
+  --color-bg-primary: #0a0a0a;
+  --color-bg-secondary: #141414;
+  --color-bg-tertiary: #1a1a1a;
+
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #a3a3a3;
+  --color-text-tertiary: #737373;
+
+  /* Accent colors */
+  --color-blue: #3b82f6;
+  --color-blue-dark: #2563eb;
+  --color-red: #ef4444;
+  --color-red-dark: #dc2626;
+  --color-orange: #f59e0b;
+  --color-yellow: #fbbf24;
+  --color-green: #10b981;
+  --color-purple: #8b5cf6;
+
+  /* Semantic colors */
+  --color-error: var(--color-red);
+  --color-warning: var(--color-orange);
+  --color-success: var(--color-green);
+  --color-info: var(--color-blue);
+
+  /* ========== COMPONENT SIZES ========== */
+  --column-width: 340px;
+  --column-width-compact: 300px;
+  --card-height-estimate: 120px;
+  --header-height: 64px;
+  --toolbar-height: 56px;
+}
+
+/* ============================================================================
+   BASE STYLES
+   ============================================================================ */
+
 @layer base {
   * {
-    border-color: #2a2a2a;
+    border-color: rgba(255, 255, 255, var(--opacity-faint));
   }
 
   body {
-    background-color: #0a0a0a;
-    color: #ffffff;
+    background-color: var(--color-bg-primary);
+    color: var(--color-text-primary);
     font-feature-settings: "rlig" 1, "calt" 1;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
 }
 
+/* ============================================================================
+   COMPONENTS
+   ============================================================================ */
+
 @layer components {
-  /* Kanban Board Container */
+
+  /* ==========================================================================
+     BOARD CONTAINER
+     ========================================================================== */
+
   .asakaa-board {
-    @apply relative flex gap-6 overflow-x-auto overflow-y-hidden p-6 min-h-screen;
-    background: linear-gradient(135deg, #0a0a0a 0%, #0a0a0a 50%, #141414 100%);
+    @apply relative flex overflow-x-auto overflow-y-hidden min-h-screen;
+    gap: var(--space-6);
+    padding: var(--space-6);
+    background: var(--color-bg-primary);
   }
 
-  /* Column - Premium glassmorphism effect */
+  /* ==========================================================================
+     COLUMN
+     ========================================================================== */
+
   .asakaa-column {
-    @apply flex flex-col rounded-xl p-4 backdrop-blur-sm;
-    min-width: 340px;
-    max-width: 340px;
+    @apply flex flex-col;
+    min-width: var(--column-width);
+    max-width: var(--column-width);
     height: fit-content;
-    max-height: calc(100vh - 180px);
-    background: linear-gradient(
-      135deg,
-      rgba(20, 20, 20, 0.6) 0%,
-      rgba(31, 31, 31, 0.4) 100%
-    );
-    border: 1px solid rgba(59, 130, 246, 0.1);
-    box-shadow:
-      0 8px 32px 0 rgba(0, 0, 0, 0.37),
-      inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    max-height: calc(100vh - var(--header-height) - var(--space-16));
+    padding: var(--space-4);
+    background: var(--color-bg-tertiary);
+    border: 1px solid rgba(255, 255, 255, var(--opacity-subtle));
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    transition: all var(--duration-base) var(--ease-smooth);
   }
 
   .asakaa-column:hover {
-    border-color: rgba(59, 130, 246, 0.2);
-    box-shadow:
-      0 12px 40px 0 rgba(0, 0, 0, 0.45),
-      inset 0 1px 0 0 rgba(255, 255, 255, 0.08);
-    transform: translateY(-2px);
+    border-color: rgba(59, 130, 246, var(--opacity-light));
+    box-shadow: var(--shadow-lg);
+    /* NO transform - columns are structural elements */
   }
 
   .asakaa-column-header {
-    @apply flex items-center justify-between gap-2 pb-3 mb-2;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    @apply flex items-center justify-between;
+    gap: var(--space-2);
+    padding-bottom: var(--space-3);
+    margin-bottom: var(--space-2);
+    border-bottom: 1px solid rgba(255, 255, 255, var(--opacity-subtle));
   }
 
   .asakaa-column-title {
-    @apply text-sm font-bold tracking-wide;
-    color: #ffffff;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+    font-size: var(--font-sm);
+    font-weight: var(--font-bold);
+    color: var(--color-text-primary);
+    letter-spacing: 0.3px;
   }
 
   .asakaa-column-count {
-    @apply text-xs font-semibold px-2.5 py-1 rounded-full;
-    color: #a3a3a3;
-    background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(59, 130, 246, 0.05));
-    border: 1px solid rgba(59, 130, 246, 0.2);
-    box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.1);
+    font-size: var(--font-2xs);
+    font-weight: var(--font-semibold);
+    padding: var(--space-1) var(--space-3);
+    color: var(--color-text-secondary);
+    background: rgba(59, 130, 246, var(--opacity-faint));
+    border: 1px solid rgba(59, 130, 246, var(--opacity-light));
+    border-radius: var(--radius-full);
   }
 
   .asakaa-column-cards {
-    @apply flex flex-col pr-1;
-    gap: 12px;
-    padding-top: 4px;
-    padding-bottom: 4px;
+    @apply flex flex-col;
+    gap: var(--space-3);
+    padding-top: var(--space-1);
+    padding-bottom: var(--space-1);
+    padding-right: var(--space-1);
     overflow-y: auto;
     overflow-x: hidden;
     flex: 1;
     min-height: 0;
-    scrollbar-width: thin;
-    scrollbar-color: rgba(59, 130, 246, 0.3) transparent;
   }
 
+  /* Unified scrollbar styling */
   .asakaa-column-cards::-webkit-scrollbar {
-    @apply w-1.5;
+    width: 8px;
   }
 
   .asakaa-column-cards::-webkit-scrollbar-track {
-    @apply bg-transparent;
-    border-radius: 10px;
+    background: transparent;
   }
 
   .asakaa-column-cards::-webkit-scrollbar-thumb {
-    background: linear-gradient(180deg, rgba(59, 130, 246, 0.4), rgba(59, 130, 246, 0.2));
-    border-radius: 10px;
-    border: 2px solid transparent;
-    background-clip: padding-box;
+    background: rgba(255, 255, 255, var(--opacity-light));
+    border-radius: var(--radius-sm);
   }
 
   .asakaa-column-cards::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(180deg, rgba(59, 130, 246, 0.6), rgba(59, 130, 246, 0.4));
+    background: rgba(255, 255, 255, var(--opacity-medium));
   }
 
-  /* Card - Premium elevation with subtle glow */
+  /* ==========================================================================
+     CARD
+     ========================================================================== */
+
   .asakaa-card {
-    @apply rounded-lg p-4 cursor-pointer;
-    @apply transition-all duration-200 ease-out;
+    @apply cursor-pointer;
     position: relative;
     width: 100%;
-    background: linear-gradient(135deg, #1a1a1a 0%, #151515 100%);
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    box-shadow:
-      0 2px 8px rgba(0, 0, 0, 0.4),
-      inset 0 1px 0 rgba(255, 255, 255, 0.03);
+    padding: var(--space-4);
+    background: var(--color-bg-secondary);
+    border: 1px solid rgba(255, 255, 255, var(--opacity-subtle));
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+    transition: all var(--duration-fast) var(--ease-smooth);
   }
 
   .asakaa-card:hover {
-    border-color: rgba(59, 130, 246, 0.4);
-    box-shadow:
-      0 8px 24px rgba(0, 0, 0, 0.5),
-      0 0 0 1px rgba(59, 130, 246, 0.1),
-      inset 0 1px 0 rgba(255, 255, 255, 0.08);
-    transform: translateY(-2px) scale(1.01);
+    border-color: rgba(59, 130, 246, var(--opacity-medium));
+    box-shadow: var(--shadow-md);
+    transform: translateY(-1px);  /* Subtle 1px, not 2px */
   }
 
   .asakaa-card:active {
@@ -135,117 +274,140 @@
   }
 
   .asakaa-card-dragging {
-    opacity: 0.7;
-    transform: rotate(3deg) scale(1.05);
-    box-shadow:
-      0 20px 40px rgba(0, 0, 0, 0.6),
-      0 0 0 2px rgba(59, 130, 246, 0.5);
+    opacity: var(--opacity-opaque);
+    transform: rotate(2deg) scale(1.03);  /* Subtle rotation and scale */
+    box-shadow: var(--shadow-xl), 0 0 0 2px rgba(59, 130, 246, var(--opacity-strong));
   }
 
   .asakaa-card-title {
-    @apply text-sm font-semibold mb-2 leading-snug;
-    color: #ffffff;
+    font-size: var(--font-sm);
+    font-weight: var(--font-semibold);
+    margin-bottom: var(--space-2);
+    line-height: 1.4;
+    color: var(--color-text-primary);
   }
 
   .asakaa-card-description {
-    @apply text-xs line-clamp-2 leading-relaxed;
-    color: #a3a3a3;
+    @apply line-clamp-2;
+    font-size: var(--font-xs);
+    line-height: 1.5;
+    color: var(--color-text-secondary);
   }
 
   .asakaa-card-footer {
-    @apply flex items-center gap-2 mt-3 pt-3;
-    border-top: 1px solid rgba(255, 255, 255, 0.04);
+    @apply flex items-center;
+    gap: var(--space-2);
+    margin-top: var(--space-3);
+    padding-top: var(--space-3);
+    border-top: 1px solid rgba(255, 255, 255, var(--opacity-subtle));
   }
 
-  /* Priority badges - Enhanced with gradients */
+  /* ==========================================================================
+     PRIORITY BADGES
+     ========================================================================== */
+
   .asakaa-priority {
-    @apply text-xs px-2.5 py-1 rounded-md font-bold uppercase tracking-wider;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    font-size: var(--font-2xs);
+    font-weight: var(--font-bold);
+    padding: var(--space-1) var(--space-3);
+    border-radius: var(--radius-sm);
+    text-transform: uppercase;
     letter-spacing: 0.5px;
   }
 
   .asakaa-priority-low {
-    background: linear-gradient(135deg, rgba(59, 130, 246, 0.25), rgba(59, 130, 246, 0.15));
+    background: rgba(59, 130, 246, var(--opacity-light));
     color: #60a5fa;
-    border: 1px solid rgba(59, 130, 246, 0.3);
+    border: 1px solid rgba(59, 130, 246, var(--opacity-medium));
   }
 
   .asakaa-priority-medium {
-    background: linear-gradient(135deg, rgba(245, 158, 11, 0.25), rgba(245, 158, 11, 0.15));
+    background: rgba(245, 158, 11, var(--opacity-light));
     color: #fbbf24;
-    border: 1px solid rgba(245, 158, 11, 0.3);
+    border: 1px solid rgba(245, 158, 11, var(--opacity-medium));
   }
 
   .asakaa-priority-high {
-    background: linear-gradient(135deg, rgba(239, 68, 68, 0.25), rgba(239, 68, 68, 0.15));
+    background: rgba(239, 68, 68, var(--opacity-light));
     color: #f87171;
-    border: 1px solid rgba(239, 68, 68, 0.3);
+    border: 1px solid rgba(239, 68, 68, var(--opacity-medium));
   }
 
   .asakaa-priority-urgent {
-    background: linear-gradient(135deg, #ef4444, #dc2626);
+    background: var(--color-red);
     color: white;
     animation: pulse-glow 2s ease-in-out infinite;
-    box-shadow: 0 0 20px rgba(239, 68, 68, 0.5);
   }
 
   @keyframes pulse-glow {
     0%, 100% {
-      box-shadow: 0 0 20px rgba(239, 68, 68, 0.5);
+      box-shadow: 0 0 16px rgba(239, 68, 68, var(--opacity-strong));
     }
     50% {
-      box-shadow: 0 0 30px rgba(239, 68, 68, 0.8);
+      box-shadow: 0 0 24px rgba(239, 68, 68, var(--opacity-opaque));
     }
   }
 
-  /* Labels - Refined with subtle borders */
+  /* ==========================================================================
+     LABELS
+     ========================================================================== */
+
   .asakaa-label {
-    @apply text-xs px-2.5 py-1 rounded-full font-medium;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    color: #a3a3a3;
-    backdrop-filter: blur(4px);
-    transition: all 0.2s ease;
+    font-size: var(--font-xs);
+    font-weight: var(--font-medium);
+    padding: var(--space-1) var(--space-3);
+    background: rgba(255, 255, 255, var(--opacity-subtle));
+    border: 1px solid rgba(255, 255, 255, var(--opacity-faint));
+    border-radius: var(--radius-full);
+    color: var(--color-text-secondary);
+    transition: all var(--duration-fast) var(--ease-smooth);
   }
 
   .asakaa-label:hover {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.04));
-    border-color: rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, var(--opacity-faint));
+    border-color: rgba(255, 255, 255, var(--opacity-light));
     transform: translateY(-1px);
   }
 
-  /* Drop zones - Animated */
+  /* ==========================================================================
+     DROP ZONES
+     ========================================================================== */
+
   .asakaa-drop-zone {
-    @apply min-h-[120px] rounded-xl border-2 border-dashed;
-    @apply transition-all duration-300;
-    border-color: rgba(255, 255, 255, 0.1);
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.02), transparent);
+    min-height: 120px;
+    border: 2px dashed rgba(255, 255, 255, var(--opacity-faint));
+    border-radius: var(--radius-lg);
+    background: rgba(255, 255, 255, var(--opacity-subtle));
+    transition: all var(--duration-base) var(--ease-smooth);
   }
 
   .asakaa-drop-zone-active {
-    border-color: rgba(59, 130, 246, 0.5);
-    background: linear-gradient(135deg, rgba(59, 130, 246, 0.08), rgba(59, 130, 246, 0.03));
-    box-shadow: inset 0 0 20px rgba(59, 130, 246, 0.15);
+    border-color: rgba(59, 130, 246, var(--opacity-strong));
+    background: rgba(59, 130, 246, var(--opacity-faint));
+    box-shadow: inset 0 0 16px rgba(59, 130, 246, var(--opacity-light));
     animation: pulse-border 1.5s ease-in-out infinite;
   }
 
   @keyframes pulse-border {
     0%, 100% {
-      border-color: rgba(59, 130, 246, 0.5);
+      border-color: rgba(59, 130, 246, var(--opacity-strong));
     }
     50% {
-      border-color: rgba(59, 130, 246, 0.8);
+      border-color: rgba(59, 130, 246, var(--opacity-opaque));
     }
   }
 
-  /* Loading states - Shimmer effect */
+  /* ==========================================================================
+     LOADING STATES
+     ========================================================================== */
+
   .asakaa-skeleton {
-    @apply rounded-lg;
+    border-radius: var(--radius-md);
     background: linear-gradient(
       90deg,
-      rgba(255, 255, 255, 0.02) 0%,
-      rgba(255, 255, 255, 0.05) 50%,
-      rgba(255, 255, 255, 0.02) 100%
+      rgba(255, 255, 255, var(--opacity-subtle)) 0%,
+      rgba(255, 255, 255, var(--opacity-faint)) 50%,
+      rgba(255, 255, 255, var(--opacity-subtle)) 100%
     );
     background-size: 200% 100%;
     animation: shimmer 1.5s ease-in-out infinite;
@@ -260,87 +422,115 @@
     }
   }
 
-  /* Empty states */
+  /* ==========================================================================
+     EMPTY STATES
+     ========================================================================== */
+
   .asakaa-empty {
-    @apply flex flex-col items-center justify-center p-8 text-sm;
-    color: #737373;
+    @apply flex flex-col items-center justify-center;
+    padding: var(--space-8);
+    font-size: var(--font-sm);
+    color: var(--color-text-tertiary);
   }
 
-  /* AI badge - Gradient with glow */
+  /* ==========================================================================
+     AI BADGE
+     ========================================================================== */
+
   .asakaa-ai-badge {
-    @apply inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg;
-    @apply text-xs font-bold uppercase tracking-wide;
-    background: linear-gradient(135deg, rgba(168, 85, 247, 0.25), rgba(168, 85, 247, 0.15));
-    border: 1px solid rgba(168, 85, 247, 0.3);
-    color: #c084fc;
-    box-shadow: 0 0 15px rgba(168, 85, 247, 0.3);
+    @apply inline-flex items-center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-3);
+    font-size: var(--font-2xs);
+    font-weight: var(--font-bold);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    background: var(--color-blue);
+    border: 1px solid rgba(59, 130, 246, var(--opacity-medium));
+    border-radius: var(--radius-md);
+    color: white;
+    box-shadow: 0 0 12px rgba(59, 130, 246, var(--opacity-medium));
   }
 
-  /* ========================================================================
-     SWIMLANES - Horizontal grouping rows
-     ======================================================================== */
+  /* ==========================================================================
+     SWIMLANES
+     ========================================================================== */
 
-  /* Swimlane view container */
   .asakaa-swimlane-view {
-    @apply w-full p-6;
-    background: linear-gradient(135deg, #0a0a0a 0%, #0a0a0a 50%, #141414 100%);
+    @apply w-full;
+    padding: var(--space-6);
+    background: var(--color-bg-primary);
     min-height: 100vh;
   }
 
-  /* Individual swimlane */
   .asakaa-swimlane {
     @apply relative overflow-hidden;
-    background: linear-gradient(
-      135deg,
-      rgba(20, 20, 20, 0.4) 0%,
-      rgba(31, 31, 31, 0.2) 100%
-    );
-    backdrop-filter: blur(8px);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    background: rgba(20, 20, 20, var(--opacity-medium));
+    transition: all var(--duration-base) var(--ease-smooth);
   }
 
   .asakaa-swimlane:hover {
-    background: linear-gradient(
-      135deg,
-      rgba(20, 20, 20, 0.5) 0%,
-      rgba(31, 31, 31, 0.3) 100%
-    );
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    background: rgba(20, 20, 20, var(--opacity-strong));
   }
 
-  /* Swimlane header */
   .asakaa-swimlane-header {
-    @apply flex items-center justify-between px-4 py-3;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    transition: all 0.2s ease;
+    @apply flex items-center justify-between;
+    padding: var(--space-3) var(--space-4);
+    border-bottom: 1px solid rgba(255, 255, 255, var(--opacity-subtle));
+    transition: background var(--duration-fast) var(--ease-smooth);
   }
 
   .asakaa-swimlane-header:hover {
-    background: rgba(255, 255, 255, 0.03);
+    background: rgba(255, 255, 255, var(--opacity-subtle));
   }
 
-  /* Swimlane content - board within lane */
   .asakaa-swimlane-content {
     @apply relative;
   }
 
-  /* Adjust board inside swimlane to be horizontal scroll */
   .asakaa-swimlane-content .asakaa-board {
-    @apply p-4;
+    padding: var(--space-4);
     min-height: auto;
     background: transparent;
   }
 
-  /* Adjust columns in swimlane view */
   .asakaa-swimlane-content .asakaa-column {
-    min-width: 300px;
-    max-width: 300px;
+    min-width: var(--column-width-compact);
+    max-width: var(--column-width-compact);
     max-height: 500px;
   }
 }
 
+/* ============================================================================
+   UTILITIES
+   ============================================================================ */
+
 @layer utilities {
-  /* Custom scrollbar utilities */
+
+  /* Unified scrollbar utility for all components */
+  .scrollbar-custom {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, var(--opacity-light)) transparent;
+  }
+
+  .scrollbar-custom::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  .scrollbar-custom::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .scrollbar-custom::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, var(--opacity-light));
+    border-radius: var(--radius-sm);
+  }
+
+  .scrollbar-custom::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, var(--opacity-medium));
+  }
+
   .scrollbar-hide {
     -ms-overflow-style: none;
     scrollbar-width: none;
@@ -350,17 +540,17 @@
     display: none;
   }
 
-  /* Focus visible styles */
+  /* Focus ring with system colors */
   .focus-ring {
     @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2;
   }
 
   .focus-ring:focus-visible {
-    --tw-ring-color: #3b82f6;
-    --tw-ring-offset-color: #0a0a0a;
+    --tw-ring-color: var(--color-blue);
+    --tw-ring-offset-color: var(--color-bg-primary);
   }
 
-  /* Truncate with custom lines */
+  /* Line clamp utility */
   .line-clamp-3 {
     display: -webkit-box;
     -webkit-line-clamp: 3;
@@ -368,10 +558,11 @@
     overflow: hidden;
   }
 
-  /* Glass effect utility */
+  /* Glassmorphism - ONLY for floating elements */
   .glass {
-    backdrop-filter: blur(12px) saturate(180%);
-    background: rgba(20, 20, 20, 0.7);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(20px) saturate(180%);
+    background: rgba(20, 20, 20, var(--opacity-opaque));
+    border: 1px solid rgba(255, 255, 255, var(--opacity-faint));
+    box-shadow: var(--shadow-glass-lg);
   }
 }

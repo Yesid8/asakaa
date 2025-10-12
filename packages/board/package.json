@@ -1,6 +1,6 @@
 {
   "name": "@asakaa/board",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "type": "module",
   "description": "AI-native Kanban board component for React with WIP Limits and Bulk Operations. Built for performance and developer experience.",
   "author": "Asakaa",
@@ -14,14 +14,14 @@
     "drag-and-drop",
     "project-management"
   ],
-  "main": "./dist/index.js",
-  "module": "./dist/index.mjs",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "require": "./dist/index.js",
-      "import": "./dist/index.mjs",
-      "types": "./dist/index.d.ts"
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
     },
     "./styles.css": "./dist/styles.css"
   },
