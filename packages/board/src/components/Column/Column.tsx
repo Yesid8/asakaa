@@ -163,17 +163,36 @@ export const Column = memo<ColumnProps>(
               {/* WIP limit status indicator */}
               {column.wipLimit && wipStatus.state !== 'none' && (
                 <span
-                  className="text-xs font-medium"
+                  className="text-xs font-medium flex items-center"
                   title={`${wipStatus.percentage.toFixed(0)}% capacity${
                     column.wipLimitType === 'hard'
                       ? ' (Hard limit - blocks new cards)'
                       : ' (Soft limit - shows warning)'
                   }`}
                 >
-                  {wipStatus.state === 'exceeded' && '⛔'}
-                  {wipStatus.state === 'warning' && '⚠️'}
-                  {wipStatus.state === 'approaching' && '⚡'}
-                  {wipStatus.state === 'ok' && '✓'}
+                  {wipStatus.state === 'exceeded' && (
+                    <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+                      <circle cx="8" cy="8" r="7" fill="#EF4444" opacity="0.9" />
+                      <path d="M5 5L11 11M11 5L5 11" stroke="white" strokeWidth="2" strokeLinecap="round" />
+                    </svg>
+                  )}
+                  {wipStatus.state === 'warning' && (
+                    <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+                      <path d="M8 1L15 14H1L8 1Z" fill="#F59E0B" opacity="0.9" />
+                      <path d="M8 6V9M8 11V11.5" stroke="white" strokeWidth="1.5" strokeLinecap="round" />
+                    </svg>
+                  )}
+                  {wipStatus.state === 'approaching' && (
+                    <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+                      <path d="M8 1L10 7H14L10 10L12 16L8 12L4 16L6 10L2 7H6L8 1Z" fill="#FB923C" opacity="0.9" />
+                    </svg>
+                  )}
+                  {wipStatus.state === 'ok' && (
+                    <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+                      <circle cx="8" cy="8" r="7" fill="#10B981" opacity="0.9" />
+                      <path d="M5 8L7 10L11 6" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  )}
                 </span>
               )}
               {onColumnRename && (

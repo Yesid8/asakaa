@@ -14,13 +14,21 @@ export interface PrioritySelectorProps {
 }
 
 const PRIORITY_CONFIG = {
-  URGENT: { label: 'Urgent', emoji: '🟥', color: '#E74C3C' },
-  HIGH: { label: 'High', emoji: '🟧', color: '#E67E22' },
-  MEDIUM: { label: 'Normal', emoji: '🟨', color: '#F1C40F' },
-  LOW: { label: 'Low', emoji: '🟩', color: '#2ECC71' },
+  URGENT: { label: 'Urgent', color: '#E74C3C' },
+  HIGH: { label: 'High', color: '#E67E22' },
+  MEDIUM: { label: 'Normal', color: '#F1C40F' },
+  LOW: { label: 'Low', color: '#2ECC71' },
 } as const
 
 const CLEAR_COLOR = '#BDC3C7'
+
+// SVG Icon Component for Priority
+const PriorityIcon = ({ color }: { color: string }) => (
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="8" cy="8" r="6" fill={color} opacity="0.9" />
+    <circle cx="8" cy="8" r="6" stroke={color} strokeWidth="1.5" opacity="0.3" />
+  </svg>
+)
 
 export function PrioritySelector({
   priority,
@@ -135,7 +143,7 @@ export function PrioritySelector({
             </span>
           </div>
 
-          {/* Options - más compactas */}
+          {/* Options */}
           <div className="py-1">
             {(Object.entries(PRIORITY_CONFIG) as [Priority, typeof PRIORITY_CONFIG[Priority]][]).map(
               ([key, config]) => (
@@ -145,26 +153,32 @@ export function PrioritySelector({
                   className="w-full px-3 py-1.5 flex items-center gap-2 text-xs font-medium transition-all hover:bg-white/15 active:scale-[0.98]"
                   style={{ color: config.color }}
                 >
-                  <span className="text-base leading-none">{config.emoji}</span>
+                  <PriorityIcon color={config.color} />
                   <span className="font-semibold text-sm">{config.label}</span>
                   {priority === key && (
-                    <span className="ml-auto text-blue-400 text-sm">✓</span>
+                    <svg className="ml-auto" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                      <path d="M13.5 4.5L6 12L2.5 8.5" stroke="#3B82F6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
                   )}
                 </button>
               )
             )}
 
-            {/* Clear option - más compacto */}
+            {/* Clear option */}
             <div className="mt-0.5 pt-0.5 border-t border-white/10">
               <button
                 onClick={() => handleSelect(undefined)}
                 className="w-full px-3 py-1.5 flex items-center gap-2 text-xs font-medium transition-all hover:bg-white/15 active:scale-[0.98]"
                 style={{ color: '#e5e5e5' }}
               >
-                <span className="text-base leading-none">⚪</span>
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                  <circle cx="8" cy="8" r="6" stroke="#9CA3AF" strokeWidth="1.5" strokeDasharray="2 2" opacity="0.6" />
+                </svg>
                 <span className="font-semibold text-sm">Clear</span>
                 {!priority && (
-                  <span className="ml-auto text-blue-400 text-sm">✓</span>
+                  <svg className="ml-auto" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                    <path d="M13.5 4.5L6 12L2.5 8.5" stroke="#3B82F6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
                 )}
               </button>
             </div>
