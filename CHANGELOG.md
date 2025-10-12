@@ -119,6 +119,17 @@ function App() {
 }
 ```
 
+### Fixed
+- **CardDetailModal Editable Fields**: Added input controls for Priority (dropdown), Dates (date pickers), Assignees (multi-select), and Estimated Hours (number input)
+- **FilterBar UI Cleanup**: Converted Priority, Assignees, and Labels from visible chips to clean dropdown menus
+- **CSS Bundle Integration**: Fixed FilterBar CSS not being included in build output by appending directly to index.css
+
+### Technical Details
+- CardDetailModal now shows editable inputs when in edit mode for all fields
+- FilterBar uses `<select>` dropdowns instead of multiple visible chips
+- Removed CSS `@import` directive that wasn't working with tsup/Tailwind build process
+- Added console logging for debugging card updates
+
 ### Breaking Changes
 None - fully backward compatible
 

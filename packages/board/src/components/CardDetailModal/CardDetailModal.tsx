@@ -421,44 +421,86 @@ export function CardDetailModal({
                 {/* Assignees */}
                 <div className="card-detail-section">
                   <label className="card-detail-label">Assigned To</label>
-                  <div className="card-detail-users">
-                    {assignedUsers.length > 0 ? (
-                      assignedUsers.map((user) => (
-                        <div key={user.id} className="card-detail-user">
-                          <div
-                            className="card-detail-user-avatar"
-                            style={{ background: user.color }}
-                          >
-                            {user.initials}
+                  {isEditing ? (
+                    <select
+                      multiple
+                      value={editedCard.assignedUserIds ?? currentCard.assignedUserIds ?? []}
+                      onChange={(e) => {
+                        const selected = Array.from(e.target.selectedOptions, (option) => option.value)
+                        setEditedCard({
+                          ...editedCard,
+                          assignedUserIds: selected,
+                        })
+                      }}
+                      className="card-detail-textarea"
+                      style={{ height: '120px', padding: '8px 12px' }}
+                    >
+                      {availableUsers.map((user) => (
+                        <option key={user.id} value={user.id}>
+                          {user.name}
+                        </option>
+                      ))}
+                    </select>
+                  ) : (
+                    <div className="card-detail-users">
+                      {assignedUsers.length > 0 ? (
+                        assignedUsers.map((user) => (
+                          <div key={user.id} className="card-detail-user">
+                            <div
+                              className="card-detail-user-avatar"
+                              style={{ background: user.color }}
+                            >
+                              {user.initials}
+                            </div>
+                            <span>{user.name}</span>
                           </div>
-                          <span>{user.name}</span>
-                        </div>
-                      ))
-                    ) : (
-                      <span className="card-detail-empty">Unassigned</span>
-                    )}
-                  </div>
+                        ))
+                      ) : (
+                        <span className="card-detail-empty">Unassigned</span>
+                      )}
+                    </div>
+                  )}
                 </div>
 
                 {/* Priority */}
                 <div className="card-detail-section">
                   <label className="card-detail-label">Priority</label>
-                  <div className="card-detail-priority">
-                    <div
-                      className="card-detail-priority-dot"
-                      style={{
-                        background:
-                          currentCard.priority === 'URGENT'
-                            ? '#EF4444'
-                            : currentCard.priority === 'HIGH'
-                            ? '#F59E0B'
-                            : currentCard.priority === 'MEDIUM'
-                            ? '#3B82F6'
-                            : '#6B7280',
-                      }}
-                    />
-                    <span>{currentCard.priority || 'None'}</span>
-                  </div>
+                  {isEditing ? (
+                    <select
+                      value={editedCard.priority ?? currentCard.priority ?? ''}
+                      onChange={(e) =>
+                        setEditedCard({
+                          ...editedCard,
+                          priority: (e.target.value || undefined) as any,
+                        })
+                      }
+                      className="card-detail-textarea"
+                      style={{ height: 'auto', padding: '8px 12px' }}
+                    >
+                      <option value="">None</option>
+                      <option value="LOW">LOW</option>
+                      <option value="MEDIUM">MEDIUM</option>
+                      <option value="HIGH">HIGH</option>
+                      <option value="URGENT">URGENT</option>
+                    </select>
+                  ) : (
+                    <div className="card-detail-priority">
+                      <div
+                        className="card-detail-priority-dot"
+                        style={{
+                          background:
+                            currentCard.priority === 'URGENT'
+                              ? '#EF4444'
+                              : currentCard.priority === 'HIGH'
+                              ? '#F59E0B'
+                              : currentCard.priority === 'MEDIUM'
+                              ? '#3B82F6'
+                              : '#6B7280',
+                        }}
+                      />
+                      <span>{currentCard.priority || 'None'}</span>
+                    </div>
+                  )}
                 </div>
 
                 {/* Labels */}
@@ -481,29 +523,89 @@ export function CardDetailModal({
                 <div className="card-detail-section-row">
                   <div className="card-detail-section">
                     <label className="card-detail-label">Start Date</label>
-                    <span className="card-detail-text">
-                      {currentCard.startDate
-                        ? new Date(currentCard.startDate).toLocaleDateString()
-                        : 'Not set'}
-                    </span>
+                    {isEditing ? (
+                      <input
+                        type="date"
+                        value={
+                          editedCard.startDate
+                            ? new Date(editedCard.startDate).toISOString().split('T')[0]
+                            : currentCard.startDate
+                            ? new Date(currentCard.startDate).toISOString().split('T')[0]
+                            : ''
+                        }
+                        onChange={(e) =>
+                          setEditedCard({
+                            ...editedCard,
+                            startDate: e.target.value || undefined,
+                          })
+                        }
+                        className="card-detail-textarea"
+                        style={{ height: 'auto', padding: '8px 12px' }}
+                      />
+                    ) : (
+                      <span className="card-detail-text">
+                        {currentCard.startDate
+                          ? new Date(currentCard.startDate).toLocaleDateString()
+                          : 'Not set'}
+                      </span>
+                    )}
                   </div>
 
                   <div className="card-detail-section">
                     <label className="card-detail-label">End Date</label>
-                    <span className="card-detail-text">
-                      {currentCard.endDate
-                        ? new Date(currentCard.endDate).toLocaleDateString()
-                        : 'Not set'}
-                    </span>
+                    {isEditing ? (
+                      <input
+                        type="date"
+                        value={
+                          editedCard.endDate
+                            ? new Date(editedCard.endDate).toISOString().split('T')[0]
+                            : currentCard.endDate
+                            ? new Date(currentCard.endDate).toISOString().split('T')[0]
+                            : ''
+                        }
+                        onChange={(e) =>
+                          setEditedCard({
+                            ...editedCard,
+                            endDate: e.target.value || undefined,
+                          })
+                        }
+                        className="card-detail-textarea"
+                        style={{ height: 'auto', padding: '8px 12px' }}
+                      />
+                    ) : (
+                      <span className="card-detail-text">
+                        {currentCard.endDate
+                          ? new Date(currentCard.endDate).toLocaleDateString()
+                          : 'Not set'}
+                      </span>
+                    )}
                   </div>
                 </div>
 
                 {/* Estimated Time */}
                 <div className="card-detail-section">
                   <label className="card-detail-label">Estimated Hours</label>
-                  <span className="card-detail-text">
-                    {currentCard.estimatedTime || 'Not estimated'}
-                  </span>
+                  {isEditing ? (
+                    <input
+                      type="number"
+                      min="0"
+                      step="0.5"
+                      value={editedCard.estimatedTime ?? currentCard.estimatedTime ?? ''}
+                      onChange={(e) =>
+                        setEditedCard({
+                          ...editedCard,
+                          estimatedTime: e.target.value ? parseFloat(e.target.value) : undefined,
+                        })
+                      }
+                      className="card-detail-textarea"
+                      style={{ height: 'auto', padding: '8px 12px' }}
+                      placeholder="Enter hours"
+                    />
+                  ) : (
+                    <span className="card-detail-text">
+                      {currentCard.estimatedTime || 'Not estimated'}
+                    </span>
+                  )}
                 </div>
 
                 {/* Dependencies */}
