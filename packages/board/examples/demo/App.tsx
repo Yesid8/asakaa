@@ -166,7 +166,7 @@ const sampleInsights: Insight[] = [
 // Realistic demo data - Software development project
 const demoBoard = {
   id: 'demo-board-1',
-  title: 'ASAKAA Platform Development',
+  title: 'Project Development Board',
   columns: [
     {
       id: 'col-backlog',
@@ -703,13 +703,10 @@ export default function App() {
           </div>
 
           {/* Project Title */}
-          <div className="mt-4 flex items-center justify-between">
+          <div className="mt-4">
             <h2 className="text-lg font-semibold text-white/90">
               {board.board.title}
             </h2>
-            <div className="text-xs text-gray-500">
-              Try dragging cards between columns • v0.4.0 with Advanced Filtering
-            </div>
           </div>
         </div>
       </header>
