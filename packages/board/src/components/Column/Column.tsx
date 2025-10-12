@@ -11,6 +11,7 @@ import { useVirtualizer } from '@tanstack/react-virtual'
 import type { Column as ColumnType, Card as CardType } from '../../types'
 import type { User } from '../Card/UserAssignmentSelector'
 import { Card } from '../Card'
+import { ColumnMenu } from './ColumnMenu'
 import { cn, shouldVirtualize } from '../../utils'
 
 export interface ColumnProps {
@@ -42,6 +43,8 @@ export interface ColumnProps {
   isCollapsed?: boolean
   /** Toggle collapse */
   onToggleCollapse?: () => void
+  /** Column rename handler */
+  onColumnRename?: (columnId: string, newTitle: string) => void
   /** Custom className */
   className?: string
 }
@@ -66,6 +69,7 @@ export const Column = memo<ColumnProps>(
     cardHeight = 120,
     isCollapsed,
     onToggleCollapse,
+    onColumnRename,
     className,
   }) => {
     const { setNodeRef, isOver } = useDroppable({
@@ -118,7 +122,7 @@ export const Column = memo<ColumnProps>(
         {renderHeader ? (
           renderHeader(column, cards.length)
         ) : (
-          <div className="asakaa-column-header">
+          <div className="asakaa-column-header group">
             <h2 className="asakaa-column-title">{column.title}</h2>
             <div className="flex items-center gap-2">
               <span
@@ -130,6 +134,12 @@ export const Column = memo<ColumnProps>(
                 {cards.length}
                 {column.wipLimit && ` / ${column.wipLimit}`}
               </span>
+              {onColumnRename && (
+                <ColumnMenu
+                  columnTitle={column.title}
+                  onRename={(newTitle) => onColumnRename(column.id, newTitle)}
+                />
+              )}
               {onToggleCollapse && (
                 <button
                   onClick={onToggleCollapse}

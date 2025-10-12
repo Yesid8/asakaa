@@ -50,6 +50,14 @@ export function KanbanBoard({
     [callbacks]
   )
 
+  // Handler for column rename
+  const handleColumnRename = useCallback(
+    (columnId: string, newTitle: string) => {
+      callbacks.onColumnUpdate?.(columnId, { title: newTitle })
+    },
+    [callbacks]
+  )
+
   // Setup sensors for drag & drop
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -235,6 +243,7 @@ export function KanbanBoard({
                 renderEmptyState={renderProps?.renderEmptyState}
                 onCardClick={handleCardClick}
                 onCardUpdate={handleCardUpdate}
+                onColumnRename={handleColumnRename}
                 availableUsers={availableUsers}
                 allCards={board.cards}
                 enableVirtualization={config?.enableVirtualization}

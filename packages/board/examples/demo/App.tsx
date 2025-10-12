@@ -6,7 +6,6 @@
 import {
   KanbanBoard,
   useKanbanState,
-  EditableColumnTitle,
   type User,
 } from '@asakaa/board'
 import '@asakaa/board/styles.css'
@@ -320,37 +319,6 @@ export default function App() {
             showCardCount: true,
             showWipLimits: true,
             enableVirtualization: false,
-          }}
-          renderProps={{
-            renderHeader: (column, cardCount) => (
-              <div className="asakaa-column-header">
-                <EditableColumnTitle
-                  title={column.title}
-                  onSave={(newTitle) => {
-                    callbacks.onColumnUpdate?.(column.id, { title: newTitle })
-                  }}
-                />
-                <div className="flex items-center gap-2">
-                  <span className="asakaa-column-count">
-                    {cardCount}
-                    {column.wipLimit && ` / ${column.wipLimit}`}
-                  </span>
-                  <button
-                    onClick={() => handleAddCard(column.id)}
-                    className="w-6 h-6 rounded-md flex items-center justify-center text-lg font-bold transition-all hover:scale-110"
-                    style={{
-                      background:
-                        'linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(59, 130, 246, 0.1))',
-                      border: '1px solid rgba(59, 130, 246, 0.3)',
-                      color: '#60a5fa',
-                    }}
-                    title="Add new task"
-                  >
-                    +
-                  </button>
-                </div>
-              </div>
-            ),
           }}
         />
 
