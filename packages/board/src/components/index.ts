@@ -8,6 +8,8 @@ export {
   DependenciesSelector,
 } from './Card'
 export { ErrorBoundary, withErrorBoundary } from './ErrorBoundary'
+export { CommandPalette } from './CommandPalette'
+export { CardDetailModal } from './CardDetailModal'
 
 export type { ColumnProps, EditableColumnTitleProps } from './Column'
 export type {
@@ -19,3 +21,5 @@ export type {
   User,
 } from './Card'
 export type { ErrorBoundaryProps } from './ErrorBoundary'
+export type { CommandPaletteProps } from './CommandPalette'
+export type { CardDetailModalProps } from './CardDetailModal'

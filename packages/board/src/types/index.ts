@@ -316,6 +316,9 @@ export interface KanbanBoardProps {
   /** AI callbacks (optional) */
   aiCallbacks?: AICallbacks
 
+  /** Card click handler */
+  onCardClick?: (card: Card) => void
+
   /** Render customization */
   renderProps?: RenderProps
 
@@ -426,6 +429,70 @@ export interface DragState {
 export interface SelectionState {
   selectedCardIds: string[]
   lastSelectedCardId: string | null
+}
+
+// ============================================================================
+// COMMENTS & ACTIVITY TYPES
+// ============================================================================
+
+/**
+ * Comment on a card
+ */
+export interface Comment {
+  /** Unique identifier */
+  id: string
+  /** Card ID */
+  cardId: string
+  /** Author user ID */
+  authorId: string
+  /** Comment content */
+  content: string
+  /** Timestamp */
+  createdAt: Date | string
+  /** Last update timestamp */
+  updatedAt?: Date | string
+  /** Mentions (user IDs) */
+  mentions?: string[]
+}
+
+/**
+ * Activity log entry types
+ */
+export type ActivityType =
+  | 'CARD_CREATED'
+  | 'CARD_UPDATED'
+  | 'CARD_MOVED'
+  | 'CARD_DELETED'
+  | 'COMMENT_ADDED'
+  | 'USER_ASSIGNED'
+  | 'USER_UNASSIGNED'
+  | 'PRIORITY_CHANGED'
+  | 'DUE_DATE_CHANGED'
+  | 'LABEL_ADDED'
+  | 'LABEL_REMOVED'
+  | 'DEPENDENCY_ADDED'
+  | 'DEPENDENCY_REMOVED'
+
+/**
+ * Activity log entry
+ */
+export interface Activity {
+  /** Unique identifier */
+  id: string
+  /** Activity type */
+  type: ActivityType
+  /** Card ID */
+  cardId: string
+  /** User who performed the action */
+  userId: string
+  /** Timestamp */
+  timestamp: Date | string
+  /** Previous value (for updates) */
+  previousValue?: any
+  /** New value (for updates) */
+  newValue?: any
+  /** Additional metadata */
+  metadata?: Record<string, any>
 }
 
 // ============================================================================
