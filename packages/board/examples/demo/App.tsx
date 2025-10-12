@@ -23,6 +23,8 @@ import {
   CardTemplateSelector,
   ExportImportModal,
   DEFAULT_TEMPLATES,
+  ThemeProvider,
+  ThemeSwitcher,
   type User,
   type GeneratedPlan,
   type Card,
@@ -571,24 +573,28 @@ export default function App() {
   }, [board.board.cards])
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0a0a0a] via-[#0f0f0f] to-[#141414]">
-      {/* Premium Header */}
-      <header className="sticky top-0 z-10 backdrop-blur-xl bg-[#0a0a0a]/80 border-b border-white/5">
-        <div className="px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <div>
-                <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-400 via-blue-500 to-purple-500 bg-clip-text text-transparent">
-                  ASAKAA Board
-                </h1>
-                <p className="text-sm text-gray-400 mt-0.5">
-                  Premium Kanban • AI-Native • React Library
-                </p>
-              </div>
-            </div>
+    <ThemeProvider defaultTheme="dark">
+      <div className="min-h-screen bg-gradient-to-br from-[#0a0a0a] via-[#0f0f0f] to-[#141414]">
+        {/* Premium Header */}
+        <header className="sticky top-0 z-10 backdrop-blur-xl bg-[#0a0a0a]/80 border-b border-white/5">
+          <div className="px-6 py-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <div>
+                  <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-400 via-blue-500 to-purple-500 bg-clip-text text-transparent">
+                    ASAKAA Board
+                  </h1>
+                  <p className="text-sm text-gray-400 mt-0.5">
+                    Premium Kanban • AI-Native • React Library
+                  </p>
+                </div>
 
-            {/* AI Actions & Stats */}
-            <div className="flex items-center gap-3">
+                {/* v0.5.0: Theme Switcher */}
+                <ThemeSwitcher compact showLabels={false} />
+              </div>
+
+              {/* AI Actions & Stats */}
+              <div className="flex items-center gap-3">
               {/* New Features v0.3.0 */}
               <GroupBySelector
                 value={groupBy}
@@ -905,6 +911,7 @@ export default function App() {
         onClose={() => setIsExportImportOpen(false)}
         onImport={handleImport}
       />
-    </div>
+      </div>
+    </ThemeProvider>
   )
 }

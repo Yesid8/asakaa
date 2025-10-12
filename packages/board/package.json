@@ -1,8 +1,8 @@
 {
   "name": "@asakaa/board",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "type": "module",
-  "description": "AI-native Kanban board component for React with advanced filtering, sorting, and state management. Built for performance and developer experience.",
+  "description": "Elite Kanban board for React with theming, advanced accessibility, and 60fps performance. Built for 2025 with superior DX.",
   "author": "Asakaa",
   "license": "BUSL-1.1",
   "keywords": [
