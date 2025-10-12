@@ -609,18 +609,25 @@ export default function App() {
 
               <button
                 onClick={() => setIsKeyboardShortcutsOpen(true)}
-                className="px-3 py-2 rounded-lg text-sm font-semibold transition-all hover:bg-white/10 border border-white/20 text-white/90"
+                className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all hover:bg-white/10 border border-white/10 text-white/80 hover:text-white hover:border-white/20"
                 title="Keyboard Shortcuts (Press ?)"
               >
-                ⌨️
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <rect x="2" y="4" width="20" height="16" rx="2" />
+                  <path d="M6 8h.01M10 8h.01M14 8h.01M18 8h.01M8 12h.01M12 12h.01M16 12h.01M7 16h10" />
+                </svg>
+                <span>Shortcuts</span>
               </button>
 
               <button
                 onClick={() => setIsExportImportOpen(true)}
-                className="px-3 py-2 rounded-lg text-sm font-semibold transition-all hover:bg-white/10 border border-white/20 text-white/90"
+                className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all hover:bg-white/10 border border-white/10 text-white/80 hover:text-white hover:border-white/20"
                 title="Export / Import"
               >
-                📦
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" />
+                </svg>
+                <span>Export</span>
               </button>
 
               <div className="w-px h-10 bg-white/10" />
@@ -628,11 +635,7 @@ export default function App() {
               {/* AI Buttons */}
               <button
                 onClick={() => setIsGeneratePlanModalOpen(true)}
-                className="px-4 py-2 rounded-lg text-sm font-semibold transition-all hover:scale-105 active:scale-95 flex items-center gap-2"
-                style={{
-                  background: 'linear-gradient(135deg, #3B82F6 0%, #2563EB 100%)',
-                  color: '#ffffff',
-                }}
+                className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all hover:bg-blue-600 active:scale-98 bg-blue-500 text-white border border-blue-400/30"
               >
                 <svg
                   width="16"
@@ -668,8 +671,12 @@ export default function App() {
 
               <button
                 onClick={() => setIsAIUsageDashboardOpen(true)}
-                className="px-4 py-2 rounded-lg text-sm font-semibold transition-all hover:bg-white/10 border border-white/20 text-white/90"
+                className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all hover:bg-white/10 border border-white/10 text-white/80 hover:text-white hover:border-white/20"
               >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <circle cx="12" cy="12" r="10" />
+                  <path d="M12 6v6l4 2" />
+                </svg>
                 AI Usage
               </button>
 
