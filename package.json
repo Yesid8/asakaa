@@ -1,0 +1,33 @@
+{
+  "name": "asakaa-monorepo",
+  "version": "0.0.0",
+  "private": true,
+  "description": "ASAKAA - AI-native Kanban board library",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace=@asakaa/board",
+    "build": "npm run build --workspace=@asakaa/board",
+    "test": "npm run test --workspace=@asakaa/board",
+    "storybook": "npm run storybook --workspace=@asakaa/board",
+    "lint": "eslint . --ext .ts,.tsx",
+    "format": "prettier --write \"**/*.{ts,tsx,json,md}\"",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^7.18.0",
+    "@typescript-eslint/parser": "^7.18.0",
+    "eslint": "^8.57.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-react": "^7.35.0",
+    "eslint-plugin-react-hooks": "^4.6.2",
+    "prettier": "^3.3.3",
+    "typescript": "^5.6.0"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  }
+}
