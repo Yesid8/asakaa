@@ -1,6 +1,6 @@
 {
   "name": "@asakaa/board",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "AI-native Kanban board component for React. Built for performance and developer experience.",
   "author": "Asakaa",
   "license": "SEE LICENSE IN LICENSE",
