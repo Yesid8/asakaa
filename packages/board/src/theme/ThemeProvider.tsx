@@ -6,6 +6,7 @@
 import { createContext, useContext, useEffect, useState, useCallback, type ReactNode } from 'react'
 import type { ThemeName, ThemeContextValue } from './types'
 import { themes, defaultTheme } from './themes'
+import './theme-overrides.css'
 
 const ThemeContext = createContext<ThemeContextValue | undefined>(undefined)
 

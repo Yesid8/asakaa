@@ -611,7 +611,20 @@ export default function App() {
 
               <button
                 onClick={() => setIsKeyboardShortcutsOpen(true)}
-                className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all hover:bg-white/10 border border-white/10 text-white/80 hover:text-white hover:border-white/20"
+                className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all border"
+                style={{
+                  backgroundColor: 'var(--theme-bg-secondary)',
+                  borderColor: 'var(--theme-border-primary)',
+                  color: 'var(--theme-text-secondary)'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = 'var(--theme-bg-tertiary)'
+                  e.currentTarget.style.color = 'var(--theme-text-primary)'
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = 'var(--theme-bg-secondary)'
+                  e.currentTarget.style.color = 'var(--theme-text-secondary)'
+                }}
                 title="Keyboard Shortcuts (Press ?)"
               >
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -623,7 +636,20 @@ export default function App() {
 
               <button
                 onClick={() => setIsExportImportOpen(true)}
-                className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all hover:bg-white/10 border border-white/10 text-white/80 hover:text-white hover:border-white/20"
+                className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all border"
+                style={{
+                  backgroundColor: 'var(--theme-bg-secondary)',
+                  borderColor: 'var(--theme-border-primary)',
+                  color: 'var(--theme-text-secondary)'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = 'var(--theme-bg-tertiary)'
+                  e.currentTarget.style.color = 'var(--theme-text-primary)'
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = 'var(--theme-bg-secondary)'
+                  e.currentTarget.style.color = 'var(--theme-text-secondary)'
+                }}
                 title="Export / Import"
               >
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -632,12 +658,25 @@ export default function App() {
                 <span>Export</span>
               </button>
 
-              <div className="w-px h-10 bg-white/10" />
+              <div className="w-px h-10" style={{ backgroundColor: 'var(--theme-border-primary)' }} />
 
               {/* AI Buttons */}
               <button
                 onClick={() => setIsGeneratePlanModalOpen(true)}
-                className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all hover:bg-blue-600 active:scale-98 bg-blue-500 text-white border border-blue-400/30"
+                className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all border"
+                style={{
+                  backgroundColor: 'var(--theme-accent-primary)',
+                  borderColor: 'var(--theme-accent-primary)',
+                  color: '#FFFFFF'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = 'var(--theme-accent-hover)'
+                  e.currentTarget.style.borderColor = 'var(--theme-accent-hover)'
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = 'var(--theme-accent-primary)'
+                  e.currentTarget.style.borderColor = 'var(--theme-accent-primary)'
+                }}
               >
                 <svg
                   width="16"
@@ -673,7 +712,22 @@ export default function App() {
 
               <button
                 onClick={() => setIsAIUsageDashboardOpen(true)}
-                className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all hover:bg-white/10 border border-white/10 text-white/80 hover:text-white hover:border-white/20"
+                className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all border"
+                style={{
+                  backgroundColor: 'var(--theme-bg-secondary)',
+                  borderColor: 'var(--theme-border-primary)',
+                  color: 'var(--theme-text-secondary)'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = 'var(--theme-bg-tertiary)'
+                  e.currentTarget.style.color = 'var(--theme-text-primary)'
+                  e.currentTarget.style.borderColor = 'var(--theme-border-secondary)'
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = 'var(--theme-bg-secondary)'
+                  e.currentTarget.style.color = 'var(--theme-text-secondary)'
+                  e.currentTarget.style.borderColor = 'var(--theme-border-primary)'
+                }}
               >
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <circle cx="12" cy="12" r="10" />
