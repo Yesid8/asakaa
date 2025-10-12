@@ -8,6 +8,9 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Import component styles */
+@import '../components/FilterBar/filter-bar.css';
+
 /* ============================================================================
    DESIGN SYSTEM FOUNDATION
    Mathematical scales for typography, spacing, colors, and timing
@@ -564,5 +567,268 @@
     background: rgba(20, 20, 20, var(--opacity-opaque));
     border: 1px solid rgba(255, 255, 255, var(--opacity-faint));
     box-shadow: var(--shadow-glass-lg);
+  }
+}
+/**
+ * FilterBar Component Styles
+ */
+
+.filter-bar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  margin-bottom: var(--space-4);
+}
+
+.filter-bar--compact {
+  padding: var(--space-3);
+  gap: var(--space-2);
+}
+
+/* Quick Filters */
+.filter-bar__quick {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.filter-bar__quick-btn {
+  padding: var(--space-2) var(--space-3);
+  background: rgba(59, 130, 246, 0.1);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  border-radius: var(--radius-md);
+  color: #60a5fa;
+  font-size: var(--font-xs);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.filter-bar__quick-btn:hover {
+  background: rgba(59, 130, 246, 0.2);
+  border-color: rgba(59, 130, 246, 0.5);
+  color: #93c5fd;
+}
+
+/* Main Filters */
+.filter-bar__main {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--space-4);
+  align-items: start;
+}
+
+.filter-bar__field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  align-items: flex-start;
+}
+
+.filter-bar__label {
+  font-size: var(--font-xs);
+  color: rgba(255, 255, 255, 0.6);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Search Input */
+.filter-bar__search {
+  padding: var(--space-2) var(--space-3);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-md);
+  color: white;
+  font-size: var(--font-sm);
+  width: 100%;
+  transition: all 0.2s;
+}
+
+.filter-bar__search:focus {
+  outline: none;
+  border-color: rgba(59, 130, 246, 0.5);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.filter-bar__search::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+/* Select Dropdown */
+.filter-bar__select {
+  padding: var(--space-2) var(--space-3);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-md);
+  color: white;
+  font-size: var(--font-sm);
+  cursor: pointer;
+  transition: all 0.2s;
+  width: 100%;
+}
+
+.filter-bar__select:hover {
+  border-color: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.filter-bar__select:focus {
+  outline: none;
+  border-color: rgba(59, 130, 246, 0.5);
+}
+
+.filter-bar__select--sm {
+  min-width: 140px;
+}
+
+.filter-bar__select option {
+  background: #1e293b;
+  color: white;
+}
+
+/* Multi-Select (Chips) */
+.filter-bar__multi-select {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.filter-bar__multi-label {
+  font-size: var(--font-xs);
+  color: rgba(255, 255, 255, 0.6);
+  font-weight: 500;
+  width: 100%;
+  margin-bottom: var(--space-1);
+}
+
+.filter-bar__chip {
+  padding: var(--space-1) var(--space-3);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-full);
+  color: rgba(255, 255, 255, 0.7);
+  font-size: var(--font-xs);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.filter-bar__chip:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: white;
+}
+
+.filter-bar__chip--active {
+  background: rgba(59, 130, 246, 0.2);
+  border-color: rgba(59, 130, 246, 0.5);
+  color: #93c5fd;
+}
+
+/* Priority-specific colors */
+.filter-bar__chip--urgent.filter-bar__chip--active {
+  background: rgba(239, 68, 68, 0.2);
+  border-color: rgba(239, 68, 68, 0.5);
+  color: #fca5a5;
+}
+
+.filter-bar__chip--high.filter-bar__chip--active {
+  background: rgba(251, 146, 60, 0.2);
+  border-color: rgba(251, 146, 60, 0.5);
+  color: #fdba74;
+}
+
+.filter-bar__chip--medium.filter-bar__chip--active {
+  background: rgba(250, 204, 21, 0.2);
+  border-color: rgba(250, 204, 21, 0.5);
+  color: #fde047;
+}
+
+.filter-bar__chip--low.filter-bar__chip--active {
+  background: rgba(34, 197, 94, 0.2);
+  border-color: rgba(34, 197, 94, 0.5);
+  color: #86efac;
+}
+
+/* Sort Controls */
+.filter-bar__sort {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.filter-bar__sort-toggle {
+  padding: var(--space-2);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-md);
+  color: rgba(255, 255, 255, 0.7);
+  font-size: var(--font-lg);
+  line-height: 1;
+  cursor: pointer;
+  transition: all 0.2s;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.filter-bar__sort-toggle:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: white;
+}
+
+/* Reset Button */
+.filter-bar__reset {
+  padding: var(--space-2) var(--space-4);
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: var(--radius-md);
+  color: #fca5a5;
+  font-size: var(--font-sm);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-left: auto;
+}
+
+.filter-bar__reset:hover {
+  background: rgba(239, 68, 68, 0.2);
+  border-color: rgba(239, 68, 68, 0.5);
+  color: #fee2e2;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .filter-bar__main {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .filter-bar__field {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .filter-bar__search,
+  .filter-bar__select {
+    width: 100%;
+    min-width: unset;
+  }
+
+  .filter-bar__reset {
+    margin-left: 0;
   }
 }
