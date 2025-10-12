@@ -3,10 +3,12 @@
  * Showcasing beautiful Kanban board with realistic project data
  */
 
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import {
   KanbanBoard,
-  useKanbanState,
+  useBoard,
+  useFilters,
+  FilterBar,
   useAI,
   useMultiSelect,
   useKeyboardShortcuts,
@@ -334,9 +336,11 @@ export default function App() {
   const [isKeyboardShortcutsOpen, setIsKeyboardShortcutsOpen] = useState(false)
   const [isExportImportOpen, setIsExportImportOpen] = useState(false)
 
-  const { board, callbacks, helpers } = useKanbanState({
-    initialBoard: demoBoard,
-    onPersist: (updatedBoard) => {
+  // v0.4.0: Simplified API with useBoard hook
+  const board = useBoard({
+    initialData: demoBoard,
+    availableUsers: sampleUsers,
+    onSave: (updatedBoard) => {
       // Persist to localStorage with auto-save
       localStorage.setItem('asakaa-demo-board', JSON.stringify(updatedBoard))
       console.log('Board state auto-saved', {
@@ -346,6 +350,16 @@ export default function App() {
       })
     },
   })
+
+  // v0.4.0: Advanced filtering and sorting
+  const filters = useFilters({
+    currentUserId: 'user-1', // For "My Tasks" quick filter
+  })
+
+  // Apply filters to cards
+  const filteredAndSortedCards = useMemo(() => {
+    return filters.applyFilters(board.board.cards)
+  }, [board.board.cards, filters])
 
   // Multi-select functionality
   const {
@@ -376,31 +390,16 @@ export default function App() {
 
   // Handler to add new column
   const handleAddColumn = () => {
-    const newPosition = Math.max(...board.columns.map((c) => c.position), 0) + 1000
-    helpers.addColumn({
-      title: 'New Column',
-      position: newPosition,
-    })
+    board.utils.addColumn('New Column')
   }
 
   // Handler to add new card to a column
   const handleAddCard = (columnId: string) => {
-    const columnCards = board.cards.filter((c) => c.columnId === columnId)
-    const maxPosition = columnCards.length > 0
-      ? Math.max(...columnCards.map((c) => c.position))
-      : 0
-
-    const newCard = {
-      id: `card-${Date.now()}`,
-      title: 'New Task',
+    board.utils.addCard(columnId, 'New Task', {
       description: 'Click to edit description',
-      position: maxPosition + 1000,
-      columnId,
       priority: 'MEDIUM' as const,
       labels: [],
-    }
-
-    callbacks.onCardCreate?.(newCard)
+    })
   }
 
   // Handler for card click - open detail modal
@@ -411,7 +410,7 @@ export default function App() {
 
   // Handler for card update from modal
   const handleCardUpdateFromModal = (cardId: string, updates: Partial<Card>) => {
-    callbacks.onCardUpdate?.(cardId, updates)
+    board.callbacks.onCardUpdate?.(cardId, updates)
     // Update selected card to reflect changes
     if (selectedCard && selectedCard.id === cardId) {
       setSelectedCard({ ...selectedCard, ...updates })
@@ -420,7 +419,7 @@ export default function App() {
 
   // Handler for card delete from modal
   const handleCardDelete = (cardId: string) => {
-    callbacks.onCardDelete?.(cardId)
+    board.callbacks.onCardDelete?.(cardId)
     setIsCardDetailModalOpen(false)
     setSelectedCard(null)
   }
@@ -457,20 +456,16 @@ export default function App() {
     console.log('AI Plan Generated:', plan)
 
     // Clear current board
-    helpers.clearBoard()
+    board.utils.reset()
 
     // Add columns from generated plan
     plan.columns.forEach((col) => {
-      helpers.addColumn({
-        title: col.title,
-        position: col.position,
-        wipLimit: col.wipLimit,
-      })
+      board.utils.addColumn(col.title)
     })
 
     // Add cards from generated plan
     plan.cards.forEach((card) => {
-      callbacks.onCardCreate?.({
+      board.callbacks.onCardCreate?.({
         ...card,
         id: `card-${Date.now()}-${Math.random().toString(36).substring(7)}`,
       })
@@ -489,48 +484,39 @@ export default function App() {
   // Handlers for bulk operations
   const handleBulkUpdate = (cardIds: string[], updates: Partial<Card>) => {
     cardIds.forEach((cardId) => {
-      callbacks.onCardUpdate?.(cardId, updates)
+      board.callbacks.onCardUpdate?.(cardId, updates)
     })
     clearSelection()
   }
 
   const handleBulkDelete = (cardIds: string[]) => {
     cardIds.forEach((cardId) => {
-      callbacks.onCardDelete?.(cardId)
+      board.callbacks.onCardDelete?.(cardId)
     })
     clearSelection()
   }
 
   const handleBulkMove = (cardIds: string[], targetColumnId: string) => {
-    const targetColumnCards = board.cards.filter((c) => c.columnId === targetColumnId)
+    const targetColumnCards = board.board.cards.filter((c) => c.columnId === targetColumnId)
     const maxPosition =
       targetColumnCards.length > 0
         ? Math.max(...targetColumnCards.map((c) => c.position))
         : 0
 
     cardIds.forEach((cardId, index) => {
-      callbacks.onCardMove?.(cardId, targetColumnId, maxPosition + (index + 1) * 1000)
+      board.callbacks.onCardMove?.(cardId, targetColumnId, maxPosition + (index + 1) * 1000)
     })
     clearSelection()
   }
 
   // Handler for template selection
   const handleSelectTemplate = (template: CardTemplate) => {
-    const firstColumn = board.columns[0]
+    const firstColumn = board.board.columns[0]
     if (!firstColumn) return
 
-    const columnCards = board.cards.filter((c) => c.columnId === firstColumn.id)
-    const maxPosition =
-      columnCards.length > 0 ? Math.max(...columnCards.map((c) => c.position)) : 0
-
-    const newCard = {
+    board.utils.addCard(firstColumn.id, template.template.title, {
       ...template.template,
-      id: `card-${Date.now()}`,
-      position: maxPosition + 1000,
-      columnId: firstColumn.id,
-    }
-
-    callbacks.onCardCreate?.(newCard as any)
+    })
   }
 
   // Handler for import
@@ -545,21 +531,16 @@ export default function App() {
       const data = JSON.parse(content)
       if (data.board && data.columns && data.cards) {
         // Clear current board
-        helpers.clearBoard()
+        board.utils.reset()
 
         // Add imported columns
         data.columns.forEach((col: any) => {
-          helpers.addColumn({
-            title: col.title,
-            position: col.position,
-            wipLimit: col.wipLimit,
-            wipLimitType: col.wipLimitType,
-          })
+          board.utils.addColumn(col.title)
         })
 
         // Add imported cards
         data.cards.forEach((card: any) => {
-          callbacks.onCardCreate?.(card)
+          board.callbacks.onCardCreate?.(card)
         })
 
         console.log('Board imported successfully!')
@@ -570,12 +551,21 @@ export default function App() {
   }
 
   // Calculate stats for header
-  const totalCards = board.cards.length
-  const inProgressCards = board.cards.filter(
+  const totalCards = board.board.cards.length
+  const inProgressCards = board.board.cards.filter(
     (c) => c.columnId === 'col-progress'
   ).length
-  const completedCards = board.cards.filter((c) => c.columnId === 'col-done')
+  const completedCards = board.board.cards.filter((c) => c.columnId === 'col-done')
     .length
+
+  // Get all unique labels for FilterBar
+  const availableLabels = useMemo(() => {
+    const labels = new Set<string>()
+    board.board.cards.forEach(card => {
+      card.labels?.forEach(label => labels.add(label))
+    })
+    return Array.from(labels)
+  }, [board.board.cards])
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#0a0a0a] via-[#0f0f0f] to-[#141414]">
@@ -715,26 +705,43 @@ export default function App() {
           {/* Project Title */}
           <div className="mt-4 flex items-center justify-between">
             <h2 className="text-lg font-semibold text-white/90">
-              {board.title}
+              {board.board.title}
             </h2>
             <div className="text-xs text-gray-500">
-              Try dragging cards between columns
+              Try dragging cards between columns • v0.4.0 with Advanced Filtering
             </div>
           </div>
         </div>
       </header>
 
+      {/* v0.4.0: Filter Bar */}
+      <div className="px-6 pt-4">
+        <FilterBar
+          filters={filters.filters}
+          sort={filters.sort}
+          onFiltersChange={filters.setFilters}
+          onSortChange={filters.setSort}
+          onReset={filters.resetFilters}
+          onFilterMyTasks={filters.filterMyTasks}
+          onFilterOverdue={filters.filterOverdue}
+          onFilterHighPriority={filters.filterHighPriority}
+          availableUsers={sampleUsers}
+          availableLabels={availableLabels}
+          availableColumns={board.board.columns.map(col => ({ id: col.id, title: col.title }))}
+          showQuickFilters={true}
+        />
+      </div>
+
       {/* Board Container */}
       <div className="asakaa-board">
         {groupBy === 'none' ? (
           <KanbanBoard
-            board={board}
+            {...board.props}
             callbacks={{
-              ...callbacks,
+              ...board.callbacks,
               onWipLimitExceeded: handleWipLimitExceeded,
             }}
             onCardClick={handleCardClick}
-            availableUsers={sampleUsers}
             config={{
               showCardCount: true,
               showWipLimits: true,
@@ -743,7 +750,7 @@ export default function App() {
           />
         ) : (
           <SwimlaneBoardView
-            board={board}
+            board={board.board}
             swimlaneConfig={{
               groupBy,
               collapsible: true,
@@ -751,7 +758,7 @@ export default function App() {
             }}
             availableUsers={sampleUsers}
             callbacks={{
-              ...callbacks,
+              ...board.callbacks,
               onWipLimitExceeded: handleWipLimitExceeded,
             }}
           />
@@ -822,33 +829,24 @@ export default function App() {
 
       {/* Command Palette */}
       <CommandPalette
-        board={board}
+        board={board.board}
         availableUsers={sampleUsers}
         onCreateCard={(columnId, title) => {
-          const columnCards = board.cards.filter((c) => c.columnId === columnId)
-          const maxPosition =
-            columnCards.length > 0
-              ? Math.max(...columnCards.map((c) => c.position))
-              : 0
-
-          callbacks.onCardCreate?.({
-            title,
+          board.utils.addCard(columnId, title, {
             description: '',
-            position: maxPosition + 1000,
-            columnId,
             priority: 'MEDIUM',
             labels: [],
           })
         }}
         onNavigateToCard={(cardId) => {
-          const card = board.cards.find((c) => c.id === cardId)
+          const card = board.board.cards.find((c) => c.id === cardId)
           if (card) {
             handleCardClick(card)
           }
         }}
         onSearch={(query) => {
-          console.log('Search:', query)
-          // TODO: Implement search filter
+          // Use the new filters!
+          filters.setFilters({ search: query })
         }}
         onGeneratePlan={() => setIsGeneratePlanModalOpen(true)}
         onPredictRisks={() => {
@@ -890,17 +888,8 @@ export default function App() {
             onBulkDelete: handleBulkDelete,
             onBulkMove: handleBulkMove,
           }}
-          columns={board.columns.map((col) => ({ id: col.id, title: col.title }))}
-          availableLabels={[
-            'feature',
-            'bug',
-            'enhancement',
-            'ai',
-            'ui',
-            'backend',
-            'performance',
-            'documentation',
-          ]}
+          columns={board.board.columns.map((col) => ({ id: col.id, title: col.title }))}
+          availableLabels={availableLabels}
         />
       )}
 
@@ -911,7 +900,7 @@ export default function App() {
       />
 
       <ExportImportModal
-        board={board}
+        board={board.board}
         isOpen={isExportImportOpen}
         onClose={() => setIsExportImportOpen(false)}
         onImport={handleImport}
