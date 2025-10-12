@@ -7,6 +7,83 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.0] - 2025-10-12
+
+### Added - WIP Limits & Bulk Operations (Priority 2 Features)
+
+#### WIP Limits - Complete Workflow Control
+- **Soft vs Hard Limits**: Configure columns with 'soft' (warning) or 'hard' (blocking) WIP limits
+- **Visual Indicators**: Color-coded badges (green/orange/yellow/red) based on capacity
+- **Status Icons**: ✓ (OK), ⚡ (approaching), ⚠️ (warning), ⛔ (exceeded)
+- **Drag & Drop Validation**: Hard limits prevent card moves when column is full
+- **onWipLimitExceeded Callback**: Notify users when hard limits block operations
+- **Capacity Tooltips**: Hover to see percentage and limit type
+
+#### Bulk Operations - Multi-Select & Batch Actions
+- **Multi-Select Hook**: `useMultiSelect()` with keyboard shortcuts support
+  - **Cmd/Ctrl+Click**: Toggle individual card selection
+  - **Shift+Click**: Range selection within same column
+  - Regular click: Replace selection
+- **Floating Toolbar**: Premium glassmorphism bulk operations toolbar
+  - Appears at bottom center when cards are selected
+  - Shows selection count
+  - Smooth slide-up animation
+- **Bulk Actions**:
+  - Update priority for multiple cards
+  - Assign users to multiple cards
+  - Add labels to multiple cards
+  - Move cards to different column
+  - Delete multiple cards (with confirmation)
+- **BulkOperationsCallbacks**: Three callbacks for persistence
+  - `onBulkUpdate`: Batch update card properties
+  - `onBulkDelete`: Batch delete cards
+  - `onBulkMove`: Batch move to target column
+- **Visual Feedback**: Selected cards show blue ring highlight
+
+### Technical Improvements
+- Extended `Column` interface with `wipLimitType?: 'soft' | 'hard'`
+- Added `onWipLimitExceeded` callback to `BoardCallbacks`
+- New `SelectionState` interface for multi-select state management
+- Selection state atoms in Jotai for optimal performance
+- Premium glassmorphism styling for bulk toolbar
+
+### Components Added
+1. **useMultiSelect hook** (~170 lines)
+   - Full keyboard modifier support
+   - Range selection within columns
+   - Selection state management
+2. **BulkOperationsToolbar** (~220 lines + 145 CSS)
+   - Floating bottom toolbar
+   - Dropdown menus for actions
+   - Responsive design
+
+### Bundle Size
+- ESM: ~103.65 KB (was ~98.78 KB) - +4.87 KB
+- CJS: ~113.08 KB (was ~107.81 KB) - +5.27 KB
+- CSS: ~27.63 KB (was ~22.28 KB) - +5.35 KB
+- Total increase: ~15.5 KB uncompressed for WIP Limits + Bulk Operations
+
+### Build Status
+- ✅ TypeScript compilation: 0 errors
+- ✅ All exports working correctly
+- ✅ Tailwind CSS compiled successfully
+- ✅ Demo updated with new features
+
+### Demo Enhancements
+- Configured columns with mixed soft/hard WIP limits
+- Integrated multi-select with Cmd/Ctrl/Shift modifiers
+- Added bulk operations toolbar with all actions
+- WIP limit exceeded alerts for hard limits
+
+### Breaking Changes
+None - fully backward compatible
+
+### Statistics
+- **Total new code**: ~600 lines (components + hooks + types)
+- **Files created**: 4
+- **Commits**: TBD
+- **Priority 2 completion**: 50% ✅ (WIP Limits + Bulk Ops done, Custom Fields + Automation pending)
+
 ## [0.2.0] - 2025-10-12
 
 ### Added - Premium UI Features (Priority 1 Complete)

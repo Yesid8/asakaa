@@ -1,5 +1,6 @@
 export { useKanbanState } from './useKanbanState'
 export { useAI } from './useAI'
+export { useMultiSelect } from './useMultiSelect'
 export {
   usePerformanceMonitor,
   useOperationTracker,
@@ -11,3 +12,4 @@ export {
 
 export type { UseKanbanStateOptions, UseKanbanStateReturn } from './useKanbanState'
 export type { UseAIOptions, UseAIReturn } from './useAI'
+export type { UseMultiSelectReturn } from './useMultiSelect'

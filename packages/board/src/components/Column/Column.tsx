@@ -103,10 +103,41 @@ export const Column = memo<ColumnProps>(
       )
     }
 
-    // Check WIP limit violation
-    const isOverWipLimit = column.wipLimit
-      ? cards.length > column.wipLimit
-      : false
+    // Calculate WIP limit status
+    const getWipLimitStatus = () => {
+      if (!column.wipLimit) return { state: 'none', percentage: 0 }
+
+      const percentage = (cards.length / column.wipLimit) * 100
+
+      if (cards.length > column.wipLimit) {
+        return { state: 'exceeded', percentage }
+      } else if (percentage >= 80) {
+        return { state: 'warning', percentage }
+      } else if (percentage >= 60) {
+        return { state: 'approaching', percentage }
+      } else {
+        return { state: 'ok', percentage }
+      }
+    }
+
+    const wipStatus = getWipLimitStatus()
+    const isOverWipLimit = wipStatus.state === 'exceeded'
+
+    // WIP limit badge styling based on status
+    const getWipBadgeClasses = () => {
+      if (!column.wipLimit) return 'asakaa-column-count'
+
+      switch (wipStatus.state) {
+        case 'exceeded':
+          return 'asakaa-column-count bg-red-500/20 text-red-400 border border-red-500/30 font-semibold'
+        case 'warning':
+          return 'asakaa-column-count bg-yellow-500/20 text-yellow-400 border border-yellow-500/30'
+        case 'approaching':
+          return 'asakaa-column-count bg-orange-500/20 text-orange-400 border border-orange-500/30'
+        default:
+          return 'asakaa-column-count bg-green-500/20 text-green-400 border border-green-500/30'
+      }
+    }
 
     return (
       <div
@@ -125,15 +156,26 @@ export const Column = memo<ColumnProps>(
           <div className="asakaa-column-header group">
             <h2 className="asakaa-column-title">{column.title}</h2>
             <div className="flex items-center gap-2">
-              <span
-                className={cn(
-                  'asakaa-column-count',
-                  isOverWipLimit && 'bg-asakaa-accent-red/20 text-asakaa-accent-red'
-                )}
-              >
+              <span className={cn(getWipBadgeClasses())}>
                 {cards.length}
                 {column.wipLimit && ` / ${column.wipLimit}`}
               </span>
+              {/* WIP limit status indicator */}
+              {column.wipLimit && wipStatus.state !== 'none' && (
+                <span
+                  className="text-xs font-medium"
+                  title={`${wipStatus.percentage.toFixed(0)}% capacity${
+                    column.wipLimitType === 'hard'
+                      ? ' (Hard limit - blocks new cards)'
+                      : ' (Soft limit - shows warning)'
+                  }`}
+                >
+                  {wipStatus.state === 'exceeded' && '⛔'}
+                  {wipStatus.state === 'warning' && '⚠️'}
+                  {wipStatus.state === 'approaching' && '⚡'}
+                  {wipStatus.state === 'ok' && '✓'}
+                </span>
+              )}
               {onColumnRename && (
                 <ColumnMenu
                   columnTitle={column.title}

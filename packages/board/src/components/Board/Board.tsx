@@ -172,6 +172,21 @@ export function KanbanBoard({
         targetPosition = calculateDropPosition(targetColumnCards, overIndex)
       }
 
+      // Check WIP limit for target column (hard limit only)
+      const targetColumn = board.columns.find((col) => col.id === targetColumnId)
+      if (targetColumn && targetColumn.wipLimit && targetColumn.wipLimitType === 'hard') {
+        const targetColumnCards = cardsByColumn.get(targetColumnId) || []
+
+        // If moving to a different column, check if adding would exceed limit
+        if (activeCard.columnId !== targetColumnId) {
+          if (targetColumnCards.length >= targetColumn.wipLimit) {
+            // Block the move - show notification via callback
+            callbacks.onWipLimitExceeded?.(targetColumn, activeCard)
+            return
+          }
+        }
+      }
+
       // Only trigger callback if position actually changed
       if (
         activeCard.columnId !== targetColumnId ||
@@ -180,7 +195,7 @@ export function KanbanBoard({
         await callbacks.onCardMove?.(activeCard.id, targetColumnId, targetPosition)
       }
     },
-    [board.cards, cardsByColumn, callbacks, setDragState]
+    [board.cards, board.columns, cardsByColumn, callbacks, setDragState]
   )
 
   // Handle card click

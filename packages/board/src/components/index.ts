@@ -12,6 +12,7 @@ export { CommandPalette } from './CommandPalette'
 export { CardDetailModal } from './CardDetailModal'
 export { AttachmentUploader } from './Attachments'
 export { VelocityChart, BurnDownChart, DistributionCharts } from './Charts'
+export { BulkOperationsToolbar } from './BulkOperations'
 
 export type { ColumnProps, EditableColumnTitleProps } from './Column'
 export type {
@@ -34,3 +35,4 @@ export type {
   DistributionChartsProps,
   DistributionDataPoint,
 } from './Charts'
+export type { BulkOperationsToolbarProps } from './BulkOperations'
