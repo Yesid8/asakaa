@@ -77,35 +77,6 @@ export function FilterBar({
     [onFiltersChange]
   )
 
-  const handlePriorityToggle = useCallback(
-    (priority: Priority) => {
-      const newPriorities = filters.priorities.includes(priority)
-        ? filters.priorities.filter((p) => p !== priority)
-        : [...filters.priorities, priority]
-      onFiltersChange({ priorities: newPriorities })
-    },
-    [filters.priorities, onFiltersChange]
-  )
-
-  const handleAssigneeToggle = useCallback(
-    (userId: string) => {
-      const newAssignees = filters.assignees.includes(userId)
-        ? filters.assignees.filter((id) => id !== userId)
-        : [...filters.assignees, userId]
-      onFiltersChange({ assignees: newAssignees })
-    },
-    [filters.assignees, onFiltersChange]
-  )
-
-  const handleLabelToggle = useCallback(
-    (label: string) => {
-      const newLabels = filters.labels.includes(label)
-        ? filters.labels.filter((l) => l !== label)
-        : [...filters.labels, label]
-      onFiltersChange({ labels: newLabels })
-    },
-    [filters.labels, onFiltersChange]
-  )
 
   const handleSortChange = useCallback(
     (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -189,70 +160,70 @@ export function FilterBar({
           </select>
         </div>
 
-        {/* Priority Filter */}
+        {/* Priority Filter - Dropdown */}
         <div className="filter-bar__field">
-          <div className="filter-bar__multi-select">
-            <span className="filter-bar__multi-label">Priority:</span>
+          <select
+            value={filters.priorities[0] || 'all'}
+            onChange={(e) => {
+              const value = e.target.value
+              onFiltersChange({
+                priorities: value === 'all' ? [] : [value as Priority]
+              })
+            }}
+            className="filter-bar__select"
+          >
+            <option value="all">All Priorities</option>
             {PRIORITY_OPTIONS.map((priority) => (
-              <button
-                key={priority}
-                onClick={() => handlePriorityToggle(priority)}
-                className={`filter-bar__chip ${
-                  filters.priorities.includes(priority)
-                    ? 'filter-bar__chip--active'
-                    : ''
-                } filter-bar__chip--${priority.toLowerCase()}`}
-                title={`Filter by ${priority.toLowerCase()} priority`}
-              >
+              <option key={priority} value={priority}>
                 {priority}
-              </button>
+              </option>
             ))}
-          </div>
+          </select>
         </div>
 
-        {/* Assignee Filter */}
+        {/* Assignee Filter - Dropdown */}
         {availableUsers.length > 0 && (
           <div className="filter-bar__field">
-            <div className="filter-bar__multi-select">
-              <span className="filter-bar__multi-label">Assigned:</span>
+            <select
+              value={filters.assignees[0] || 'all'}
+              onChange={(e) => {
+                const value = e.target.value
+                onFiltersChange({
+                  assignees: value === 'all' ? [] : [value]
+                })
+              }}
+              className="filter-bar__select"
+            >
+              <option value="all">All Assignees</option>
               {availableUsers.map((user) => (
-                <button
-                  key={user.id}
-                  onClick={() => handleAssigneeToggle(user.id)}
-                  className={`filter-bar__chip ${
-                    filters.assignees.includes(user.id)
-                      ? 'filter-bar__chip--active'
-                      : ''
-                  }`}
-                  title={`Filter by ${user.name}`}
-                >
+                <option key={user.id} value={user.id}>
                   {user.name}
-                </button>
+                </option>
               ))}
-            </div>
+            </select>
           </div>
         )}
 
-        {/* Label Filter */}
+        {/* Label Filter - Dropdown */}
         {availableLabels.length > 0 && (
           <div className="filter-bar__field">
-            <div className="filter-bar__multi-select">
-              <span className="filter-bar__multi-label">Labels:</span>
+            <select
+              value={filters.labels[0] || 'all'}
+              onChange={(e) => {
+                const value = e.target.value
+                onFiltersChange({
+                  labels: value === 'all' ? [] : [value]
+                })
+              }}
+              className="filter-bar__select"
+            >
+              <option value="all">All Labels</option>
               {availableLabels.map((label) => (
-                <button
-                  key={label}
-                  onClick={() => handleLabelToggle(label)}
-                  className={`filter-bar__chip ${
-                    filters.labels.includes(label)
-                      ? 'filter-bar__chip--active'
-                      : ''
-                  }`}
-                  title={`Filter by ${label}`}
-                >
+                <option key={label} value={label}>
                   {label}
-                </button>
+                </option>
               ))}
-            </div>
+            </select>
           </div>
         )}
 

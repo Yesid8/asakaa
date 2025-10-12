@@ -8,9 +8,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Import component styles */
-@import '../components/FilterBar/filter-bar.css';
-
 /* ============================================================================
    DESIGN SYSTEM FOUNDATION
    Mathematical scales for typography, spacing, colors, and timing
@@ -618,17 +615,18 @@
 
 /* Main Filters */
 .filter-bar__main {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: var(--space-4);
-  align-items: start;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  align-items: center;
 }
 
 .filter-bar__field {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   gap: var(--space-2);
-  align-items: flex-start;
+  align-items: center;
+  min-width: 200px;
 }
 
 .filter-bar__label {
@@ -647,7 +645,8 @@
   border-radius: var(--radius-md);
   color: white;
   font-size: var(--font-sm);
-  width: 100%;
+  min-width: 220px;
+  flex: 1;
   transition: all 0.2s;
 }
 
@@ -671,7 +670,7 @@
   font-size: var(--font-sm);
   cursor: pointer;
   transition: all 0.2s;
-  width: 100%;
+  min-width: 160px;
 }
 
 .filter-bar__select:hover {
@@ -696,18 +695,16 @@
 /* Multi-Select (Chips) */
 .filter-bar__multi-select {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: var(--space-2);
   flex-wrap: wrap;
-  width: 100%;
 }
 
 .filter-bar__multi-label {
   font-size: var(--font-xs);
   color: rgba(255, 255, 255, 0.6);
   font-weight: 500;
-  width: 100%;
-  margin-bottom: var(--space-1);
+  white-space: nowrap;
 }
 
 .filter-bar__chip {
@@ -758,6 +755,14 @@
   background: rgba(34, 197, 94, 0.2);
   border-color: rgba(34, 197, 94, 0.5);
   color: #86efac;
+}
+
+.filter-bar__chip--more {
+  background: rgba(255, 255, 255, 0.03);
+  border-color: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.5);
+  cursor: default;
+  font-size: var(--font-2xs);
 }
 
 /* Sort Controls */

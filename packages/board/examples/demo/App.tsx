@@ -410,10 +410,13 @@ export default function App() {
 
   // Handler for card update from modal
   const handleCardUpdateFromModal = (cardId: string, updates: Partial<Card>) => {
+    console.log('🔄 Updating card from modal:', cardId, updates)
     board.callbacks.onCardUpdate?.(cardId, updates)
     // Update selected card to reflect changes
     if (selectedCard && selectedCard.id === cardId) {
-      setSelectedCard({ ...selectedCard, ...updates })
+      const updatedCard = { ...selectedCard, ...updates }
+      setSelectedCard(updatedCard)
+      console.log('✅ Card updated successfully:', updatedCard)
     }
   }
 
