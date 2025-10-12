@@ -118,53 +118,53 @@ export function PrioritySelector({
         <Portal>
           <div
             ref={menuRef}
-            className="fixed rounded-xl shadow-2xl border min-w-[240px]"
+            className="fixed rounded-lg shadow-2xl border min-w-[160px]"
             style={{
               top: `${menuPosition.top}px`,
               left: `${menuPosition.left}px`,
               background: 'linear-gradient(135deg, #1f1f1f 0%, #1a1a1a 100%)',
               borderColor: 'rgba(255, 255, 255, 0.15)',
-              boxShadow: '0 20px 60px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.1)',
+              boxShadow: '0 10px 40px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.1)',
               zIndex: 99999,
             }}
           >
-          {/* Header */}
-          <div className="px-4 py-3 border-b border-white/10">
-            <span className="text-xs font-bold text-white/90 uppercase tracking-wider">
-              Task Priority
+          {/* Header - más compacto */}
+          <div className="px-3 py-1.5 border-b border-white/10">
+            <span className="text-[10px] font-bold text-white/70 uppercase tracking-wider">
+              Priority
             </span>
           </div>
 
-          {/* Options */}
-          <div className="py-2">
+          {/* Options - más compactas */}
+          <div className="py-1">
             {(Object.entries(PRIORITY_CONFIG) as [Priority, typeof PRIORITY_CONFIG[Priority]][]).map(
               ([key, config]) => (
                 <button
                   key={key}
                   onClick={() => handleSelect(key)}
-                  className="w-full px-4 py-3 flex items-center gap-3 text-sm font-medium transition-all hover:bg-white/15 active:scale-[0.98]"
+                  className="w-full px-3 py-1.5 flex items-center gap-2 text-xs font-medium transition-all hover:bg-white/15 active:scale-[0.98]"
                   style={{ color: config.color }}
                 >
-                  <span className="text-2xl leading-none">{config.emoji}</span>
-                  <span className="font-semibold text-base">{config.label}</span>
+                  <span className="text-base leading-none">{config.emoji}</span>
+                  <span className="font-semibold text-sm">{config.label}</span>
                   {priority === key && (
-                    <span className="ml-auto text-blue-400 text-lg">✓</span>
+                    <span className="ml-auto text-blue-400 text-sm">✓</span>
                   )}
                 </button>
               )
             )}
 
-            {/* Clear option */}
-            <div className="mt-1 pt-1 border-t border-white/10">
+            {/* Clear option - más compacto */}
+            <div className="mt-0.5 pt-0.5 border-t border-white/10">
               <button
                 onClick={() => handleSelect(undefined)}
-                className="w-full px-4 py-3 flex items-center gap-3 text-sm font-medium transition-all hover:bg-white/15 active:scale-[0.98]"
+                className="w-full px-3 py-1.5 flex items-center gap-2 text-xs font-medium transition-all hover:bg-white/15 active:scale-[0.98]"
                 style={{ color: '#e5e5e5' }}
               >
-                <span className="text-2xl leading-none">⚪</span>
-                <span className="font-semibold text-base">Clear</span>
+                <span className="text-base leading-none">⚪</span>
+                <span className="font-semibold text-sm">Clear</span>
                 {!priority && (
-                  <span className="ml-auto text-blue-400 text-lg">✓</span>
+                  <span className="ml-auto text-blue-400 text-sm">✓</span>
                 )}
               </button>
             </div>

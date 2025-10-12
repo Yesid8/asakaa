@@ -13,6 +13,10 @@ export { CardDetailModal } from './CardDetailModal'
 export { AttachmentUploader } from './Attachments'
 export { VelocityChart, BurnDownChart, DistributionCharts } from './Charts'
 export { BulkOperationsToolbar } from './BulkOperations'
+export { SwimlaneBoardView, GroupBySelector } from './Swimlanes'
+export { KeyboardShortcutsHelp } from './KeyboardShortcuts'
+export { CardTemplateSelector, DEFAULT_TEMPLATES } from './Templates'
+export { ExportImportModal } from './ExportImport'
 
 export type { ColumnProps, EditableColumnTitleProps } from './Column'
 export type {
@@ -36,3 +40,7 @@ export type {
   DistributionDataPoint,
 } from './Charts'
 export type { BulkOperationsToolbarProps } from './BulkOperations'
+export type { SwimlaneBoardViewProps, GroupBySelectorProps } from './Swimlanes'
+export type { KeyboardShortcutsHelpProps } from './KeyboardShortcuts'
+export type { CardTemplateSelectorProps } from './Templates'
+export type { ExportImportModalProps } from './ExportImport'

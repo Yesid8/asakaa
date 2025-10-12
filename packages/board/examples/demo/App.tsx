@@ -9,17 +9,27 @@ import {
   useKanbanState,
   useAI,
   useMultiSelect,
+  useKeyboardShortcuts,
   GeneratePlanModal,
   AIUsageDashboard,
   CommandPalette,
   CardDetailModal,
   BulkOperationsToolbar,
+  SwimlaneBoardView,
+  GroupBySelector,
+  KeyboardShortcutsHelp,
+  CardTemplateSelector,
+  ExportImportModal,
+  DEFAULT_TEMPLATES,
   type User,
   type GeneratedPlan,
   type Card,
   type Comment,
   type Activity,
   type Insight,
+  type GroupByOption,
+  type CardTemplate,
+  type ImportResult,
 } from '@asakaa/board'
 import '@asakaa/board/styles.css'
 
@@ -319,6 +329,11 @@ export default function App() {
   const [comments, setComments] = useState<Comment[]>(sampleComments)
   const [activities, setActivities] = useState<Activity[]>(sampleActivities)
 
+  // New Features v0.3.0
+  const [groupBy, setGroupBy] = useState<GroupByOption>('none')
+  const [isKeyboardShortcutsOpen, setIsKeyboardShortcutsOpen] = useState(false)
+  const [isExportImportOpen, setIsExportImportOpen] = useState(false)
+
   const { board, callbacks, helpers } = useKanbanState({
     initialBoard: demoBoard,
     onPersist: (updatedBoard) => {
@@ -351,6 +366,12 @@ export default function App() {
     // For demo: use mock mode if no API key is set
     // apiKey: import.meta.env.VITE_ANTHROPIC_API_KEY,
     // provider: 'anthropic',
+  })
+
+  // Keyboard Shortcuts Hook
+  useKeyboardShortcuts({
+    enabled: true,
+    preventDefault: true,
   })
 
   // Handler to add new column
@@ -493,6 +514,61 @@ export default function App() {
     clearSelection()
   }
 
+  // Handler for template selection
+  const handleSelectTemplate = (template: CardTemplate) => {
+    const firstColumn = board.columns[0]
+    if (!firstColumn) return
+
+    const columnCards = board.cards.filter((c) => c.columnId === firstColumn.id)
+    const maxPosition =
+      columnCards.length > 0 ? Math.max(...columnCards.map((c) => c.position)) : 0
+
+    const newCard = {
+      ...template.template,
+      id: `card-${Date.now()}`,
+      position: maxPosition + 1000,
+      columnId: firstColumn.id,
+    }
+
+    callbacks.onCardCreate?.(newCard as any)
+  }
+
+  // Handler for import
+  const handleImport = (result: ImportResult, content: string) => {
+    if (!result.success) {
+      console.error('Import failed:', result.errors)
+      return
+    }
+
+    // Parse imported data
+    try {
+      const data = JSON.parse(content)
+      if (data.board && data.columns && data.cards) {
+        // Clear current board
+        helpers.clearBoard()
+
+        // Add imported columns
+        data.columns.forEach((col: any) => {
+          helpers.addColumn({
+            title: col.title,
+            position: col.position,
+            wipLimit: col.wipLimit,
+            wipLimitType: col.wipLimitType,
+          })
+        })
+
+        // Add imported cards
+        data.cards.forEach((card: any) => {
+          callbacks.onCardCreate?.(card)
+        })
+
+        console.log('Board imported successfully!')
+      }
+    } catch (error) {
+      console.error('Failed to parse imported data:', error)
+    }
+  }
+
   // Calculate stats for header
   const totalCards = board.cards.length
   const inProgressCards = board.cards.filter(
@@ -519,7 +595,36 @@ export default function App() {
             </div>
 
             {/* AI Actions & Stats */}
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3">
+              {/* New Features v0.3.0 */}
+              <GroupBySelector
+                value={groupBy}
+                onChange={setGroupBy}
+              />
+
+              <CardTemplateSelector
+                templates={DEFAULT_TEMPLATES}
+                onSelectTemplate={handleSelectTemplate}
+              />
+
+              <button
+                onClick={() => setIsKeyboardShortcutsOpen(true)}
+                className="px-3 py-2 rounded-lg text-sm font-semibold transition-all hover:bg-white/10 border border-white/20 text-white/90"
+                title="Keyboard Shortcuts (Press ?)"
+              >
+                ⌨️
+              </button>
+
+              <button
+                onClick={() => setIsExportImportOpen(true)}
+                className="px-3 py-2 rounded-lg text-sm font-semibold transition-all hover:bg-white/10 border border-white/20 text-white/90"
+                title="Export / Import"
+              >
+                📦
+              </button>
+
+              <div className="w-px h-10 bg-white/10" />
+
               {/* AI Buttons */}
               <button
                 onClick={() => setIsGeneratePlanModalOpen(true)}
@@ -614,20 +719,36 @@ export default function App() {
 
       {/* Board Container */}
       <div className="asakaa-board">
-        <KanbanBoard
-          board={board}
-          callbacks={{
-            ...callbacks,
-            onWipLimitExceeded: handleWipLimitExceeded,
-          }}
-          onCardClick={handleCardClick}
-          availableUsers={sampleUsers}
-          config={{
-            showCardCount: true,
-            showWipLimits: true,
-            enableVirtualization: false,
-          }}
-        />
+        {groupBy === 'none' ? (
+          <KanbanBoard
+            board={board}
+            callbacks={{
+              ...callbacks,
+              onWipLimitExceeded: handleWipLimitExceeded,
+            }}
+            onCardClick={handleCardClick}
+            availableUsers={sampleUsers}
+            config={{
+              showCardCount: true,
+              showWipLimits: true,
+              enableVirtualization: false,
+            }}
+          />
+        ) : (
+          <SwimlaneBoardView
+            board={board}
+            swimlaneConfig={{
+              groupBy,
+              collapsible: true,
+              showEmptyLanes: false,
+            }}
+            availableUsers={sampleUsers}
+            callbacks={{
+              ...callbacks,
+              onWipLimitExceeded: handleWipLimitExceeded,
+            }}
+          />
+        )}
 
         {/* Add Group Button - Inside scrollable area */}
         <div style={{ paddingTop: '16px' }}>
@@ -775,6 +896,19 @@ export default function App() {
           ]}
         />
       )}
+
+      {/* New Modals v0.3.0 */}
+      <KeyboardShortcutsHelp
+        isOpen={isKeyboardShortcutsOpen}
+        onClose={() => setIsKeyboardShortcutsOpen(false)}
+      />
+
+      <ExportImportModal
+        board={board}
+        isOpen={isExportImportOpen}
+        onClose={() => setIsExportImportOpen(false)}
+        onImport={handleImport}
+      />
     </div>
   )
 }

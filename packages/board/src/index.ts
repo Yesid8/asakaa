@@ -22,6 +22,12 @@ export {
   BurnDownChart,
   DistributionCharts,
   BulkOperationsToolbar,
+  SwimlaneBoardView,
+  GroupBySelector,
+  KeyboardShortcutsHelp,
+  CardTemplateSelector,
+  DEFAULT_TEMPLATES,
+  ExportImportModal,
 } from './components'
 export type {
   ColumnProps,
@@ -42,6 +48,11 @@ export type {
   DistributionChartsProps,
   DistributionDataPoint,
   BulkOperationsToolbarProps,
+  SwimlaneBoardViewProps,
+  GroupBySelectorProps,
+  KeyboardShortcutsHelpProps,
+  CardTemplateSelectorProps,
+  ExportImportModalProps,
 } from './components'
 
 // AI Components
@@ -49,13 +60,15 @@ export { GeneratePlanModal, AIUsageDashboard } from './components/AI'
 export type { GeneratePlanModalProps, AIUsageDashboardProps } from './components/AI'
 
 // Hooks
-export { useKanbanState, useAI, useMultiSelect } from './hooks'
+export { useKanbanState, useAI, useMultiSelect, useKeyboardShortcuts, DEFAULT_SHORTCUTS } from './hooks'
 export type {
   UseKanbanStateOptions,
   UseKanbanStateReturn,
   UseAIOptions,
   UseAIReturn,
   UseMultiSelectReturn,
+  UseKeyboardShortcutsOptions,
+  UseKeyboardShortcutsReturn,
 } from './hooks'
 
 // Types
@@ -85,6 +98,15 @@ export type {
   Activity,
   ActivityType,
   Attachment,
+  GroupByOption,
+  SwimlaneConfig,
+  Swimlane,
+  KeyboardAction,
+  KeyboardShortcut,
+  CardTemplate,
+  ExportFormat,
+  ExportOptions,
+  ImportResult,
 } from './types'
 
 // Utilities

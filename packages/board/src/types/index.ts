@@ -53,7 +53,7 @@ export interface Card {
   /** Estimated time (in hours) */
   estimatedTime?: number
   /** Custom metadata */
-  metadata?: Record<string, any>
+  metadata?: Record<string, unknown>
 
   // Timestamps
   createdAt?: Date | string
@@ -82,7 +82,7 @@ export interface Column {
   /** Color for visual distinction */
   color?: string
   /** Custom metadata */
-  metadata?: Record<string, any>
+  metadata?: Record<string, unknown>
 
   // Timestamps
   createdAt?: Date | string
@@ -759,6 +759,166 @@ export interface AutomationCallbacks {
   onAutomationExecute?: (rule: AutomationRule, card: Card) => void | Promise<void>
   /** Called when automation rule execution fails */
   onAutomationError?: (rule: AutomationRule, error: Error) => void
+}
+
+// ============================================================================
+// SWIMLANES / GROUPING TYPES
+// ============================================================================
+
+/**
+ * Grouping options for swimlanes
+ */
+export type GroupByOption =
+  | 'none'           // No grouping (default Kanban view)
+  | 'assignee'       // Group by assigned user
+  | 'priority'       // Group by priority level
+  | 'label'          // Group by label/tag
+  | 'custom'         // Group by custom field
+
+/**
+ * Swimlane configuration
+ */
+export interface SwimlaneConfig {
+  /** Grouping option */
+  groupBy: GroupByOption
+  /** Custom field ID (when groupBy is 'custom') */
+  customFieldId?: string
+  /** Show empty swimlanes */
+  showEmptyLanes?: boolean
+  /** Collapsible swimlanes */
+  collapsible?: boolean
+  /** Default collapsed state */
+  defaultCollapsed?: boolean
+}
+
+/**
+ * Swimlane (horizontal row grouping cards)
+ */
+export interface Swimlane {
+  /** Unique identifier */
+  id: string
+  /** Swimlane title */
+  title: string
+  /** Group value (user ID, priority, label, etc.) */
+  groupValue: any
+  /** Card IDs in this swimlane */
+  cardIds: string[]
+  /** Is collapsed */
+  isCollapsed?: boolean
+  /** Color for visual distinction */
+  color?: string
+  /** Icon */
+  icon?: string
+}
+
+// ============================================================================
+// KEYBOARD SHORTCUTS TYPES
+// ============================================================================
+
+/**
+ * Keyboard shortcut action types
+ */
+export type KeyboardAction =
+  | 'navigate_up'
+  | 'navigate_down'
+  | 'navigate_left'
+  | 'navigate_right'
+  | 'open_card'
+  | 'close_modal'
+  | 'delete_card'
+  | 'new_card'
+  | 'search'
+  | 'save'
+  | 'undo'
+  | 'redo'
+  | 'select_all'
+  | 'deselect_all'
+
+/**
+ * Keyboard shortcut definition
+ */
+export interface KeyboardShortcut {
+  /** Shortcut key(s) */
+  keys: string | string[]
+  /** Action to perform */
+  action: KeyboardAction
+  /** Description */
+  description: string
+  /** Modifier keys required */
+  modifiers?: {
+    ctrl?: boolean
+    shift?: boolean
+    alt?: boolean
+    meta?: boolean
+  }
+}
+
+// ============================================================================
+// CARD TEMPLATES TYPES
+// ============================================================================
+
+/**
+ * Card template for quick creation
+ */
+export interface CardTemplate {
+  /** Unique identifier */
+  id: string
+  /** Template name */
+  name: string
+  /** Template description */
+  description?: string
+  /** Icon or emoji */
+  icon?: string
+  /** Pre-filled card data */
+  template: Partial<Omit<Card, 'id' | 'position' | 'columnId'>>
+  /** Category for organization */
+  category?: string
+}
+
+// ============================================================================
+// EXPORT/IMPORT TYPES
+// ============================================================================
+
+/**
+ * Export format options
+ */
+export type ExportFormat = 'json' | 'csv' | 'markdown'
+
+/**
+ * Export options
+ */
+export interface ExportOptions {
+  /** Format to export */
+  format: ExportFormat
+  /** Include card details */
+  includeCardDetails?: boolean
+  /** Include comments */
+  includeComments?: boolean
+  /** Include activity log */
+  includeActivity?: boolean
+  /** Include attachments */
+  includeAttachments?: boolean
+  /** Date range filter */
+  dateRange?: {
+    start: Date | string
+    end: Date | string
+  }
+}
+
+/**
+ * Import result
+ */
+export interface ImportResult {
+  /** Was import successful */
+  success: boolean
+  /** Number of cards imported */
+  cardsImported?: number
+  /** Number of columns imported */
+  columnsImported?: number
+  /** Errors encountered */
+  errors?: string[]
+  /** Warnings */
+  warnings?: string[]
 }
 
 // ============================================================================
