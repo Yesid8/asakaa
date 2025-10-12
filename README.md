@@ -10,6 +10,12 @@ Project management components for React applications.
 
 ASAKAA is a monorepo containing production-ready React components for project management interfaces. The suite currently includes a Kanban board component with planned expansion to todo lists, Gantt charts, and calendar views.
 
+## Interface
+
+![ASAKAA Kanban Board Interface](./.github/screenshots/board-interface.png)
+
+*Modern Kanban board with drag-and-drop, virtual scrolling, and Design System v2.0*
+
 ## Installation
 
 ```bash
