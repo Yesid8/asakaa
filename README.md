@@ -1,129 +1,289 @@
 # ASAKAA
 
-> Modern project management components for React - Built for performance and developer experience.
+Project management components for React applications.
 
 [![License](https://img.shields.io/badge/license-BSL%201.1-blue.svg)](./LICENSE)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.6-blue)](https://www.typescriptlang.org/)
 [![React](https://img.shields.io/badge/React-18+-61dafb)](https://reactjs.org/)
 
-## 🎯 Vision
+## Overview
 
-ASAKAA is a comprehensive suite of project management components designed to help teams build powerful productivity tools. Starting with our Kanban board, we're expanding to include todo lists, Gantt charts, calendars, and more.
+ASAKAA is a monorepo containing production-ready React components for project management interfaces. The suite currently includes a Kanban board component with planned expansion to todo lists, Gantt charts, and calendar views.
 
-## 📦 Packages
-
-| Package | Version | Description |
-|---------|---------|-------------|
-| [@asakaa/board](./packages/board) | 0.1.0 | AI-native Kanban board component |
-| @asakaa/todo | Coming Soon | Advanced todo list component |
-| @asakaa/gantt | Coming Soon | Interactive Gantt chart component |
-| @asakaa/calendar | Coming Soon | Smart calendar component |
-
-## 🚀 Quick Start
+## Installation
 
 ```bash
-# Install the Kanban board
 npm install @asakaa/board
+```
 
-# Or with yarn
+Or with other package managers:
+
+```bash
 yarn add @asakaa/board
-
-# Or with pnpm
 pnpm add @asakaa/board
 ```
+
+## Usage
 
 ```tsx
 import { Board } from '@asakaa/board'
 import '@asakaa/board/styles.css'
 
 function App() {
-  return <Board initialData={myData} />
+  const initialData = {
+    columns: [
+      { id: 'todo', title: 'To Do', cards: [] },
+      { id: 'in-progress', title: 'In Progress', cards: [] },
+      { id: 'done', title: 'Done', cards: [] }
+    ]
+  }
+
+  return <Board initialData={initialData} />
 }
 ```
 
-## ✨ Features
+## Technical Specifications
 
-- 🎨 **Beautiful UI** - Modern, polished design out of the box
-- ⚡ **High Performance** - Virtual scrolling, optimized renders
-- 🎯 **TypeScript First** - Full type safety and IntelliSense
-- 🧩 **Composable** - Use individual components or the full suite
-- 🔌 **Extensible** - Plugin system for custom functionality
-- 📱 **Responsive** - Works seamlessly on all devices
-- ♿ **Accessible** - WCAG 2.1 AA compliant
-- 🌙 **Dark Mode** - Built-in theme support
+### @asakaa/board (v0.3.1)
 
-## 🏗️ Project Structure
+**Core Features:**
+- Drag-and-drop functionality via @dnd-kit
+- Virtual scrolling for lists with 1000+ items (@tanstack/react-virtual)
+- TypeScript-first architecture with complete type definitions
+- Plugin system with 15+ lifecycle hooks
+- Command palette with keyboard shortcuts
+- Undo/Redo with command pattern implementation
+- Bulk operations API
+- Real-time performance monitoring
+
+**Architecture:**
+- State management: Jotai atoms
+- Animation: Framer Motion
+- Styling: CSS variables with Design System v2.0
+- Build: tsup (ESM + CJS)
+- Testing: Vitest with 75% coverage
+
+**Bundle Size:**
+- ESM: 40.43 KB minified
+- CJS: 42.67 KB minified
+- CSS: 30 KB minified
+
+**Performance:**
+- Virtual scrolling handles 10,000+ cards
+- 60fps drag-and-drop animations
+- Debounced search with 300ms delay
+- Optimized re-renders with React.memo
+
+**Browser Support:**
+- Chrome/Edge 90+
+- Firefox 88+
+- Safari 14+
+
+## Project Structure
 
 ```
 asakaa/
 ├── packages/
-│   ├── board/          # @asakaa/board - Kanban board component
-│   ├── todo/           # @asakaa/todo (planned)
-│   ├── gantt/          # @asakaa/gantt (planned)
-│   └── calendar/       # @asakaa/calendar (planned)
-└── apps/
-    └── docs/           # Documentation site (planned)
+│   └── board/              # @asakaa/board package
+│       ├── src/
+│       │   ├── components/ # React components
+│       │   ├── hooks/      # Custom React hooks
+│       │   ├── stores/     # Jotai state stores
+│       │   ├── types/      # TypeScript definitions
+│       │   ├── utils/      # Utility functions
+│       │   └── styles/     # CSS with Design System v2.0
+│       ├── examples/       # Demo applications
+│       └── dist/           # Build output
+└── pnpm-workspace.yaml     # Monorepo configuration
 ```
 
-## 🛠️ Development
+## Development
 
-This is a monorepo managed with pnpm workspaces.
+This monorepo uses pnpm workspaces.
 
+**Setup:**
 ```bash
 # Install dependencies
-npm install
+pnpm install
 
-# Start development server
-npm run dev
+# Build packages
+pnpm run build
 
 # Run tests
-npm test
+pnpm test
 
-# Build all packages
-npm run build
-
-# Start Storybook
-npm run storybook
+# Type checking
+pnpm run typecheck
 ```
 
-## 📚 Documentation
+**Development Workflow:**
+```bash
+# Start dev server for demo
+cd packages/board/examples/demo
+npm run dev
 
-- [Kanban Board Documentation](./packages/board/README.md)
-- [API Reference](./packages/board/docs) (Coming Soon)
-- [Examples](./packages/board/examples)
+# Run tests in watch mode
+pnpm run test:watch
 
-## 🤝 Contributing
+# Generate API documentation
+pnpm run docs
+```
 
-We welcome contributions! Please see our contributing guidelines (coming soon).
+## API Reference
 
-## 📄 License
+### Board Component
+
+```tsx
+interface BoardProps {
+  initialData: BoardData
+  config?: BoardConfig
+  plugins?: Plugin[]
+  onUpdate?: (data: BoardData) => void
+}
+```
+
+### Plugin System
+
+```tsx
+interface Plugin {
+  name: string
+  version: string
+  hooks: {
+    onCardCreate?: (card: Card) => void
+    onCardUpdate?: (card: Card) => void
+    onCardDelete?: (cardId: string) => void
+    // ... 12 more hooks
+  }
+}
+```
+
+### Hook Examples
+
+```tsx
+import { useBoard, useSelection, useUndo } from '@asakaa/board'
+
+// Access board state
+const { data, updateCard } = useBoard()
+
+// Selection state
+const { selectedCards, selectCard } = useSelection()
+
+// Undo/Redo
+const { undo, redo, canUndo, canRedo } = useUndo()
+```
+
+## Design System v2.0
+
+The board component uses a CSS variables-based design system:
+
+```css
+/* Typography Scale */
+--font-2xs: 10px
+--font-xs: 12px
+--font-sm: 14px
+--font-base: 16px
+--font-lg: 20px
+--font-xl: 24px
+--font-2xl: 32px
+--font-3xl: 48px
+
+/* Spacing Scale (4px grid) */
+--space-1: 4px
+--space-2: 8px
+--space-3: 12px
+--space-4: 16px
+/* ... up to --space-16: 64px */
+
+/* Opacity Scale */
+--opacity-subtle: 0.05
+--opacity-faint: 0.10
+--opacity-light: 0.20
+--opacity-medium: 0.40
+--opacity-strong: 0.60
+--opacity-opaque: 0.80
+--opacity-full: 1.0
+```
+
+## Testing
+
+```bash
+# Run all tests
+pnpm test
+
+# Coverage report
+pnpm run test:coverage
+
+# UI mode
+pnpm run test:ui
+```
+
+Current test coverage: 75%
+
+## Building
+
+```bash
+# Build all packages
+pnpm run build
+
+# Build specific package
+cd packages/board
+pnpm run build
+```
+
+Output formats:
+- ESM: `dist/index.js`
+- CJS: `dist/index.cjs`
+- Types: `dist/index.d.ts`
+- CSS: `dist/styles.css`
+
+## Adding Screenshots
+
+To add screenshots to this README:
+
+1. Create the screenshots directory:
+```bash
+mkdir -p .github/screenshots
+```
+
+2. Take a screenshot of the interface and save it as PNG or JPG
+
+3. Add the image file to `.github/screenshots/`:
+```bash
+# Example: board-interface.png
+.github/screenshots/board-interface.png
+```
+
+4. Reference in README.md:
+```markdown
+![Board Interface](./.github/screenshots/board-interface.png)
+```
+
+5. Commit and push:
+```bash
+git add .github/screenshots/
+git commit -m "docs: Add interface screenshots"
+git push
+```
+
+**Recommended screenshot specifications:**
+- Format: PNG for UI screenshots
+- Width: 1280-1920px (ideal: 1600px)
+- Height: auto (maintain aspect ratio)
+- File size: < 500KB (use compression if needed)
+
+## Changelog
+
+See [CHANGELOG.md](./CHANGELOG.md) for version history and release notes.
+
+## License
 
 Business Source License 1.1 - See [LICENSE](./LICENSE) for details.
 
-## 🗺️ Roadmap
+## Packages
 
-### v0.1.0 (Current)
-- ✅ Kanban board component
-- ✅ Drag and drop
-- ✅ Virtual scrolling
-- ✅ Plugin system
-- ✅ Advanced filtering
-
-### v0.2.0 (Next)
-- 🔄 Todo list component
-- 🔄 Enhanced documentation
-- 🔄 More examples
-
-### v0.3.0 (Future)
-- 📅 Gantt chart component
-- 📅 Calendar component
-- 📅 Integration APIs
-
-## 💬 Community
-
-- GitHub Issues - Bug reports and feature requests
-- Discussions - Questions and community chat
-
----
-
-Built with ❤️ by the ASAKAA team
+| Package | Version | Status |
+|---------|---------|--------|
+| [@asakaa/board](./packages/board) | 0.3.1 | Production |
+| @asakaa/todo | - | Planned |
+| @asakaa/gantt | - | Planned |
+| @asakaa/calendar | - | Planned |
