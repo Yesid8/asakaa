@@ -28,6 +28,7 @@ export {
   CardTemplateSelector,
   DEFAULT_TEMPLATES,
   ExportImportModal,
+  FilterBar,
 } from './components'
 export type {
   ColumnProps,
@@ -53,6 +54,7 @@ export type {
   KeyboardShortcutsHelpProps,
   CardTemplateSelectorProps,
   ExportImportModalProps,
+  FilterBarProps,
 } from './components'
 
 // AI Components
@@ -60,10 +62,27 @@ export { GeneratePlanModal, AIUsageDashboard } from './components/AI'
 export type { GeneratePlanModalProps, AIUsageDashboardProps } from './components/AI'
 
 // Hooks
-export { useKanbanState, useAI, useMultiSelect, useKeyboardShortcuts, DEFAULT_SHORTCUTS } from './hooks'
+export {
+  useKanbanState,
+  useBoard,
+  useFilters,
+  useAI,
+  useMultiSelect,
+  useKeyboardShortcuts,
+  DEFAULT_SHORTCUTS,
+} from './hooks'
 export type {
   UseKanbanStateOptions,
   UseKanbanStateReturn,
+  UseBoardOptions,
+  UseBoardReturn,
+  UseFiltersOptions,
+  UseFiltersReturn,
+  FilterState,
+  SortState,
+  DateFilter,
+  SortBy,
+  SortOrder,
   UseAIOptions,
   UseAIReturn,
   UseMultiSelectReturn,

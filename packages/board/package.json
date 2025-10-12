@@ -1,8 +1,8 @@
 {
   "name": "@asakaa/board",
-  "version": "0.3.1",
+  "version": "0.4.0",
   "type": "module",
-  "description": "AI-native Kanban board component for React with WIP Limits and Bulk Operations. Built for performance and developer experience.",
+  "description": "AI-native Kanban board component for React with advanced filtering, sorting, and state management. Built for performance and developer experience.",
   "author": "Asakaa",
   "license": "SEE LICENSE IN LICENSE",
   "keywords": [

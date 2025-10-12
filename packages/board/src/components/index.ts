@@ -17,6 +17,7 @@ export { SwimlaneBoardView, GroupBySelector } from './Swimlanes'
 export { KeyboardShortcutsHelp } from './KeyboardShortcuts'
 export { CardTemplateSelector, DEFAULT_TEMPLATES } from './Templates'
 export { ExportImportModal } from './ExportImport'
+export { FilterBar } from './FilterBar'
 
 export type { ColumnProps, EditableColumnTitleProps } from './Column'
 export type {
@@ -44,3 +45,4 @@ export type { SwimlaneBoardViewProps, GroupBySelectorProps } from './Swimlanes'
 export type { KeyboardShortcutsHelpProps } from './KeyboardShortcuts'
 export type { CardTemplateSelectorProps } from './Templates'
 export type { ExportImportModalProps } from './ExportImport'
+export type { FilterBarProps } from './FilterBar'
