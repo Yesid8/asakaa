@@ -8,9 +8,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Import component styles */
-@import '../components/FilterBar/filter-bar.css';
-
 /* ============================================================================
    DESIGN SYSTEM FOUNDATION
    Mathematical scales for typography, spacing, colors, and timing
@@ -102,23 +99,23 @@
   --z-tooltip: 800;   /* Tooltips (always on top) */
 
   /* ========== COLOR SYSTEM ========== */
-  /* Base colors */
-  --color-bg-primary: #0a0a0a;
-  --color-bg-secondary: #141414;
-  --color-bg-tertiary: #1a1a1a;
+  /* v0.5.0: Theme-aware colors - fallback to dark theme if ThemeProvider not used */
+  --color-bg-primary: var(--theme-bg-primary, #0a0a0a);
+  --color-bg-secondary: var(--theme-bg-secondary, #141414);
+  --color-bg-tertiary: var(--theme-bg-tertiary, #1a1a1a);
 
-  --color-text-primary: #ffffff;
-  --color-text-secondary: #a3a3a3;
-  --color-text-tertiary: #737373;
+  --color-text-primary: var(--theme-text-primary, #ffffff);
+  --color-text-secondary: var(--theme-text-secondary, #a3a3a3);
+  --color-text-tertiary: var(--theme-text-tertiary, #737373);
 
-  /* Accent colors */
-  --color-blue: #3b82f6;
-  --color-blue-dark: #2563eb;
-  --color-red: #ef4444;
+  /* Accent colors - use theme accent or fallback to blue */
+  --color-blue: var(--theme-accent-primary, #3b82f6);
+  --color-blue-dark: var(--theme-accent-hover, #2563eb);
+  --color-red: var(--theme-error, #ef4444);
   --color-red-dark: #dc2626;
-  --color-orange: #f59e0b;
+  --color-orange: var(--theme-warning, #f59e0b);
   --color-yellow: #fbbf24;
-  --color-green: #10b981;
+  --color-green: var(--theme-success, #10b981);
   --color-purple: #8b5cf6;
 
   /* Semantic colors */
@@ -126,6 +123,10 @@
   --color-warning: var(--color-orange);
   --color-success: var(--color-green);
   --color-info: var(--color-blue);
+
+  /* Border colors from theme */
+  --color-border-primary: var(--theme-border-primary, rgba(255, 255, 255, 0.1));
+  --color-border-secondary: var(--theme-border-secondary, rgba(255, 255, 255, 0.05));
 
   /* ========== COMPONENT SIZES ========== */
   --column-width: 340px;
@@ -618,17 +619,18 @@
 
 /* Main Filters */
 .filter-bar__main {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: var(--space-4);
-  align-items: start;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  align-items: center;
 }
 
 .filter-bar__field {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   gap: var(--space-2);
-  align-items: flex-start;
+  align-items: center;
+  min-width: 200px;
 }
 
 .filter-bar__label {
@@ -647,7 +649,8 @@
   border-radius: var(--radius-md);
   color: white;
   font-size: var(--font-sm);
-  width: 100%;
+  min-width: 220px;
+  flex: 1;
   transition: all 0.2s;
 }
 
@@ -671,7 +674,7 @@
   font-size: var(--font-sm);
   cursor: pointer;
   transition: all 0.2s;
-  width: 100%;
+  min-width: 160px;
 }
 
 .filter-bar__select:hover {
@@ -696,18 +699,16 @@
 /* Multi-Select (Chips) */
 .filter-bar__multi-select {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: var(--space-2);
   flex-wrap: wrap;
-  width: 100%;
 }
 
 .filter-bar__multi-label {
   font-size: var(--font-xs);
   color: rgba(255, 255, 255, 0.6);
   font-weight: 500;
-  width: 100%;
-  margin-bottom: var(--space-1);
+  white-space: nowrap;
 }
 
 .filter-bar__chip {
@@ -758,6 +759,14 @@
   background: rgba(34, 197, 94, 0.2);
   border-color: rgba(34, 197, 94, 0.5);
   color: #86efac;
+}
+
+.filter-bar__chip--more {
+  background: rgba(255, 255, 255, 0.03);
+  border-color: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.5);
+  cursor: default;
+  font-size: var(--font-2xs);
 }
 
 /* Sort Controls */

@@ -23,6 +23,8 @@ import {
   CardTemplateSelector,
   ExportImportModal,
   DEFAULT_TEMPLATES,
+  ThemeProvider,
+  ThemeSwitcher,
   type User,
   type GeneratedPlan,
   type Card,
@@ -410,10 +412,13 @@ export default function App() {
 
   // Handler for card update from modal
   const handleCardUpdateFromModal = (cardId: string, updates: Partial<Card>) => {
+    console.log('🔄 Updating card from modal:', cardId, updates)
     board.callbacks.onCardUpdate?.(cardId, updates)
     // Update selected card to reflect changes
     if (selectedCard && selectedCard.id === cardId) {
-      setSelectedCard({ ...selectedCard, ...updates })
+      const updatedCard = { ...selectedCard, ...updates }
+      setSelectedCard(updatedCard)
+      console.log('✅ Card updated successfully:', updatedCard)
     }
   }
 
@@ -568,24 +573,31 @@ export default function App() {
   }, [board.board.cards])
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0a0a0a] via-[#0f0f0f] to-[#141414]">
-      {/* Premium Header */}
-      <header className="sticky top-0 z-10 backdrop-blur-xl bg-[#0a0a0a]/80 border-b border-white/5">
-        <div className="px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <div>
-                <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-400 via-blue-500 to-purple-500 bg-clip-text text-transparent">
-                  ASAKAA Board
-                </h1>
-                <p className="text-sm text-gray-400 mt-0.5">
-                  Premium Kanban • AI-Native • React Library
-                </p>
-              </div>
-            </div>
+    <ThemeProvider defaultTheme="dark">
+      <div className="min-h-screen" style={{ background: 'var(--theme-bg-primary)' }}>
+        {/* Premium Header - v0.5.0: Theme-aware */}
+        <header className="sticky top-0 z-10 backdrop-blur-xl border-b" style={{
+          backgroundColor: 'var(--theme-bg-primary)',
+          borderColor: 'var(--theme-border-primary)'
+        }}>
+          <div className="px-6 py-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <div>
+                  <h1 className="text-2xl font-bold" style={{ color: 'var(--theme-text-primary)' }}>
+                    ASAKAA Board
+                  </h1>
+                  <p className="text-sm mt-0.5" style={{ color: 'var(--theme-text-secondary)' }}>
+                    Premium Kanban • AI-Native • React Library
+                  </p>
+                </div>
 
-            {/* AI Actions & Stats */}
-            <div className="flex items-center gap-3">
+                {/* v0.5.0: Theme Switcher */}
+                <ThemeSwitcher compact showLabels={false} />
+              </div>
+
+              {/* AI Actions & Stats */}
+              <div className="flex items-center gap-3">
               {/* New Features v0.3.0 */}
               <GroupBySelector
                 value={groupBy}
@@ -599,7 +611,20 @@ export default function App() {
 
               <button
                 onClick={() => setIsKeyboardShortcutsOpen(true)}
-                className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all hover:bg-white/10 border border-white/10 text-white/80 hover:text-white hover:border-white/20"
+                className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all border"
+                style={{
+                  backgroundColor: 'var(--theme-bg-secondary)',
+                  borderColor: 'var(--theme-border-primary)',
+                  color: 'var(--theme-text-secondary)'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = 'var(--theme-bg-tertiary)'
+                  e.currentTarget.style.color = 'var(--theme-text-primary)'
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = 'var(--theme-bg-secondary)'
+                  e.currentTarget.style.color = 'var(--theme-text-secondary)'
+                }}
                 title="Keyboard Shortcuts (Press ?)"
               >
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -611,7 +636,20 @@ export default function App() {
 
               <button
                 onClick={() => setIsExportImportOpen(true)}
-                className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all hover:bg-white/10 border border-white/10 text-white/80 hover:text-white hover:border-white/20"
+                className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all border"
+                style={{
+                  backgroundColor: 'var(--theme-bg-secondary)',
+                  borderColor: 'var(--theme-border-primary)',
+                  color: 'var(--theme-text-secondary)'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = 'var(--theme-bg-tertiary)'
+                  e.currentTarget.style.color = 'var(--theme-text-primary)'
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = 'var(--theme-bg-secondary)'
+                  e.currentTarget.style.color = 'var(--theme-text-secondary)'
+                }}
                 title="Export / Import"
               >
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -620,12 +658,25 @@ export default function App() {
                 <span>Export</span>
               </button>
 
-              <div className="w-px h-10 bg-white/10" />
+              <div className="w-px h-10" style={{ backgroundColor: 'var(--theme-border-primary)' }} />
 
               {/* AI Buttons */}
               <button
                 onClick={() => setIsGeneratePlanModalOpen(true)}
-                className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all hover:bg-blue-600 active:scale-98 bg-blue-500 text-white border border-blue-400/30"
+                className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all border"
+                style={{
+                  backgroundColor: 'var(--theme-accent-primary)',
+                  borderColor: 'var(--theme-accent-primary)',
+                  color: '#FFFFFF'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = 'var(--theme-accent-hover)'
+                  e.currentTarget.style.borderColor = 'var(--theme-accent-hover)'
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = 'var(--theme-accent-primary)'
+                  e.currentTarget.style.borderColor = 'var(--theme-accent-primary)'
+                }}
               >
                 <svg
                   width="16"
@@ -661,7 +712,22 @@ export default function App() {
 
               <button
                 onClick={() => setIsAIUsageDashboardOpen(true)}
-                className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all hover:bg-white/10 border border-white/10 text-white/80 hover:text-white hover:border-white/20"
+                className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all border"
+                style={{
+                  backgroundColor: 'var(--theme-bg-secondary)',
+                  borderColor: 'var(--theme-border-primary)',
+                  color: 'var(--theme-text-secondary)'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = 'var(--theme-bg-tertiary)'
+                  e.currentTarget.style.color = 'var(--theme-text-primary)'
+                  e.currentTarget.style.borderColor = 'var(--theme-border-secondary)'
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = 'var(--theme-bg-secondary)'
+                  e.currentTarget.style.color = 'var(--theme-text-secondary)'
+                  e.currentTarget.style.borderColor = 'var(--theme-border-primary)'
+                }}
               >
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <circle cx="12" cy="12" r="10" />
@@ -674,28 +740,28 @@ export default function App() {
 
               {/* Stats */}
               <div className="text-center">
-                <div className="text-2xl font-bold text-white">
+                <div className="text-2xl font-bold" style={{ color: 'var(--theme-text-primary)' }}>
                   {totalCards}
                 </div>
-                <div className="text-xs text-gray-400 uppercase tracking-wider">
+                <div className="text-xs uppercase tracking-wider" style={{ color: 'var(--theme-text-secondary)' }}>
                   Total Tasks
                 </div>
               </div>
-              <div className="w-px h-10 bg-white/10" />
+              <div className="w-px h-10" style={{ backgroundColor: 'var(--theme-border-primary)' }} />
               <div className="text-center">
-                <div className="text-2xl font-bold text-blue-400">
+                <div className="text-2xl font-bold" style={{ color: 'var(--theme-accent-primary)' }}>
                   {inProgressCards}
                 </div>
-                <div className="text-xs text-gray-400 uppercase tracking-wider">
+                <div className="text-xs uppercase tracking-wider" style={{ color: 'var(--theme-text-secondary)' }}>
                   In Progress
                 </div>
               </div>
-              <div className="w-px h-10 bg-white/10" />
+              <div className="w-px h-10" style={{ backgroundColor: 'var(--theme-border-primary)' }} />
               <div className="text-center">
-                <div className="text-2xl font-bold text-green-400">
+                <div className="text-2xl font-bold" style={{ color: 'var(--theme-success, #10B981)' }}>
                   {completedCards}
                 </div>
-                <div className="text-xs text-gray-400 uppercase tracking-wider">
+                <div className="text-xs uppercase tracking-wider" style={{ color: 'var(--theme-text-secondary)' }}>
                   Completed
                 </div>
               </div>
@@ -704,7 +770,7 @@ export default function App() {
 
           {/* Project Title */}
           <div className="mt-4">
-            <h2 className="text-lg font-semibold text-white/90">
+            <h2 className="text-lg font-semibold" style={{ color: 'var(--theme-text-primary)' }}>
               {board.board.title}
             </h2>
           </div>
@@ -788,11 +854,14 @@ export default function App() {
       </div>
 
       {/* Footer */}
-      <footer className="fixed bottom-0 left-0 right-0 backdrop-blur-xl bg-[#0a0a0a]/60 border-t border-white/5 px-6 py-3">
-        <div className="flex items-center justify-between text-xs text-gray-500">
+      <footer className="fixed bottom-0 left-0 right-0 backdrop-blur-xl border-t px-6 py-3" style={{
+        backgroundColor: 'var(--theme-bg-secondary)',
+        borderColor: 'var(--theme-border-primary)'
+      }}>
+        <div className="flex items-center justify-between text-xs" style={{ color: 'var(--theme-text-tertiary)' }}>
           <div>
             Built with{' '}
-            <span className="text-blue-400 font-semibold">@asakaa/board</span>{' '}
+            <span className="font-semibold" style={{ color: 'var(--theme-accent-primary)' }}>@asakaa/board</span>{' '}
             • Open source React library
           </div>
           <div className="flex items-center gap-4">
@@ -801,7 +870,10 @@ export default function App() {
               href="https://github.com/asakaa"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-gray-400 hover:text-white transition-colors"
+              className="transition-colors"
+              style={{ color: 'var(--theme-text-secondary)' }}
+              onMouseEnter={(e) => e.currentTarget.style.color = 'var(--theme-text-primary)'}
+              onMouseLeave={(e) => e.currentTarget.style.color = 'var(--theme-text-secondary)'}
             >
               GitHub
             </a>
@@ -902,6 +974,7 @@ export default function App() {
         onClose={() => setIsExportImportOpen(false)}
         onImport={handleImport}
       />
-    </div>
+      </div>
+    </ThemeProvider>
   )
 }
