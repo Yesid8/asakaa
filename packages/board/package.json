@@ -4,7 +4,7 @@
   "type": "module",
   "description": "AI-native Kanban board component for React with advanced filtering, sorting, and state management. Built for performance and developer experience.",
   "author": "Asakaa",
-  "license": "SEE LICENSE IN LICENSE",
+  "license": "BUSL-1.1",
   "keywords": [
     "kanban",
     "board",
