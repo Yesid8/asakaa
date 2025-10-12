@@ -574,17 +574,20 @@ export default function App() {
 
   return (
     <ThemeProvider defaultTheme="dark">
-      <div className="min-h-screen bg-gradient-to-br from-[#0a0a0a] via-[#0f0f0f] to-[#141414]">
-        {/* Premium Header */}
-        <header className="sticky top-0 z-10 backdrop-blur-xl bg-[#0a0a0a]/80 border-b border-white/5">
+      <div className="min-h-screen" style={{ background: 'var(--theme-bg-primary)' }}>
+        {/* Premium Header - v0.5.0: Theme-aware */}
+        <header className="sticky top-0 z-10 backdrop-blur-xl border-b" style={{
+          backgroundColor: 'var(--theme-bg-primary)',
+          borderColor: 'var(--theme-border-primary)'
+        }}>
           <div className="px-6 py-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
                 <div>
-                  <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-400 via-blue-500 to-purple-500 bg-clip-text text-transparent">
+                  <h1 className="text-2xl font-bold" style={{ color: 'var(--theme-text-primary)' }}>
                     ASAKAA Board
                   </h1>
-                  <p className="text-sm text-gray-400 mt-0.5">
+                  <p className="text-sm mt-0.5" style={{ color: 'var(--theme-text-secondary)' }}>
                     Premium Kanban • AI-Native • React Library
                   </p>
                 </div>
@@ -683,28 +686,28 @@ export default function App() {
 
               {/* Stats */}
               <div className="text-center">
-                <div className="text-2xl font-bold text-white">
+                <div className="text-2xl font-bold" style={{ color: 'var(--theme-text-primary)' }}>
                   {totalCards}
                 </div>
-                <div className="text-xs text-gray-400 uppercase tracking-wider">
+                <div className="text-xs uppercase tracking-wider" style={{ color: 'var(--theme-text-secondary)' }}>
                   Total Tasks
                 </div>
               </div>
-              <div className="w-px h-10 bg-white/10" />
+              <div className="w-px h-10" style={{ backgroundColor: 'var(--theme-border-primary)' }} />
               <div className="text-center">
-                <div className="text-2xl font-bold text-blue-400">
+                <div className="text-2xl font-bold" style={{ color: 'var(--theme-accent-primary)' }}>
                   {inProgressCards}
                 </div>
-                <div className="text-xs text-gray-400 uppercase tracking-wider">
+                <div className="text-xs uppercase tracking-wider" style={{ color: 'var(--theme-text-secondary)' }}>
                   In Progress
                 </div>
               </div>
-              <div className="w-px h-10 bg-white/10" />
+              <div className="w-px h-10" style={{ backgroundColor: 'var(--theme-border-primary)' }} />
               <div className="text-center">
-                <div className="text-2xl font-bold text-green-400">
+                <div className="text-2xl font-bold" style={{ color: 'var(--theme-success, #10B981)' }}>
                   {completedCards}
                 </div>
-                <div className="text-xs text-gray-400 uppercase tracking-wider">
+                <div className="text-xs uppercase tracking-wider" style={{ color: 'var(--theme-text-secondary)' }}>
                   Completed
                 </div>
               </div>
@@ -713,7 +716,7 @@ export default function App() {
 
           {/* Project Title */}
           <div className="mt-4">
-            <h2 className="text-lg font-semibold text-white/90">
+            <h2 className="text-lg font-semibold" style={{ color: 'var(--theme-text-primary)' }}>
               {board.board.title}
             </h2>
           </div>
@@ -797,11 +800,14 @@ export default function App() {
       </div>
 
       {/* Footer */}
-      <footer className="fixed bottom-0 left-0 right-0 backdrop-blur-xl bg-[#0a0a0a]/60 border-t border-white/5 px-6 py-3">
-        <div className="flex items-center justify-between text-xs text-gray-500">
+      <footer className="fixed bottom-0 left-0 right-0 backdrop-blur-xl border-t px-6 py-3" style={{
+        backgroundColor: 'var(--theme-bg-secondary)',
+        borderColor: 'var(--theme-border-primary)'
+      }}>
+        <div className="flex items-center justify-between text-xs" style={{ color: 'var(--theme-text-tertiary)' }}>
           <div>
             Built with{' '}
-            <span className="text-blue-400 font-semibold">@asakaa/board</span>{' '}
+            <span className="font-semibold" style={{ color: 'var(--theme-accent-primary)' }}>@asakaa/board</span>{' '}
             • Open source React library
           </div>
           <div className="flex items-center gap-4">
@@ -810,7 +816,10 @@ export default function App() {
               href="https://github.com/asakaa"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-gray-400 hover:text-white transition-colors"
+              className="transition-colors"
+              style={{ color: 'var(--theme-text-secondary)' }}
+              onMouseEnter={(e) => e.currentTarget.style.color = 'var(--theme-text-primary)'}
+              onMouseLeave={(e) => e.currentTarget.style.color = 'var(--theme-text-secondary)'}
             >
               GitHub
             </a>
