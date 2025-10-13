@@ -94,7 +94,7 @@ describe('Card Component', () => {
       )
 
       // Priority selector should be present (icon button)
-      const priorityButton = screen.getByTitle('High Priority')
+      const priorityButton = screen.getByTitle('High')
       expect(priorityButton).toBeInTheDocument()
     })
 
@@ -106,7 +106,7 @@ describe('Card Component', () => {
         </DndContext>
       )
 
-      const priorityButton = screen.getByTitle('High Priority')
+      const priorityButton = screen.getByTitle('High')
       fireEvent.click(priorityButton)
 
       // Menu should open - look for priority options
@@ -124,7 +124,7 @@ describe('Card Component', () => {
         </DndContext>
       )
 
-      expect(screen.queryByTitle('High Priority')).not.toBeInTheDocument()
+      expect(screen.queryByTitle('High')).not.toBeInTheDocument()
     })
   })
 
@@ -154,7 +154,7 @@ describe('Card Component', () => {
       )
 
       // Should show calendar icon button
-      const dateButton = screen.getByTitle('Set dates')
+      const dateButton = screen.getByTitle('Set date range')
       expect(dateButton).toBeInTheDocument()
     })
 
@@ -166,7 +166,7 @@ describe('Card Component', () => {
         </DndContext>
       )
 
-      const dateButton = screen.getByTitle('Set dates')
+      const dateButton = screen.getByTitle('Set date range')
       fireEvent.click(dateButton)
 
       // Menu should open
@@ -315,7 +315,7 @@ describe('Card Component', () => {
       )
 
       // Click on priority selector
-      const priorityButton = screen.getByTitle('High Priority')
+      const priorityButton = screen.getByTitle('High')
       fireEvent.click(priorityButton)
 
       // onClick should not be called due to stopPropagation
