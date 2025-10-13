@@ -1,9 +1,3 @@
-/**
- * KanbanBoard Component
- * Main board component with drag & drop
- * @module components/Board
- */
-
 import { useCallback, useMemo } from 'react'
 import {
   DndContext,
@@ -25,10 +19,6 @@ import { cn, calculateDropPosition } from '../../utils'
 import { useAtom } from 'jotai'
 import { dragStateAtom } from '../../state/atoms'
 
-/**
- * Main KanbanBoard Component
- * Controlled component - parent manages state
- */
 export function KanbanBoard({
   board,
   callbacks,
@@ -43,7 +33,6 @@ export function KanbanBoard({
 }: KanbanBoardProps) {
   const [dragState, setDragState] = useAtom(dragStateAtom)
 
-  // Handler for card updates (priority, dates, users, dependencies)
   const handleCardUpdate = useCallback(
     (cardId: string, updates: Partial<typeof board.cards[0]>) => {
       callbacks.onCardUpdate?.(cardId, updates)
@@ -51,7 +40,6 @@ export function KanbanBoard({
     [callbacks]
   )
 
-  // Handler for column rename
   const handleColumnRename = useCallback(
     (columnId: string, newTitle: string) => {
       callbacks.onColumnUpdate?.(columnId, { title: newTitle })
@@ -59,11 +47,10 @@ export function KanbanBoard({
     [callbacks]
   )
 
-  // Setup sensors for drag & drop
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
-        distance: 8, // 8px movement required to start drag
+        distance: 8,
       },
     }),
     useSensor(KeyboardSensor, {
@@ -71,7 +58,6 @@ export function KanbanBoard({
     })
   )
 
-  // Group cards by column for efficient lookup
   const cardsByColumn = useMemo(() => {
     const map = new Map<string, typeof board.cards>()
 
@@ -87,7 +73,6 @@ export function KanbanBoard({
     return map
   }, [board.cards, board.columns])
 
-  // Handle drag start
   const handleDragStart = useCallback(
     (event: DragStartEvent) => {
       const { active } = event
@@ -105,7 +90,6 @@ export function KanbanBoard({
     [board.cards, setDragState]
   )
 
-  // Handle drag over (moving between columns)
   const handleDragOver = useCallback(
     (event: DragOverEvent) => {
       const { active, over } = event
@@ -114,7 +98,6 @@ export function KanbanBoard({
       const activeCard = board.cards.find((c) => c.id === active.id)
       if (!activeCard) return
 
-      // Determine target column
       let targetColumnId: string | null = null
 
       if (over.data.current?.type === 'column') {
@@ -134,7 +117,6 @@ export function KanbanBoard({
     [board.cards, dragState.targetColumnId, setDragState]
   )
 
-  // Handle drag end (drop)
   const handleDragEnd = useCallback(
     async (event: DragEndEvent) => {
       const { active, over } = event
@@ -151,17 +133,14 @@ export function KanbanBoard({
       const activeCard = board.cards.find((c) => c.id === active.id)
       if (!activeCard) return
 
-      // Determine target column and position
       let targetColumnId: string
       let targetPosition: number
 
       if (over.data.current?.type === 'column') {
-        // Dropped on empty column
         targetColumnId = over.id as string
         const targetColumnCards = cardsByColumn.get(targetColumnId) || []
         targetPosition = calculateDropPosition(targetColumnCards, 0)
       } else {
-        // Dropped on/near another card
         const overCard = board.cards.find((c) => c.id === over.id)
         if (!overCard) return
 
@@ -172,22 +151,18 @@ export function KanbanBoard({
         targetPosition = calculateDropPosition(targetColumnCards, overIndex)
       }
 
-      // Check WIP limit for target column (hard limit only)
       const targetColumn = board.columns.find((col) => col.id === targetColumnId)
       if (targetColumn && targetColumn.wipLimit && targetColumn.wipLimitType === 'hard') {
         const targetColumnCards = cardsByColumn.get(targetColumnId) || []
 
-        // If moving to a different column, check if adding would exceed limit
         if (activeCard.columnId !== targetColumnId) {
           if (targetColumnCards.length >= targetColumn.wipLimit) {
-            // Block the move - show notification via callback
             callbacks.onWipLimitExceeded?.(targetColumn, activeCard)
             return
           }
         }
       }
 
-      // Only trigger callback if position actually changed
       if (
         activeCard.columnId !== targetColumnId ||
         activeCard.position !== targetPosition
@@ -198,7 +173,6 @@ export function KanbanBoard({
     [board.cards, board.columns, cardsByColumn, callbacks, setDragState]
   )
 
-  // Handle card click
   const handleCardClick = useCallback(
     (card: typeof board.cards[0]) => {
       onCardClick?.(card)
@@ -206,7 +180,6 @@ export function KanbanBoard({
     [onCardClick]
   )
 
-  // Loading state
   if (isLoading) {
     return (
       <div className={cn('asakaa-board', className)} style={style}>
@@ -215,7 +188,6 @@ export function KanbanBoard({
     )
   }
 
-  // Error state
   if (error) {
     return (
       <div className={cn('asakaa-board', className)} style={style}>
@@ -268,7 +240,6 @@ export function KanbanBoard({
           })}
       </div>
 
-      {/* Drag overlay */}
       <DragOverlay>
         {dragState.draggedCardId ? (
           <Card
@@ -285,7 +256,6 @@ export function KanbanBoard({
   )
 }
 
-// Loading skeleton component
 function LoadingSkeleton({ columnCount }: { columnCount: number }) {
   return (
     <>
