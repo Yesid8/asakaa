@@ -786,33 +786,37 @@ export default function App() {
             />
           )}
 
-          {/* Add Group Button - Only show in normal mode */}
+          {/* Add Group Button - Inline with column headers */}
           {groupBy === 'none' && (
-            <div style={{
-              display: 'flex',
-              flexDirection: 'column',
-              minWidth: '200px',
-              flexShrink: 0,
-              marginTop: '16px',
-            }}>
+            <div
+              className="asakaa-column"
+              style={{
+                minWidth: 'var(--column-width)',
+                maxWidth: 'var(--column-width)',
+                background: 'transparent',
+                border: 'none',
+                boxShadow: 'none',
+                padding: 'var(--space-4)',
+              }}
+            >
               <button
                 onClick={handleAddColumn}
-                className="flex items-center justify-center gap-2 px-4 text-sm font-medium transition-all rounded-lg"
+                className="flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium transition-all rounded-lg w-full"
                 style={{
                   background: 'transparent',
-                  border: `2px dashed var(--theme-border-secondary, rgba(96, 165, 250, 0.3))`,
+                  border: `2px dashed var(--theme-border-secondary)`,
                   color: 'var(--theme-text-secondary)',
                   cursor: 'pointer',
-                  height: '56px',
+                  height: '40px',
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.background = 'var(--theme-bg-tertiary, rgba(59, 130, 246, 0.05))'
-                  e.currentTarget.style.borderColor = 'var(--theme-accent-primary, rgba(96, 165, 250, 0.5))'
+                  e.currentTarget.style.background = 'var(--theme-bg-tertiary)'
+                  e.currentTarget.style.borderColor = 'var(--theme-accent-primary)'
                   e.currentTarget.style.color = 'var(--theme-accent-primary)'
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.background = 'transparent'
-                  e.currentTarget.style.borderColor = 'var(--theme-border-secondary, rgba(96, 165, 250, 0.3))'
+                  e.currentTarget.style.borderColor = 'var(--theme-border-secondary)'
                   e.currentTarget.style.color = 'var(--theme-text-secondary)'
                 }}
               >
