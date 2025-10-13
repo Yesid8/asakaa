@@ -57,9 +57,9 @@ describe('DateRangePicker Component', () => {
       fireEvent.click(button)
 
       await waitFor(() => {
-        expect(screen.getByText('Date Range')).toBeInTheDocument()
-        expect(screen.getByText('Start Date')).toBeInTheDocument()
-        expect(screen.getByText('End Date')).toBeInTheDocument()
+        expect(screen.getByText('Quick Select')).toBeInTheDocument()
+        expect(screen.getByText('Custom Range')).toBeInTheDocument()
+        expect(screen.getByText('Custom Range')).toBeInTheDocument()
       })
     })
 
@@ -75,14 +75,14 @@ describe('DateRangePicker Component', () => {
       fireEvent.click(button)
 
       await waitFor(() => {
-        expect(screen.getByText('Date Range')).toBeInTheDocument()
+        expect(screen.getByText('Quick Select')).toBeInTheDocument()
       })
 
       const outside = screen.getByTestId('outside')
       fireEvent.mouseDown(outside)
 
       await waitFor(() => {
-        expect(screen.queryByText('Date Range')).not.toBeInTheDocument()
+        expect(screen.queryByText('Quick Select')).not.toBeInTheDocument()
       })
     })
 
@@ -110,7 +110,7 @@ describe('DateRangePicker Component', () => {
       fireEvent.click(button)
 
       await waitFor(() => {
-        expect(screen.getByText('Start Date')).toBeInTheDocument()
+        expect(screen.getByText('Custom Range')).toBeInTheDocument()
       })
 
       const startInput = screen.getAllByRole('textbox')[0]!
@@ -130,7 +130,7 @@ describe('DateRangePicker Component', () => {
       fireEvent.click(button)
 
       await waitFor(() => {
-        expect(screen.getByText('End Date')).toBeInTheDocument()
+        expect(screen.getByText('Custom Range')).toBeInTheDocument()
       })
 
       const endInput = screen.getAllByRole('textbox')[1]!
@@ -150,7 +150,7 @@ describe('DateRangePicker Component', () => {
       fireEvent.click(button)
 
       await waitFor(() => {
-        expect(screen.getByText('Start Date')).toBeInTheDocument()
+        expect(screen.getByText('Custom Range')).toBeInTheDocument()
       })
 
       const [startInput, endInput] = screen.getAllByRole('textbox')
@@ -180,7 +180,7 @@ describe('DateRangePicker Component', () => {
       fireEvent.click(button)
 
       await waitFor(() => {
-        expect(screen.getByText('Clear')).toBeInTheDocument()
+        expect(screen.getByText('Clear Dates')).toBeInTheDocument()
       })
     })
 
@@ -198,7 +198,7 @@ describe('DateRangePicker Component', () => {
       fireEvent.click(button)
 
       await waitFor(() => {
-        const clearButton = screen.getByText('Clear')
+        const clearButton = screen.getByText('Clear Dates')
         fireEvent.click(clearButton)
       })
 
@@ -277,8 +277,8 @@ describe('DateRangePicker Component', () => {
       fireEvent.click(button)
 
       await waitFor(() => {
-        expect(screen.getByText('Start Date')).toBeInTheDocument()
-        expect(screen.getByText('End Date')).toBeInTheDocument()
+        expect(screen.getByText('Custom Range')).toBeInTheDocument()
+        expect(screen.getByText('Custom Range')).toBeInTheDocument()
       })
     })
   })
@@ -338,7 +338,7 @@ describe('DateRangePicker Component', () => {
 
       // Should handle rapid clicks gracefully
       await waitFor(() => {
-        expect(screen.getByText('Date Range')).toBeInTheDocument()
+        expect(screen.getByText('Quick Select')).toBeInTheDocument()
       })
     })
   })
