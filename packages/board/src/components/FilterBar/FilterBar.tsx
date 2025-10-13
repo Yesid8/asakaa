@@ -1,4 +1,4 @@
-import { useCallback, useState, useRef, useEffect } from 'react'
+import { useCallback, useState } from 'react'
 import type { Priority, User } from '../../types'
 import type { FilterState, SortState, SortBy } from '../../hooks/useFilters'
 import type { GroupByOption } from '../../types'
@@ -58,14 +58,6 @@ export function FilterBar({
   onGroupByChange,
 }: FilterBarProps) {
   const [isCollapsed, setIsCollapsed] = useState(false)
-  const searchInputRef = useRef<HTMLInputElement>(null)
-
-  // Apply placeholder color fix on mount
-  useEffect(() => {
-    if (searchInputRef.current) {
-      searchInputRef.current.setAttribute('data-search-input', 'true')
-    }
-  }, [])
 
   const handleSearchChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -101,39 +93,15 @@ export function FilterBar({
     sort.by !== 'none'
 
   return (
-    <>
-      {/* Inject CSS for placeholder color with data attribute selector - ensures visibility in all themes */}
-      <style>{`
-        input[data-search-input]::placeholder {
-          color: var(--theme-text-tertiary) !important;
-          opacity: 1 !important;
-        }
-        input[data-search-input]::-webkit-input-placeholder {
-          color: var(--theme-text-tertiary) !important;
-          opacity: 1 !important;
-        }
-        input[data-search-input]::-moz-placeholder {
-          color: var(--theme-text-tertiary) !important;
-          opacity: 1 !important;
-        }
-        input[data-search-input]:-ms-input-placeholder {
-          color: var(--theme-text-tertiary) !important;
-          opacity: 1 !important;
-        }
-        input[data-search-input]::-ms-input-placeholder {
-          color: var(--theme-text-tertiary) !important;
-          opacity: 1 !important;
-        }
-      `}</style>
+    <div
+      className={`filter-bar ${compact ? 'filter-bar--compact' : ''}`}
+      style={{
+        padding: isCollapsed ? '6px 12px' : undefined,
+        minHeight: isCollapsed ? 'auto' : undefined,
+        border: isCollapsed ? '1px solid var(--theme-border-secondary)' : undefined,
+      }}
+    >
       <div
-        className={`filter-bar ${compact ? 'filter-bar--compact' : ''}`}
-        style={{
-          padding: isCollapsed ? '6px 12px' : undefined,
-          minHeight: isCollapsed ? 'auto' : undefined,
-          border: isCollapsed ? '1px solid var(--theme-border-secondary)' : undefined,
-        }}
-      >
-        <div
         className="filter-bar__header"
         onClick={() => setIsCollapsed(!isCollapsed)}
         style={{
@@ -222,16 +190,11 @@ export function FilterBar({
           <div className="filter-bar__main">
             <div className="filter-bar__field">
               <input
-                ref={searchInputRef}
                 type="text"
                 placeholder="Search tasks..."
                 value={filters.search}
                 onChange={handleSearchChange}
                 className="filter-bar__search"
-                style={{
-                  color: 'var(--theme-text-primary)',
-                  backgroundColor: 'var(--theme-bg-secondary)',
-                }}
               />
             </div>
 
@@ -240,10 +203,6 @@ export function FilterBar({
                 value={filters.dateFilter}
                 onChange={handleDateFilterChange}
                 className="filter-bar__select"
-                style={{
-                  color: 'var(--theme-text-primary)',
-                  backgroundColor: 'var(--theme-bg-secondary)',
-                }}
               >
                 <option value="all">All Dates</option>
                 <option value="overdue">Overdue</option>
@@ -262,10 +221,6 @@ export function FilterBar({
                   })
                 }}
                 className="filter-bar__select"
-                style={{
-                  color: 'var(--theme-text-primary)',
-                  backgroundColor: 'var(--theme-bg-secondary)',
-                }}
               >
                 <option value="all">All Priorities</option>
                 {PRIORITY_OPTIONS.map((priority) => (
@@ -287,10 +242,6 @@ export function FilterBar({
                     })
                   }}
                   className="filter-bar__select"
-                  style={{
-                    color: 'var(--theme-text-primary)',
-                    backgroundColor: 'var(--theme-bg-secondary)',
-                  }}
                 >
                   <option value="all">All Assignees</option>
                   {availableUsers.map((user) => (
@@ -313,10 +264,6 @@ export function FilterBar({
                     })
                   }}
                   className="filter-bar__select"
-                  style={{
-                    color: 'var(--theme-text-primary)',
-                    backgroundColor: 'var(--theme-bg-secondary)',
-                  }}
                 >
                   <option value="all">All Labels</option>
                   {availableLabels.map((label) => (
@@ -334,10 +281,6 @@ export function FilterBar({
                 value={sort.by}
                 onChange={handleSortChange}
                 className="filter-bar__select filter-bar__select--sm"
-                style={{
-                  color: 'var(--theme-text-primary)',
-                  backgroundColor: 'var(--theme-bg-secondary)',
-                }}
               >
                 {SORT_OPTIONS.map((option) => (
                   <option key={option.value} value={option.value}>
@@ -365,8 +308,6 @@ export function FilterBar({
                   style={{
                     fontWeight: 500,
                     borderWidth: '2px',
-                    color: 'var(--theme-text-primary)',
-                    backgroundColor: 'var(--theme-bg-secondary)',
                   }}
                 >
                   {GROUPBY_OPTIONS.map((option) => (
@@ -390,7 +331,6 @@ export function FilterBar({
           </div>
         </div>
       )}
-      </div>
-    </>
+    </div>
   )
 }
