@@ -93,15 +93,26 @@ export function FilterBar({
     sort.by !== 'none'
 
   return (
-    <div
-      className={`filter-bar ${compact ? 'filter-bar--compact' : ''}`}
-      style={{
-        padding: isCollapsed ? '6px 12px' : undefined,
-        minHeight: isCollapsed ? 'auto' : undefined,
-        border: isCollapsed ? '1px solid var(--theme-border-secondary)' : undefined,
-      }}
-    >
+    <>
+      {/* Inject CSS for placeholder color - ensures visibility in all themes */}
+      <style>{`
+        .filter-bar__search::placeholder,
+        .filter-bar__search::-webkit-input-placeholder,
+        .filter-bar__search::-moz-placeholder,
+        .filter-bar__search:-ms-input-placeholder {
+          color: var(--theme-text-tertiary) !important;
+          opacity: 1 !important;
+        }
+      `}</style>
       <div
+        className={`filter-bar ${compact ? 'filter-bar--compact' : ''}`}
+        style={{
+          padding: isCollapsed ? '6px 12px' : undefined,
+          minHeight: isCollapsed ? 'auto' : undefined,
+          border: isCollapsed ? '1px solid var(--theme-border-secondary)' : undefined,
+        }}
+      >
+        <div
         className="filter-bar__header"
         onClick={() => setIsCollapsed(!isCollapsed)}
         style={{
@@ -357,6 +368,7 @@ export function FilterBar({
           </div>
         </div>
       )}
-    </div>
+      </div>
+    </>
   )
 }
