@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.5.0] - 2025-10-12
 
-### Added - Elite Theming, Enhanced Shortcuts & WCAG AA Accessibility
+### Added - Elite Theming, Enhanced Shortcuts, WCAG AA & UX Improvements
 
 #### Theme System 🎨
 - **ThemeProvider**: React Context-based theme provider with localStorage persistence
@@ -110,6 +110,38 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Testing recommendations
   - Screen reader guidelines
 
+#### UX Improvements 🎯
+- **Horizontal Scroll Restored**: Board now scrolls horizontally with all columns
+  - Proper scrollable container wrapper
+  - +Add Group button moved inside scrollable area
+  - Button appears inline with column headers at the end
+
+- **FilterBar Enhanced**:
+  - Collapsible header now more subtle and compact when collapsed
+  - Reduced padding: 6px 12px when collapsed
+  - Smaller chevron icon: 14x14px (was 16x16px)
+  - Lighter font weight: 500 (was 600)
+  - GroupBy selector moved to END of filter line (was at beginning)
+  - Better UX: filters flow naturally, grouping control at the end
+
+- **Theme Variable Implementation**:
+  - FilterBar now uses var(--theme-*) CSS variables throughout
+  - Proper visibility in Light, Dark, and Neutral themes
+  - No more hardcoded rgba() colors
+  - All inputs, selects, and buttons adapt to theme
+  - Perfect contrast in all three themes
+
+- **ConfigMenu Component**:
+  - Dropdown menu with Export, Themes, and Shortcuts options
+  - Gear icon button with theme-aware hover states
+  - Click-outside-to-close functionality
+  - Proper z-index and positioning
+
+- **Export Options**:
+  - JSON, CSV, and PDF export fully functional
+  - PDF export uses jsPDF library
+  - No Markdown option (removed from UI)
+  - ExportImportModal theme-aware
 #### Documentation 📝
 - **WCAG_AA_AUDIT.md** - Complete accessibility audit
   - Contrast ratio tables for all themes
