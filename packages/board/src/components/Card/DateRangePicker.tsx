@@ -93,8 +93,24 @@ export function DateRangePicker({
   const formatDateRange = () => {
     if (!startDate || !endDate) return 'Set date'
 
-    const start = new Date(startDate)
-    const end = new Date(endDate)
+    // Parse dates as local timezone to avoid UTC conversion issues
+    const parseLocalDate = (dateStr: string | Date) => {
+      if (dateStr instanceof Date) return dateStr
+      // Handle invalid date strings
+      if (typeof dateStr !== 'string' || !dateStr.match(/^\d{4}-\d{2}-\d{2}$/)) {
+        return null
+      }
+      const [year, month, day] = dateStr.split('-').map(Number)
+      return new Date(year, month - 1, day)
+    }
+
+    const start = parseLocalDate(startDate)
+    const end = parseLocalDate(endDate)
+
+    // Return 'Set date' if parsing failed
+    if (!start || !end || isNaN(start.getTime()) || isNaN(end.getTime())) {
+      return 'Set date'
+    }
 
     const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 

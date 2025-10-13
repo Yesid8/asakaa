@@ -21,20 +21,8 @@ function createKeyboardEvent(options: KeyboardEventInit): KeyboardEvent {
 }
 
 describe('useKeyboardShortcuts', () => {
-  let eventListener: ((event: KeyboardEvent) => void) | null = null
-
   beforeEach(() => {
     vi.clearAllMocks()
-    // Capture the event listener
-    vi.spyOn(window, 'addEventListener').mockImplementation((event, handler) => {
-      if (event === 'keydown') {
-        eventListener = handler as (event: KeyboardEvent) => void
-      }
-    })
-  })
-
-  afterEach(() => {
-    eventListener = null
   })
 
   describe('Hook initialization', () => {
@@ -80,9 +68,7 @@ describe('useKeyboardShortcuts', () => {
 
       // Simulate ArrowUp key press
       const event = createKeyboardEvent({ key: 'ArrowUp' })
-      if (eventListener) {
-        eventListener(event)
-      }
+      window.dispatchEvent(event)
 
       expect(handleKeyboardAction).toHaveBeenCalledTimes(1)
       expect(handleKeyboardAction.mock.calls[0][0].detail).toBe('navigate_up')
@@ -98,9 +84,7 @@ describe('useKeyboardShortcuts', () => {
 
       // Simulate Ctrl+N key press
       const event = createKeyboardEvent({ key: 'n', ctrlKey: true })
-      if (eventListener) {
-        eventListener(event)
-      }
+      window.dispatchEvent(event)
 
       expect(handleKeyboardAction).toHaveBeenCalledTimes(1)
       expect(handleKeyboardAction.mock.calls[0][0].detail).toBe('new_card')
@@ -116,9 +100,7 @@ describe('useKeyboardShortcuts', () => {
 
       // Simulate Shift+Delete key press
       const event = createKeyboardEvent({ key: 'Delete', shiftKey: true })
-      if (eventListener) {
-        eventListener(event)
-      }
+      window.dispatchEvent(event)
 
       expect(handleKeyboardAction).toHaveBeenCalledTimes(1)
       expect(handleKeyboardAction.mock.calls[0][0].detail).toBe('delete_card')
@@ -134,9 +116,7 @@ describe('useKeyboardShortcuts', () => {
 
       // Simulate key press
       const event = createKeyboardEvent({ key: 'ArrowUp' })
-      if (eventListener) {
-        eventListener(event)
-      }
+      window.dispatchEvent(event)
 
       expect(handleKeyboardAction).not.toHaveBeenCalled()
 
@@ -161,9 +141,7 @@ describe('useKeyboardShortcuts', () => {
       })
       Object.defineProperty(event, 'target', { value: input, enumerable: true })
 
-      if (eventListener) {
-        eventListener(event)
-      }
+      window.dispatchEvent(event)
 
       expect(handleKeyboardAction).not.toHaveBeenCalled()
 
@@ -187,9 +165,7 @@ describe('useKeyboardShortcuts', () => {
       })
       Object.defineProperty(event, 'target', { value: textarea, enumerable: true })
 
-      if (eventListener) {
-        eventListener(event)
-      }
+      window.dispatchEvent(event)
 
       expect(handleKeyboardAction).not.toHaveBeenCalled()
 
@@ -213,9 +189,7 @@ describe('useKeyboardShortcuts', () => {
       })
       Object.defineProperty(event, 'target', { value: input, enumerable: true })
 
-      if (eventListener) {
-        eventListener(event)
-      }
+      window.dispatchEvent(event)
 
       expect(handleKeyboardAction).toHaveBeenCalled()
 
@@ -240,9 +214,7 @@ describe('useKeyboardShortcuts', () => {
       })
       Object.defineProperty(event, 'target', { value: input, enumerable: true })
 
-      if (eventListener) {
-        eventListener(event)
-      }
+      window.dispatchEvent(event)
 
       expect(handleKeyboardAction).toHaveBeenCalled()
 
@@ -269,9 +241,7 @@ describe('useKeyboardShortcuts', () => {
 
       // Trigger the new shortcut
       const event = createKeyboardEvent({ key: 'F1' })
-      if (eventListener) {
-        eventListener(event)
-      }
+      window.dispatchEvent(event)
 
       expect(handleKeyboardAction).toHaveBeenCalledTimes(1)
       expect(handleKeyboardAction.mock.calls[0][0].detail).toBe('help')
@@ -292,9 +262,7 @@ describe('useKeyboardShortcuts', () => {
 
       // Try to trigger unregistered shortcut
       const event = createKeyboardEvent({ key: 'ArrowUp' })
-      if (eventListener) {
-        eventListener(event)
-      }
+      window.dispatchEvent(event)
 
       expect(handleKeyboardAction).not.toHaveBeenCalled()
 
@@ -340,9 +308,7 @@ describe('useKeyboardShortcuts', () => {
       const event = createKeyboardEvent({ key: 'ArrowUp' })
       const preventDefaultSpy = vi.spyOn(event, 'preventDefault')
 
-      if (eventListener) {
-        eventListener(event)
-      }
+      window.dispatchEvent(event)
 
       expect(preventDefaultSpy).toHaveBeenCalled()
     })
@@ -353,9 +319,7 @@ describe('useKeyboardShortcuts', () => {
       const event = createKeyboardEvent({ key: 'ArrowUp' })
       const preventDefaultSpy = vi.spyOn(event, 'preventDefault')
 
-      if (eventListener) {
-        eventListener(event)
-      }
+      window.dispatchEvent(event)
 
       expect(preventDefaultSpy).not.toHaveBeenCalled()
     })
