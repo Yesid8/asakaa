@@ -100,7 +100,16 @@ export function DateRangePicker({
       if (typeof dateStr !== 'string' || !dateStr.match(/^\d{4}-\d{2}-\d{2}$/)) {
         return null
       }
-      const [year, month, day] = dateStr.split('-').map(Number)
+      const parts = dateStr.split('-').map(Number)
+      if (parts.length !== 3 || parts.some(p => isNaN(p))) {
+        return null
+      }
+      const year = parts[0]
+      const month = parts[1]
+      const day = parts[2]
+      if (year === undefined || month === undefined || day === undefined) {
+        return null
+      }
       return new Date(year, month - 1, day)
     }
 
