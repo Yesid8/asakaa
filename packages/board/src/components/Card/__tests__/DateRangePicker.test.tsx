@@ -10,7 +10,7 @@ describe('DateRangePicker Component', () => {
   describe('Rendering', () => {
     it('renders calendar icon when no dates are set', () => {
       render(<DateRangePicker onChange={vi.fn()} />)
-      expect(screen.getByTitle('Set dates')).toBeInTheDocument()
+      expect(screen.getByTitle('Set date range')).toBeInTheDocument()
     })
 
     it('renders formatted dates when both dates are set', () => {
@@ -53,7 +53,7 @@ describe('DateRangePicker Component', () => {
     it('opens menu when button is clicked', async () => {
       render(<DateRangePicker onChange={vi.fn()} />)
 
-      const button = screen.getByTitle('Set dates')
+      const button = screen.getByTitle('Set date range')
       fireEvent.click(button)
 
       await waitFor(() => {
@@ -71,7 +71,7 @@ describe('DateRangePicker Component', () => {
         </div>
       )
 
-      const button = screen.getByTitle('Set dates')
+      const button = screen.getByTitle('Set date range')
       fireEvent.click(button)
 
       await waitFor(() => {
@@ -89,7 +89,7 @@ describe('DateRangePicker Component', () => {
     it('displays input fields in menu', async () => {
       render(<DateRangePicker onChange={vi.fn()} />)
 
-      const button = screen.getByTitle('Set dates')
+      const button = screen.getByTitle('Set date range')
       fireEvent.click(button)
 
       await waitFor(() => {
@@ -106,7 +106,7 @@ describe('DateRangePicker Component', () => {
       const onChange = vi.fn()
       render(<DateRangePicker onChange={onChange} />)
 
-      const button = screen.getByTitle('Set dates')
+      const button = screen.getByTitle('Set date range')
       fireEvent.click(button)
 
       await waitFor(() => {
@@ -126,7 +126,7 @@ describe('DateRangePicker Component', () => {
       const onChange = vi.fn()
       render(<DateRangePicker onChange={onChange} />)
 
-      const button = screen.getByTitle('Set dates')
+      const button = screen.getByTitle('Set date range')
       fireEvent.click(button)
 
       await waitFor(() => {
@@ -146,7 +146,7 @@ describe('DateRangePicker Component', () => {
       const onChange = vi.fn()
       render(<DateRangePicker onChange={onChange} />)
 
-      const button = screen.getByTitle('Set dates')
+      const button = screen.getByTitle('Set date range')
       fireEvent.click(button)
 
       await waitFor(() => {
@@ -260,20 +260,20 @@ describe('DateRangePicker Component', () => {
   describe('Accessibility', () => {
     it('has proper button type', () => {
       render(<DateRangePicker onChange={vi.fn()} />)
-      const button = screen.getByTitle('Set dates')
+      const button = screen.getByTitle('Set date range')
       expect(button.tagName).toBe('BUTTON')
     })
 
     it('has hover state on button', () => {
       render(<DateRangePicker onChange={vi.fn()} />)
-      const button = screen.getByTitle('Set dates')
+      const button = screen.getByTitle('Set date range')
       expect(button).toHaveClass('hover:bg-white/10')
     })
 
     it('date inputs have proper labels', async () => {
       render(<DateRangePicker onChange={vi.fn()} />)
 
-      const button = screen.getByTitle('Set dates')
+      const button = screen.getByTitle('Set date range')
       fireEvent.click(button)
 
       await waitFor(() => {
@@ -294,14 +294,14 @@ describe('DateRangePicker Component', () => {
       )
 
       // Should not crash and might show icon if dates can't be parsed
-      expect(screen.getByTitle('Set dates')).toBeInTheDocument()
+      expect(screen.getByTitle('Set date range')).toBeInTheDocument()
     })
 
     it('handles start date after end date', async () => {
       const onChange = vi.fn()
       render(<DateRangePicker onChange={onChange} />)
 
-      const button = screen.getByTitle('Set dates')
+      const button = screen.getByTitle('Set date range')
       fireEvent.click(button)
 
       await waitFor(() => {
@@ -330,7 +330,7 @@ describe('DateRangePicker Component', () => {
     it('handles rapid menu open/close', async () => {
       render(<DateRangePicker onChange={vi.fn()} />)
 
-      const button = screen.getByTitle('Set dates')
+      const button = screen.getByTitle('Set date range')
 
       fireEvent.click(button)
       fireEvent.click(button)

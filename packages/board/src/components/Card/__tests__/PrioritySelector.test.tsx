@@ -8,29 +8,29 @@ describe('PrioritySelector Component', () => {
   })
 
   describe('Rendering', () => {
-    it('renders URGENT priority button', () => {
+    it('renders Urgent button', () => {
       render(<PrioritySelector priority="URGENT" onChange={vi.fn()} />)
-      expect(screen.getByTitle('Urgent Priority')).toBeInTheDocument()
+      expect(screen.getByTitle('Urgent')).toBeInTheDocument()
     })
 
-    it('renders HIGH priority button', () => {
+    it('renders High button', () => {
       render(<PrioritySelector priority="HIGH" onChange={vi.fn()} />)
-      expect(screen.getByTitle('High Priority')).toBeInTheDocument()
+      expect(screen.getByTitle('High')).toBeInTheDocument()
     })
 
-    it('renders MEDIUM priority button', () => {
+    it('renders Normal button', () => {
       render(<PrioritySelector priority="MEDIUM" onChange={vi.fn()} />)
-      expect(screen.getByTitle('Medium Priority')).toBeInTheDocument()
+      expect(screen.getByTitle('Normal')).toBeInTheDocument()
     })
 
-    it('renders LOW priority button', () => {
+    it('renders Low button', () => {
       render(<PrioritySelector priority="LOW" onChange={vi.fn()} />)
-      expect(screen.getByTitle('Low Priority')).toBeInTheDocument()
+      expect(screen.getByTitle('Low')).toBeInTheDocument()
     })
 
     it('renders NONE priority button', () => {
       render(<PrioritySelector priority="NONE" onChange={vi.fn()} />)
-      expect(screen.getByTitle('No Priority')).toBeInTheDocument()
+      expect(screen.getByTitle('Set priority')).toBeInTheDocument()
     })
 
     it('renders default button when priority is undefined', () => {
@@ -43,15 +43,15 @@ describe('PrioritySelector Component', () => {
     it('opens menu when button is clicked', async () => {
       render(<PrioritySelector priority="HIGH" onChange={vi.fn()} />)
 
-      const button = screen.getByTitle('High Priority')
+      const button = screen.getByTitle('High')
       fireEvent.click(button)
 
       await waitFor(() => {
         expect(screen.getByText('Urgent')).toBeInTheDocument()
         expect(screen.getByText('High')).toBeInTheDocument()
-        expect(screen.getByText('Medium')).toBeInTheDocument()
+        expect(screen.getByText('Normal')).toBeInTheDocument()
         expect(screen.getByText('Low')).toBeInTheDocument()
-        expect(screen.getByText('None')).toBeInTheDocument()
+        expect(screen.getByText('Clear')).toBeInTheDocument()
       })
     })
 
@@ -63,7 +63,7 @@ describe('PrioritySelector Component', () => {
         </div>
       )
 
-      const button = screen.getByTitle('High Priority')
+      const button = screen.getByTitle('High')
       fireEvent.click(button)
 
       await waitFor(() => {
@@ -82,14 +82,14 @@ describe('PrioritySelector Component', () => {
       const onChange = vi.fn()
       render(<PrioritySelector priority="HIGH" onChange={onChange} />)
 
-      const button = screen.getByTitle('High Priority')
+      const button = screen.getByTitle('High')
       fireEvent.click(button)
 
       await waitFor(() => {
-        expect(screen.getByText('Medium')).toBeInTheDocument()
+        expect(screen.getByText('Normal')).toBeInTheDocument()
       })
 
-      const mediumOption = screen.getByText('Medium')
+      const mediumOption = screen.getByText('Normal')
       fireEvent.click(mediumOption)
 
       expect(onChange).toHaveBeenCalledWith('MEDIUM')
@@ -105,7 +105,7 @@ describe('PrioritySelector Component', () => {
       const onChange = vi.fn()
       render(<PrioritySelector priority="HIGH" onChange={onChange} />)
 
-      const button = screen.getByTitle('High Priority')
+      const button = screen.getByTitle('High')
       fireEvent.click(button)
 
       await waitFor(() => {
@@ -123,7 +123,7 @@ describe('PrioritySelector Component', () => {
       const onChange = vi.fn()
       render(<PrioritySelector priority="MEDIUM" onChange={onChange} />)
 
-      const button = screen.getByTitle('Medium Priority')
+      const button = screen.getByTitle('Normal')
       fireEvent.click(button)
 
       await waitFor(() => {
@@ -138,11 +138,11 @@ describe('PrioritySelector Component', () => {
       const onChange = vi.fn()
       render(<PrioritySelector priority="HIGH" onChange={onChange} />)
 
-      const button = screen.getByTitle('High Priority')
+      const button = screen.getByTitle('High')
       fireEvent.click(button)
 
       await waitFor(() => {
-        const mediumOption = screen.getByText('Medium')
+        const mediumOption = screen.getByText('Normal')
         fireEvent.click(mediumOption)
       })
 
@@ -153,7 +153,7 @@ describe('PrioritySelector Component', () => {
       const onChange = vi.fn()
       render(<PrioritySelector priority="HIGH" onChange={onChange} />)
 
-      const button = screen.getByTitle('High Priority')
+      const button = screen.getByTitle('High')
       fireEvent.click(button)
 
       await waitFor(() => {
@@ -168,52 +168,52 @@ describe('PrioritySelector Component', () => {
       const onChange = vi.fn()
       render(<PrioritySelector priority="HIGH" onChange={onChange} />)
 
-      const button = screen.getByTitle('High Priority')
+      const button = screen.getByTitle('High')
       fireEvent.click(button)
 
       await waitFor(() => {
-        const noneOption = screen.getByText('None')
+        const noneOption = screen.getByText('Clear')
         fireEvent.click(noneOption)
       })
 
-      expect(onChange).toHaveBeenCalledWith('NONE')
+      expect(onChange).toHaveBeenCalledWith(undefined)
     })
   })
 
   describe('Styling', () => {
-    it('applies correct color for URGENT priority', () => {
+    it('applies correct color for Urgent', () => {
       render(<PrioritySelector priority="URGENT" onChange={vi.fn()} />)
-      const button = screen.getByTitle('Urgent Priority')
+      const button = screen.getByTitle('Urgent')
       const svg = button.querySelector('svg')
-      expect(svg?.getAttribute('fill')).toBe('#EF4444')
+      expect(svg?.getAttribute('fill')).toBe('#E74C3C')
     })
 
-    it('applies correct color for HIGH priority', () => {
+    it('applies correct color for High', () => {
       render(<PrioritySelector priority="HIGH" onChange={vi.fn()} />)
-      const button = screen.getByTitle('High Priority')
+      const button = screen.getByTitle('High')
       const svg = button.querySelector('svg')
-      expect(svg?.getAttribute('fill')).toBe('#F59E0B')
+      expect(svg?.getAttribute('fill')).toBe('#E67E22')
     })
 
-    it('applies correct color for MEDIUM priority', () => {
+    it('applies correct color for Normal', () => {
       render(<PrioritySelector priority="MEDIUM" onChange={vi.fn()} />)
-      const button = screen.getByTitle('Medium Priority')
+      const button = screen.getByTitle('Normal')
       const svg = button.querySelector('svg')
-      expect(svg?.getAttribute('fill')).toBe('#3B82F6')
+      expect(svg?.getAttribute('fill')).toBe('#F1C40F')
     })
 
-    it('applies correct color for LOW priority', () => {
+    it('applies correct color for Low', () => {
       render(<PrioritySelector priority="LOW" onChange={vi.fn()} />)
-      const button = screen.getByTitle('Low Priority')
+      const button = screen.getByTitle('Low')
       const svg = button.querySelector('svg')
-      expect(svg?.getAttribute('fill')).toBe('#10B981')
+      expect(svg?.getAttribute('fill')).toBe('#2ECC71')
     })
 
     it('applies correct color for NONE priority', () => {
       render(<PrioritySelector priority="NONE" onChange={vi.fn()} />)
-      const button = screen.getByTitle('No Priority')
+      const button = screen.getByTitle('Set priority')
       const svg = button.querySelector('svg')
-      expect(svg?.getAttribute('fill')).toBe('#6B7280')
+      expect(svg?.getAttribute('fill')).toBe('#BDC3C7')
     })
   })
 
@@ -229,13 +229,13 @@ describe('PrioritySelector Component', () => {
   describe('Accessibility', () => {
     it('has hover state', () => {
       render(<PrioritySelector priority="HIGH" onChange={vi.fn()} />)
-      const button = screen.getByTitle('High Priority')
-      expect(button).toHaveClass('hover:bg-white/10')
+      const button = screen.getByTitle('High')
+      expect(button).toHaveClass('hover:bg-white/15')
     })
 
     it('button is keyboard accessible', () => {
       render(<PrioritySelector priority="HIGH" onChange={vi.fn()} />)
-      const button = screen.getByTitle('High Priority')
+      const button = screen.getByTitle('High')
       expect(button.tagName).toBe('BUTTON')
     })
   })
@@ -245,13 +245,13 @@ describe('PrioritySelector Component', () => {
       const onChange = vi.fn()
       render(<PrioritySelector priority="HIGH" onChange={onChange} />)
 
-      const button = screen.getByTitle('High Priority')
+      const button = screen.getByTitle('High')
       fireEvent.click(button)
       fireEvent.click(button)
       fireEvent.click(button)
 
       await waitFor(() => {
-        expect(screen.getByText('Medium')).toBeInTheDocument()
+        expect(screen.getByText('Normal')).toBeInTheDocument()
       })
 
       // Should still work correctly
@@ -262,7 +262,7 @@ describe('PrioritySelector Component', () => {
       const onChange = vi.fn()
       render(<PrioritySelector priority="HIGH" onChange={onChange} />)
 
-      const button = screen.getByTitle('High Priority')
+      const button = screen.getByTitle('High')
       fireEvent.click(button)
 
       await waitFor(() => {
