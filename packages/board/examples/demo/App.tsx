@@ -786,39 +786,53 @@ export default function App() {
             />
           )}
 
-          {/* Add Group Button - Inline at end of columns */}
-          <div style={{
-            display: 'flex',
-            flexDirection: 'column',
-            minWidth: 'fit-content',
-            paddingTop: '4px'
-          }}>
-            <button
-              onClick={handleAddColumn}
-              className="flex items-center gap-2 px-4 py-2 text-sm font-medium transition-all rounded-lg"
-              style={{
-                background: 'transparent',
-                border: '2px dashed rgba(96, 165, 250, 0.3)',
-                color: 'var(--theme-text-secondary)',
-                cursor: 'pointer',
-                minWidth: '160px',
-                height: 'fit-content',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.background = 'rgba(59, 130, 246, 0.05)'
-                e.currentTarget.style.borderColor = 'rgba(96, 165, 250, 0.5)'
-                e.currentTarget.style.color = 'var(--theme-accent-primary)'
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.background = 'transparent'
-                e.currentTarget.style.borderColor = 'rgba(96, 165, 250, 0.3)'
-                e.currentTarget.style.color = 'var(--theme-text-secondary)'
-              }}
-            >
-              <span className="text-xl font-light">+</span>
-              <span>Add Group</span>
-            </button>
-          </div>
+          {/* Add Group Button - Only show in normal mode */}
+          {groupBy === 'none' && (
+            <div style={{
+              display: 'flex',
+              flexDirection: 'column',
+              minWidth: '200px',
+              flexShrink: 0,
+              marginTop: '16px',
+            }}>
+              <button
+                onClick={handleAddColumn}
+                className="flex items-center justify-center gap-2 px-4 text-sm font-medium transition-all rounded-lg"
+                style={{
+                  background: 'transparent',
+                  border: `2px dashed var(--theme-border-secondary, rgba(96, 165, 250, 0.3))`,
+                  color: 'var(--theme-text-secondary)',
+                  cursor: 'pointer',
+                  height: '56px',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = 'var(--theme-bg-tertiary, rgba(59, 130, 246, 0.05))'
+                  e.currentTarget.style.borderColor = 'var(--theme-accent-primary, rgba(96, 165, 250, 0.5))'
+                  e.currentTarget.style.color = 'var(--theme-accent-primary)'
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = 'transparent'
+                  e.currentTarget.style.borderColor = 'var(--theme-border-secondary, rgba(96, 165, 250, 0.3))'
+                  e.currentTarget.style.color = 'var(--theme-text-secondary)'
+                }}
+              >
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <line x1="12" y1="5" x2="12" y2="19" />
+                  <line x1="5" y1="12" x2="19" y2="12" />
+                </svg>
+                <span>Add Group</span>
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
