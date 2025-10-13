@@ -817,22 +817,35 @@ export interface Swimlane {
 
 /**
  * Keyboard shortcut action types
+ * v0.5.0: Added single-key shortcuts for speed
  */
 export type KeyboardAction =
+  // Navigation
   | 'navigate_up'
   | 'navigate_down'
   | 'navigate_left'
   | 'navigate_right'
   | 'open_card'
   | 'close_modal'
-  | 'delete_card'
-  | 'new_card'
-  | 'search'
-  | 'save'
-  | 'undo'
-  | 'redo'
+  // Selection
   | 'select_all'
   | 'deselect_all'
+  // v0.5.0: Quick Actions (Single Keys)
+  | 'new_card'              // n - Quick create card
+  | 'edit_card'             // e - Edit selected card
+  | 'delete_card'           // d - Delete selected card
+  | 'focus_search'          // / - Focus search input
+  | 'show_shortcuts'        // ? - Show shortcuts help
+  // Ctrl/Cmd Shortcuts
+  | 'new_card_modal'        // Ctrl+N - Create with modal
+  | 'search'                // Ctrl+K - Command palette
+  | 'open_filters'          // Ctrl+F - Open filter bar
+  | 'save'                  // Ctrl+S - Save changes
+  | 'undo'                  // Ctrl+Z - Undo
+  | 'redo'                  // Ctrl+Y - Redo
+  | 'quick_add'             // Ctrl+Enter - Quick add card
+  // Shift Shortcuts
+  | 'delete_card_confirm'   // Shift+Delete - Delete with confirmation
 
 /**
  * Keyboard shortcut definition
@@ -882,7 +895,7 @@ export interface CardTemplate {
 /**
  * Export format options
  */
-export type ExportFormat = 'json' | 'csv' | 'markdown'
+export type ExportFormat = 'json' | 'csv' | 'pdf'
 
 /**
  * Export options

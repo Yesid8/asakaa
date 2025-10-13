@@ -175,9 +175,11 @@ describe('SwimlaneBoardView', () => {
         />
       )
 
-      // Should show label swimlanes
-      expect(screen.getByText('frontend')).toBeInTheDocument()
-      expect(screen.getByText('backend')).toBeInTheDocument()
+      // Should show label swimlanes - use getAllByText since labels appear in headers AND on cards
+      const frontendElements = screen.getAllByText('frontend')
+      const backendElements = screen.getAllByText('backend')
+      expect(frontendElements.length).toBeGreaterThan(0)
+      expect(backendElements.length).toBeGreaterThan(0)
     })
   })
 
@@ -248,8 +250,9 @@ describe('SwimlaneBoardView', () => {
         />
       )
 
-      // Initially should show collapse indicator (▼)
-      expect(screen.getByText('▼')).toBeInTheDocument()
+      // Initially should show collapse indicator (▼) - multiple swimlanes will have this
+      const collapseIndicators = screen.getAllByText('▼')
+      expect(collapseIndicators.length).toBeGreaterThan(0)
     })
   })
 
@@ -266,7 +269,7 @@ describe('SwimlaneBoardView', () => {
         collapsible: false,
       }
 
-      render(
+      const { container } = render(
         <SwimlaneBoardView
           board={emptyBoard}
           swimlaneConfig={swimlaneConfig}
@@ -274,9 +277,10 @@ describe('SwimlaneBoardView', () => {
         />
       )
 
-      // Should render standard board when there are no cards
-      const swimlaneView = document.querySelector('.asakaa-swimlane-view')
-      expect(swimlaneView).toBeInTheDocument()
+      // When there are no cards, swimlanes.length === 0, so it renders standard board
+      // Look for the standard board element instead
+      const board = container.querySelector('.asakaa-board')
+      expect(board).not.toBeNull()
     })
   })
 

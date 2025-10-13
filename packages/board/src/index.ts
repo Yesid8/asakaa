@@ -29,6 +29,8 @@ export {
   DEFAULT_TEMPLATES,
   ExportImportModal,
   FilterBar,
+  ConfigMenu,
+  ThemeModal,
 } from './components'
 export type {
   ColumnProps,
@@ -55,6 +57,8 @@ export type {
   CardTemplateSelectorProps,
   ExportImportModalProps,
   FilterBarProps,
+  ConfigMenuProps,
+  ThemeModalProps,
 } from './components'
 
 // AI Components
@@ -160,3 +164,7 @@ export {
 // Plugins
 export { PluginManager, pluginManager } from './plugins'
 export type { Plugin, PluginContext, PluginHooks, IPluginManager } from './plugins'
+
+// Theme System (v0.5.0)
+export { ThemeProvider, useTheme, ThemeSwitcher, themes, darkTheme, lightTheme, neutralTheme, defaultTheme } from './theme'
+export type { ThemeName, Theme, ThemeColors, ThemeContextValue } from './theme'

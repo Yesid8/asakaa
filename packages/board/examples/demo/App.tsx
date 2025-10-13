@@ -23,6 +23,10 @@ import {
   CardTemplateSelector,
   ExportImportModal,
   DEFAULT_TEMPLATES,
+  ThemeProvider,
+  ThemeSwitcher,
+  ConfigMenu,
+  ThemeModal,
   type User,
   type GeneratedPlan,
   type Card,
@@ -335,6 +339,7 @@ export default function App() {
   const [groupBy, setGroupBy] = useState<GroupByOption>('none')
   const [isKeyboardShortcutsOpen, setIsKeyboardShortcutsOpen] = useState(false)
   const [isExportImportOpen, setIsExportImportOpen] = useState(false)
+  const [isThemeModalOpen, setIsThemeModalOpen] = useState(false)
 
   // v0.4.0: Simplified API with useBoard hook
   const board = useBoard({
@@ -571,64 +576,62 @@ export default function App() {
   }, [board.board.cards])
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0a0a0a] via-[#0f0f0f] to-[#141414]">
-      {/* Premium Header */}
-      <header className="sticky top-0 z-10 backdrop-blur-xl bg-[#0a0a0a]/80 border-b border-white/5">
-        <div className="px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <div>
-                <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-400 via-blue-500 to-purple-500 bg-clip-text text-transparent">
-                  ASAKAA Board
-                </h1>
-                <p className="text-sm text-gray-400 mt-0.5">
-                  Premium Kanban • AI-Native • React Library
-                </p>
+    <ThemeProvider defaultTheme="dark">
+      <div className="min-h-screen" style={{ background: 'var(--theme-bg-primary)' }}>
+        {/* Premium Header - v0.5.0: Theme-aware */}
+        <header className="sticky top-0 z-10 backdrop-blur-xl border-b" style={{
+          backgroundColor: 'var(--theme-bg-primary)',
+          borderColor: 'var(--theme-border-primary)'
+        }}>
+          <div className="px-6 py-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <div>
+                  <h1 className="text-2xl font-bold" style={{ color: 'var(--theme-text-primary)' }}>
+                    ASAKAA Board
+                  </h1>
+                  <p className="text-sm mt-0.5" style={{ color: 'var(--theme-text-secondary)' }}>
+                    Premium Kanban • AI-Native • React Library
+                  </p>
+                </div>
+
+                {/* v0.5.0: Theme Switcher */}
+                <ThemeSwitcher compact showLabels={false} />
               </div>
-            </div>
 
-            {/* AI Actions & Stats */}
-            <div className="flex items-center gap-3">
+              {/* AI Actions & Stats */}
+              <div className="flex items-center gap-3">
               {/* New Features v0.3.0 */}
-              <GroupBySelector
-                value={groupBy}
-                onChange={setGroupBy}
-              />
-
               <CardTemplateSelector
                 templates={DEFAULT_TEMPLATES}
                 onSelectTemplate={handleSelectTemplate}
               />
 
-              <button
-                onClick={() => setIsKeyboardShortcutsOpen(true)}
-                className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all hover:bg-white/10 border border-white/10 text-white/80 hover:text-white hover:border-white/20"
-                title="Keyboard Shortcuts (Press ?)"
-              >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <rect x="2" y="4" width="20" height="16" rx="2" />
-                  <path d="M6 8h.01M10 8h.01M14 8h.01M18 8h.01M8 12h.01M12 12h.01M16 12h.01M7 16h10" />
-                </svg>
-                <span>Shortcuts</span>
-              </button>
+              {/* v0.5.0: Config Menu */}
+              <ConfigMenu
+                onOpenExport={() => setIsExportImportOpen(true)}
+                onOpenThemes={() => setIsThemeModalOpen(true)}
+                onOpenShortcuts={() => setIsKeyboardShortcutsOpen(true)}
+              />
 
-              <button
-                onClick={() => setIsExportImportOpen(true)}
-                className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all hover:bg-white/10 border border-white/10 text-white/80 hover:text-white hover:border-white/20"
-                title="Export / Import"
-              >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" />
-                </svg>
-                <span>Export</span>
-              </button>
-
-              <div className="w-px h-10 bg-white/10" />
+              <div className="w-px h-10" style={{ backgroundColor: 'var(--theme-border-primary)' }} />
 
               {/* AI Buttons */}
               <button
                 onClick={() => setIsGeneratePlanModalOpen(true)}
-                className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all hover:bg-blue-600 active:scale-98 bg-blue-500 text-white border border-blue-400/30"
+                className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all border text-white"
+                style={{
+                  backgroundColor: 'var(--theme-accent-primary)',
+                  borderColor: 'var(--theme-accent-primary)',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = 'var(--theme-accent-hover)'
+                  e.currentTarget.style.borderColor = 'var(--theme-accent-hover)'
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = 'var(--theme-accent-primary)'
+                  e.currentTarget.style.borderColor = 'var(--theme-accent-primary)'
+                }}
               >
                 <svg
                   width="16"
@@ -664,7 +667,22 @@ export default function App() {
 
               <button
                 onClick={() => setIsAIUsageDashboardOpen(true)}
-                className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all hover:bg-white/10 border border-white/10 text-white/80 hover:text-white hover:border-white/20"
+                className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all border"
+                style={{
+                  backgroundColor: 'var(--theme-bg-secondary)',
+                  borderColor: 'var(--theme-border-primary)',
+                  color: 'var(--theme-text-secondary)'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = 'var(--theme-bg-tertiary)'
+                  e.currentTarget.style.color = 'var(--theme-text-primary)'
+                  e.currentTarget.style.borderColor = 'var(--theme-border-secondary)'
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = 'var(--theme-bg-secondary)'
+                  e.currentTarget.style.color = 'var(--theme-text-secondary)'
+                  e.currentTarget.style.borderColor = 'var(--theme-border-primary)'
+                }}
               >
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <circle cx="12" cy="12" r="10" />
@@ -677,28 +695,28 @@ export default function App() {
 
               {/* Stats */}
               <div className="text-center">
-                <div className="text-2xl font-bold text-white">
+                <div className="text-2xl font-bold" style={{ color: 'var(--theme-text-primary)' }}>
                   {totalCards}
                 </div>
-                <div className="text-xs text-gray-400 uppercase tracking-wider">
+                <div className="text-xs uppercase tracking-wider" style={{ color: 'var(--theme-text-secondary)' }}>
                   Total Tasks
                 </div>
               </div>
-              <div className="w-px h-10 bg-white/10" />
+              <div className="w-px h-10" style={{ backgroundColor: 'var(--theme-border-primary)' }} />
               <div className="text-center">
-                <div className="text-2xl font-bold text-blue-400">
+                <div className="text-2xl font-bold" style={{ color: 'var(--theme-accent-primary)' }}>
                   {inProgressCards}
                 </div>
-                <div className="text-xs text-gray-400 uppercase tracking-wider">
+                <div className="text-xs uppercase tracking-wider" style={{ color: 'var(--theme-text-secondary)' }}>
                   In Progress
                 </div>
               </div>
-              <div className="w-px h-10 bg-white/10" />
+              <div className="w-px h-10" style={{ backgroundColor: 'var(--theme-border-primary)' }} />
               <div className="text-center">
-                <div className="text-2xl font-bold text-green-400">
+                <div className="text-2xl font-bold" style={{ color: 'var(--theme-success, #10B981)' }}>
                   {completedCards}
                 </div>
-                <div className="text-xs text-gray-400 uppercase tracking-wider">
+                <div className="text-xs uppercase tracking-wider" style={{ color: 'var(--theme-text-secondary)' }}>
                   Completed
                 </div>
               </div>
@@ -707,14 +725,14 @@ export default function App() {
 
           {/* Project Title */}
           <div className="mt-4">
-            <h2 className="text-lg font-semibold text-white/90">
+            <h2 className="text-lg font-semibold" style={{ color: 'var(--theme-text-primary)' }}>
               {board.board.title}
             </h2>
           </div>
         </div>
       </header>
 
-      {/* v0.4.0: Filter Bar */}
+      {/* v0.5.0: Filter Bar with integrated GroupBySelector */}
       <div className="px-6 pt-4">
         <FilterBar
           filters={filters.filters}
@@ -729,11 +747,13 @@ export default function App() {
           availableLabels={availableLabels}
           availableColumns={board.board.columns.map(col => ({ id: col.id, title: col.title }))}
           showQuickFilters={true}
+          groupBy={groupBy}
+          onGroupByChange={setGroupBy}
         />
       </div>
 
-      {/* Board Container */}
-      <div className="asakaa-board">
+      {/* Board Container with horizontal scroll */}
+      <div className="pb-12">
         {groupBy === 'none' ? (
           <KanbanBoard
             {...board.props}
@@ -747,7 +767,57 @@ export default function App() {
               showWipLimits: true,
               enableVirtualization: false,
             }}
-          />
+            style={{ minHeight: 'calc(100vh - 200px)' }}
+          >
+            {/* Add Group Button - Inline with columns */}
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                minWidth: 'var(--column-width)',
+                maxWidth: 'var(--column-width)',
+                flexShrink: 0,
+                padding: 'var(--space-4)',
+              }}
+            >
+              <button
+                onClick={handleAddColumn}
+                className="flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium transition-all rounded-lg w-full"
+                style={{
+                  background: 'transparent',
+                  border: `2px dashed var(--theme-border-secondary)`,
+                  color: 'var(--theme-text-secondary)',
+                  cursor: 'pointer',
+                  height: '40px',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = 'var(--theme-bg-tertiary)'
+                  e.currentTarget.style.borderColor = 'var(--theme-accent-primary)'
+                  e.currentTarget.style.color = 'var(--theme-accent-primary)'
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = 'transparent'
+                  e.currentTarget.style.borderColor = 'var(--theme-border-secondary)'
+                  e.currentTarget.style.color = 'var(--theme-text-secondary)'
+                }}
+              >
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <line x1="12" y1="5" x2="12" y2="19" />
+                  <line x1="5" y1="12" x2="19" y2="12" />
+                </svg>
+                <span>Add Group</span>
+              </button>
+            </div>
+          </KanbanBoard>
         ) : (
           <SwimlaneBoardView
             board={board.board}
@@ -763,39 +833,17 @@ export default function App() {
             }}
           />
         )}
-
-        {/* Add Group Button - Inside scrollable area */}
-        <div style={{ paddingTop: '16px' }}>
-          <button
-            onClick={handleAddColumn}
-            className="flex items-center gap-2 px-2 py-1 text-sm font-medium transition-all rounded-md"
-            style={{
-              background: 'transparent',
-              border: 'none',
-              color: '#60a5fa',
-              cursor: 'pointer',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.background = 'rgba(59, 130, 246, 0.08)'
-              e.currentTarget.style.color = '#93c5fd'
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background = 'transparent'
-              e.currentTarget.style.color = '#60a5fa'
-            }}
-          >
-            <span className="text-base font-bold">+</span>
-            <span>Add Group</span>
-          </button>
-        </div>
       </div>
 
       {/* Footer */}
-      <footer className="fixed bottom-0 left-0 right-0 backdrop-blur-xl bg-[#0a0a0a]/60 border-t border-white/5 px-6 py-3">
-        <div className="flex items-center justify-between text-xs text-gray-500">
+      <footer className="fixed bottom-0 left-0 right-0 backdrop-blur-xl border-t px-6 py-1.5" style={{
+        backgroundColor: 'var(--theme-bg-secondary)',
+        borderColor: 'var(--theme-border-primary)'
+      }}>
+        <div className="flex items-center justify-between text-xs" style={{ color: 'var(--theme-text-tertiary)' }}>
           <div>
             Built with{' '}
-            <span className="text-blue-400 font-semibold">@asakaa/board</span>{' '}
+            <span className="font-semibold" style={{ color: 'var(--theme-accent-primary)' }}>@asakaa/board</span>{' '}
             • Open source React library
           </div>
           <div className="flex items-center gap-4">
@@ -804,7 +852,10 @@ export default function App() {
               href="https://github.com/asakaa"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-gray-400 hover:text-white transition-colors"
+              className="transition-colors"
+              style={{ color: 'var(--theme-text-secondary)' }}
+              onMouseEnter={(e) => e.currentTarget.style.color = 'var(--theme-text-primary)'}
+              onMouseLeave={(e) => e.currentTarget.style.color = 'var(--theme-text-secondary)'}
             >
               GitHub
             </a>
@@ -905,6 +956,13 @@ export default function App() {
         onClose={() => setIsExportImportOpen(false)}
         onImport={handleImport}
       />
-    </div>
+
+      {/* v0.5.0: Theme Modal */}
+      <ThemeModal
+        isOpen={isThemeModalOpen}
+        onClose={() => setIsThemeModalOpen(false)}
+      />
+      </div>
+    </ThemeProvider>
   )
 }

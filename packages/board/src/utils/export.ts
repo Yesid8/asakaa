@@ -1,13 +1,7 @@
-/**
- * Export utility functions
- * @module utils/export
- */
-
+import { jsPDF } from 'jspdf'
+import html2canvas from 'html2canvas'
 import type { Board, ExportOptions, ExportFormat } from '../types'
 
-/**
- * Export board to JSON format
- */
 export function exportToJSON(board: Board, _options?: ExportOptions): string {
   const data = {
     board: {
@@ -24,9 +18,6 @@ export function exportToJSON(board: Board, _options?: ExportOptions): string {
   return JSON.stringify(data, null, 2)
 }
 
-/**
- * Export board to CSV format
- */
 export function exportToCSV(board: Board, _options?: ExportOptions): string {
   const headers = [
     'Card ID',
@@ -68,59 +59,163 @@ export function exportToCSV(board: Board, _options?: ExportOptions): string {
   return csvContent
 }
 
-/**
- * Export board to Markdown format
- */
-export function exportToMarkdown(board: Board, _options?: ExportOptions): string {
-  let md = `# ${board.title || 'Kanban Board'}\n\n`
-  md += `*Exported on ${new Date().toLocaleString()}*\n\n`
-  md += `---\n\n`
+export async function exportToPDF(
+  board: Board,
+  boardElement?: HTMLElement,
+  _options?: ExportOptions
+): Promise<jsPDF> {
+  // Try to find board element automatically if not provided
+  let element = boardElement
+
+  if (!element) {
+    // Look for the board element in the DOM
+    const boardEl = document.querySelector<HTMLElement>('.asakaa-board')
+    if (boardEl) {
+      element = boardEl.parentElement || boardEl
+    }
+  }
+
+  // If board element is available, capture it visually
+  if (element) {
+    try {
+      const canvas = await html2canvas(element, {
+        backgroundColor: '#0a0a0a',
+        scale: 1.5, // Balance between quality and performance
+        logging: false,
+        useCORS: true,
+        allowTaint: true,
+        windowWidth: element.scrollWidth,
+        windowHeight: element.scrollHeight,
+      })
+
+      const imgData = canvas.toDataURL('image/png')
+
+      // Calculate dimensions for landscape PDF
+      const pdfWidth = 297 // A4 landscape width in mm
+      const pdfHeight = 210 // A4 landscape height in mm
+      const imgAspect = canvas.width / canvas.height
+
+      let imgWidth = pdfWidth - 20 // margins
+      let imgHeight = imgWidth / imgAspect
+
+      // If image is too tall, scale to fit height
+      if (imgHeight > pdfHeight - 20) {
+        imgHeight = pdfHeight - 20
+        imgWidth = imgHeight * imgAspect
+      }
+
+      const doc = new jsPDF({
+        orientation: 'landscape',
+        unit: 'mm',
+        format: 'a4',
+      })
+
+      // Add title
+      doc.setFontSize(16)
+      doc.setTextColor(255, 255, 255)
+      doc.setFillColor(10, 10, 10)
+      doc.rect(0, 0, pdfWidth, 15, 'F')
+      doc.text(board.title || 'Kanban Board', 10, 10)
+
+      // Add board image
+      const xOffset = (pdfWidth - imgWidth) / 2
+      doc.addImage(imgData, 'PNG', xOffset, 20, imgWidth, imgHeight)
+
+      return doc
+    } catch (error) {
+      console.error('Error capturing board:', error)
+      // Fall back to text-based export
+    }
+  }
+
+  // Fallback: Text-based PDF export
+  const doc = new jsPDF()
+  let yPosition = 20
+
+  doc.setFontSize(20)
+  doc.text(board.title || 'Kanban Board', 20, yPosition)
+  yPosition += 10
+
+  doc.setFontSize(10)
+  doc.setTextColor(128, 128, 128)
+  doc.text(`Exported on ${new Date().toLocaleString()}`, 20, yPosition)
+  yPosition += 15
+
+  doc.setTextColor(0, 0, 0)
 
   board.columns.forEach((column) => {
     const columnCards = board.cards.filter((card) => card.columnId === column.id)
 
-    md += `## ${column.title}\n\n`
+    if (yPosition > 250) {
+      doc.addPage()
+      yPosition = 20
+    }
+
+    doc.setFontSize(16)
+    doc.setFont('helvetica', 'bold')
+    doc.text(column.title, 20, yPosition)
+    yPosition += 8
 
     if (columnCards.length === 0) {
-      md += `*No cards in this column*\n\n`
+      doc.setFontSize(10)
+      doc.setFont('helvetica', 'italic')
+      doc.setTextColor(128, 128, 128)
+      doc.text('No cards in this column', 20, yPosition)
+      doc.setTextColor(0, 0, 0)
+      yPosition += 10
     } else {
       columnCards.forEach((card) => {
-        md += `### ${card.title}\n\n`
+        if (yPosition > 260) {
+          doc.addPage()
+          yPosition = 20
+        }
+
+        doc.setFontSize(12)
+        doc.setFont('helvetica', 'bold')
+        doc.text(card.title, 25, yPosition)
+        yPosition += 6
 
         if (card.description) {
-          md += `${card.description}\n\n`
+          doc.setFontSize(9)
+          doc.setFont('helvetica', 'normal')
+          const lines = doc.splitTextToSize(card.description, 160)
+          doc.text(lines, 25, yPosition)
+          yPosition += lines.length * 5
         }
 
         const metadata: string[] = []
-        if (card.priority) metadata.push(`**Priority:** ${card.priority}`)
+        if (card.priority) metadata.push(`Priority: ${card.priority}`)
         if (card.labels && card.labels.length > 0) {
-          metadata.push(`**Labels:** ${card.labels.join(', ')}`)
+          metadata.push(`Labels: ${card.labels.join(', ')}`)
         }
         if (card.assignedUserIds && card.assignedUserIds.length > 0) {
-          metadata.push(`**Assigned:** ${card.assignedUserIds.length} user(s)`)
+          metadata.push(`Assigned: ${card.assignedUserIds.length} user(s)`)
         }
         if (card.startDate || card.endDate) {
           const dates = []
           if (card.startDate) dates.push(`Start: ${card.startDate}`)
           if (card.endDate) dates.push(`End: ${card.endDate}`)
-          metadata.push(`**Dates:** ${dates.join(' → ')}`)
+          metadata.push(dates.join(' → '))
         }
 
         if (metadata.length > 0) {
-          md += metadata.join(' • ') + '\n\n'
+          doc.setFontSize(8)
+          doc.setTextColor(100, 100, 100)
+          doc.text(metadata.join(' • '), 25, yPosition)
+          doc.setTextColor(0, 0, 0)
+          yPosition += 5
         }
 
-        md += `---\n\n`
+        yPosition += 5
       })
     }
+
+    yPosition += 5
   })
 
-  return md
+  return doc
 }
 
-/**
- * Escape CSV field
- */
 function escapeCSV(value: string): string {
   if (value.includes(',') || value.includes('"') || value.includes('\n')) {
     return `"${value.replace(/"/g, '""')}"`
@@ -128,39 +223,46 @@ function escapeCSV(value: string): string {
   return value
 }
 
-/**
- * Main export function
- */
-export function exportBoard(
+export async function exportBoard(
   board: Board,
   format: ExportFormat,
+  boardElement?: HTMLElement,
   options?: ExportOptions
-): string {
+): Promise<string | jsPDF> {
   switch (format) {
     case 'json':
       return exportToJSON(board, options)
     case 'csv':
       return exportToCSV(board, options)
-    case 'markdown':
-      return exportToMarkdown(board, options)
+    case 'pdf':
+      return await exportToPDF(board, boardElement, options)
     default:
       throw new Error(`Unsupported export format: ${format}`)
   }
 }
 
-/**
- * Download exported data as file
- */
 export function downloadExport(
-  content: string,
+  content: string | jsPDF,
   format: ExportFormat,
   filename?: string
 ): void {
   const defaultFilename = `board-export-${new Date().getTime()}`
+
+  // Check if content is a jsPDF object by checking for the save method
+  if (format === 'pdf' && typeof content === 'object' && content !== null && 'save' in content) {
+    const finalFilename = filename || `${defaultFilename}.pdf`
+    ;(content as jsPDF).save(finalFilename)
+    return
+  }
+
+  if (typeof content !== 'string') {
+    throw new Error('Invalid content type for non-PDF export')
+  }
+
   const extensions: Record<ExportFormat, string> = {
     json: 'json',
     csv: 'csv',
-    markdown: 'md',
+    pdf: 'pdf',
   }
 
   const finalFilename = filename || `${defaultFilename}.${extensions[format]}`
@@ -168,7 +270,7 @@ export function downloadExport(
   const mimeTypes: Record<ExportFormat, string> = {
     json: 'application/json',
     csv: 'text/csv',
-    markdown: 'text/markdown',
+    pdf: 'application/pdf',
   }
 
   const blob = new Blob([content], { type: mimeTypes[format] })

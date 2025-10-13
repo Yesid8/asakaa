@@ -95,11 +95,15 @@ export function PrioritySelector({
 
   return (
     <div className={`relative ${className || ''}`}>
-      {/* Flag button */}
+      {/* Flag button with visual feedback when priority is set */}
       <button
         ref={buttonRef}
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center justify-center w-8 h-8 rounded-lg transition-all hover:bg-white/15 hover:scale-110 active:scale-95"
+        style={{
+          background: priority ? `${flagColor}10` : 'transparent',
+          boxShadow: priority ? `0 0 0 2px ${flagColor}30 inset` : 'none',
+        }}
         title={currentConfig?.label || 'Set priority'}
       >
         <svg
@@ -116,7 +120,7 @@ export function PrioritySelector({
             strokeLinecap="round"
             strokeLinejoin="round"
             fill={flagColor}
-            fillOpacity="0.4"
+            fillOpacity={priority ? "0.6" : "0.4"}
           />
         </svg>
       </button>

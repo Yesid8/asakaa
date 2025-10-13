@@ -4,7 +4,7 @@
  */
 
 import { describe, it, expect } from 'vitest'
-import { exportBoard, exportToJSON, exportToCSV, exportToMarkdown } from '../export'
+import { exportBoard, exportToJSON, exportToCSV } from '../export'
 import type { Board } from '../../types'
 
 const mockBoard: Board = {
@@ -184,86 +184,6 @@ describe('exportToCSV', () => {
   })
 })
 
-describe('exportToMarkdown', () => {
-  it('exports board to Markdown format', () => {
-    const result = exportToMarkdown(mockBoard)
-
-    expect(result).toBeTruthy()
-    expect(result.includes('# Test Board')).toBe(true)
-  })
-
-  it('includes board title', () => {
-    const result = exportToMarkdown(mockBoard)
-
-    expect(result.startsWith('# Test Board')).toBe(true)
-  })
-
-  it('includes export timestamp', () => {
-    const result = exportToMarkdown(mockBoard)
-
-    expect(result.includes('*Exported on')).toBe(true)
-  })
-
-  it('includes column headers', () => {
-    const result = exportToMarkdown(mockBoard)
-
-    expect(result.includes('## To Do')).toBe(true)
-    expect(result.includes('## Done')).toBe(true)
-  })
-
-  it('includes card titles', () => {
-    const result = exportToMarkdown(mockBoard)
-
-    expect(result.includes('### Task 1')).toBe(true)
-    expect(result.includes('### Task 2')).toBe(true)
-    expect(result.includes('### Task 3')).toBe(true)
-  })
-
-  it('includes card descriptions', () => {
-    const result = exportToMarkdown(mockBoard)
-
-    expect(result.includes('Description 1')).toBe(true)
-    expect(result.includes('Description 2')).toBe(true)
-  })
-
-  it('includes card metadata', () => {
-    const result = exportToMarkdown(mockBoard)
-
-    expect(result.includes('**Priority:** HIGH')).toBe(true)
-    expect(result.includes('**Labels:** bug, frontend')).toBe(true)
-  })
-
-  it('includes date ranges', () => {
-    const result = exportToMarkdown(mockBoard)
-
-    expect(result.includes('Start: 2024-01-01')).toBe(true)
-    expect(result.includes('End: 2024-01-05')).toBe(true)
-  })
-
-  it('handles empty columns', () => {
-    const emptyColumnBoard: Board = {
-      ...mockBoard,
-      columns: [
-        { id: 'col-1', title: 'Empty Column', position: 1000, cardIds: [] },
-      ],
-      cards: [],
-    }
-
-    const result = exportToMarkdown(emptyColumnBoard)
-
-    expect(result.includes('*No cards in this column*')).toBe(true)
-  })
-
-  it('handles board without title', () => {
-    const noTitleBoard = { ...mockBoard }
-    delete noTitleBoard.title
-
-    const result = exportToMarkdown(noTitleBoard)
-
-    expect(result.includes('# Kanban Board')).toBe(true)
-  })
-})
-
 describe('exportBoard', () => {
   it('exports to JSON when format is json', () => {
     const result = exportBoard(mockBoard, 'json')
@@ -278,13 +198,6 @@ describe('exportBoard', () => {
 
     expect(result).toBeTruthy()
     expect(result.includes('Card ID,Title')).toBe(true)
-  })
-
-  it('exports to Markdown when format is markdown', () => {
-    const result = exportBoard(mockBoard, 'markdown')
-
-    expect(result).toBeTruthy()
-    expect(result.includes('# Test Board')).toBe(true)
   })
 
   it('throws error for unsupported format', () => {
@@ -317,9 +230,6 @@ describe('Edge cases', () => {
 
     const csvResult = exportToCSV(emptyBoard)
     expect(csvResult.split('\n').length).toBe(1) // Only header
-
-    const mdResult = exportToMarkdown(emptyBoard)
-    expect(mdResult.includes('*No cards in this column*')).toBe(true)
   })
 
   it('handles board with no columns', () => {
@@ -352,8 +262,5 @@ describe('Edge cases', () => {
 
     const csvResult = exportToCSV(minimalCard)
     expect(csvResult).toBeTruthy()
-
-    const mdResult = exportToMarkdown(minimalCard)
-    expect(mdResult.includes('### Minimal')).toBe(true)
   })
 })

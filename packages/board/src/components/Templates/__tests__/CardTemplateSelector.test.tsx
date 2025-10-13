@@ -326,15 +326,21 @@ describe('CardTemplateSelector', () => {
         />
       )
 
-      const button = screen.getByText('Templates')
-      const svg = button.querySelector('svg')
+      // Find the button by title attribute
+      const button = screen.getByTitle('Create from template')
 
-      expect(svg).not.toHaveClass('rotate-180')
+      // Initially the menu is closed, so the chevron should not have rotate-180 class
+      let svg = container.querySelector('svg')
+      expect(svg).toBeTruthy()
+      expect(svg?.className.baseVal || svg?.getAttribute('class')).not.toContain('rotate-180')
 
       fireEvent.click(button)
 
       await waitFor(() => {
-        expect(svg).toHaveClass('rotate-180')
+        // Re-query the svg after click to get updated element
+        const updatedSvg = container.querySelector('svg')
+        const className = updatedSvg?.className.baseVal || updatedSvg?.getAttribute('class') || ''
+        expect(className).toContain('rotate-180')
       })
     })
   })

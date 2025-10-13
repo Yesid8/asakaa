@@ -93,23 +93,54 @@ export function DateRangePicker({
   const formatDateRange = () => {
     if (!startDate || !endDate) return 'Set date'
 
-    const start = new Date(startDate)
-    const end = new Date(endDate)
+    // Parse dates as local timezone to avoid UTC conversion issues
+    const parseLocalDate = (dateStr: string | Date) => {
+      if (dateStr instanceof Date) return dateStr
+      // Handle invalid date strings
+      if (typeof dateStr !== 'string' || !dateStr.match(/^\d{4}-\d{2}-\d{2}$/)) {
+        return null
+      }
+      const parts = dateStr.split('-').map(Number)
+      if (parts.length !== 3 || parts.some(p => isNaN(p))) {
+        return null
+      }
+      const year = parts[0]
+      const month = parts[1]
+      const day = parts[2]
+      if (year === undefined || month === undefined || day === undefined) {
+        return null
+      }
+      return new Date(year, month - 1, day)
+    }
+
+    const start = parseLocalDate(startDate)
+    const end = parseLocalDate(endDate)
+
+    // Return 'Set date' if parsing failed
+    if (!start || !end || isNaN(start.getTime()) || isNaN(end.getTime())) {
+      return 'Set date'
+    }
 
     const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 
     return `${monthNames[start.getMonth()]} ${start.getDate()} – ${monthNames[end.getMonth()]} ${end.getDate()}`
   }
 
+  const hasDateSet = startDate && endDate
+
   return (
     <div className={`relative ${className || ''}`}>
-      {/* Date button */}
+      {/* Date button with visual feedback when dates are set */}
       <button
         ref={buttonRef}
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-xs transition-all hover:bg-white/15 hover:scale-105 active:scale-95"
-        style={{ color: startDate ? '#60a5fa' : '#d4d4d4' }}
-        title={startDate && endDate ? `${formatDateRange()}` : 'Set date range'}
+        style={{
+          color: hasDateSet ? '#60a5fa' : '#d4d4d4',
+          background: hasDateSet ? 'rgba(96, 165, 250, 0.15)' : 'transparent',
+          boxShadow: hasDateSet ? '0 0 0 2px rgba(96, 165, 250, 0.3) inset' : 'none',
+        }}
+        title={hasDateSet ? `${formatDateRange()}` : 'Set date range'}
       >
         <svg
           width="18"

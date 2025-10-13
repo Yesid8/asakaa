@@ -1,8 +1,8 @@
 {
   "name": "@asakaa/board",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "type": "module",
-  "description": "AI-native Kanban board component for React with advanced filtering, sorting, and state management. Built for performance and developer experience.",
+  "description": "Elite Kanban board for React with theming, advanced accessibility, and 60fps performance. Built for 2025 with superior DX.",
   "author": "Asakaa",
   "license": "BUSL-1.1",
   "keywords": [
@@ -56,7 +56,9 @@
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
     "framer-motion": "^11.11.0",
+    "html2canvas": "^1.4.1",
     "jotai": "^2.10.0",
+    "jspdf": "^3.0.3",
     "recharts": "^3.2.1",
     "tailwind-merge": "^2.5.0",
     "zod": "^3.25.76"
@@ -85,6 +87,8 @@
     "autoprefixer": "^10.4.20",
     "jsdom": "^25.0.0",
     "postcss": "^8.4.47",
+    "postcss-cli": "^11.0.1",
+    "postcss-import": "^15.1.0",
     "react": "^18.3.0",
     "react-dom": "^18.3.0",
     "tailwindcss": "^3.4.0",

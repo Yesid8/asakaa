@@ -1,8 +1,3 @@
-/**
- * useFilters Hook - Advanced filtering and sorting for cards
- * @module hooks/useFilters
- */
-
 import { useState, useMemo, useCallback } from 'react'
 import type { Card, Priority } from '../types'
 
@@ -11,58 +6,36 @@ export type SortBy = 'created' | 'priority' | 'dueDate' | 'title' | 'estimate' |
 export type SortOrder = 'asc' | 'desc'
 
 export interface FilterState {
-  /** Date filter type */
   dateFilter: DateFilter
-  /** Custom date range (when dateFilter === 'custom') */
   dateRange?: { start: Date; end: Date }
-  /** Filter by priorities */
   priorities: Priority[]
-  /** Filter by assigned user IDs */
   assignees: string[]
-  /** Filter by labels */
   labels: string[]
-  /** Filter by column IDs */
   columns: string[]
-  /** Search query */
   search: string
 }
 
 export interface SortState {
-  /** Sort field */
   by: SortBy
-  /** Sort order */
   order: SortOrder
 }
 
 export interface UseFiltersOptions {
-  /** Initial filter state */
   initialFilters?: Partial<FilterState>
-  /** Initial sort state */
   initialSort?: Partial<SortState>
-  /** Current user ID (for "My tasks" quick filter) */
   currentUserId?: string
 }
 
 export interface UseFiltersReturn {
-  /** Current filter state */
   filters: FilterState
-  /** Current sort state */
   sort: SortState
-  /** Update filters */
   setFilters: (filters: Partial<FilterState>) => void
-  /** Update sort */
   setSort: (sort: Partial<SortState>) => void
-  /** Reset all filters */
   resetFilters: () => void
-  /** Quick filter: My tasks */
   filterMyTasks: () => void
-  /** Quick filter: Overdue tasks */
   filterOverdue: () => void
-  /** Quick filter: High priority */
   filterHighPriority: () => void
-  /** Apply filters and sorting to cards */
   applyFilters: (cards: Card[]) => Card[]
-  /** Check if any filters are active */
   hasActiveFilters: boolean
 }
 
@@ -149,7 +122,6 @@ export function useFilters({
     (cards: Card[]): Card[] => {
       let filtered = [...cards]
 
-      // Apply search filter
       if (filters.search) {
         const query = filters.search.toLowerCase()
         filtered = filtered.filter(
@@ -159,7 +131,6 @@ export function useFilters({
         )
       }
 
-      // Apply date filter
       if (filters.dateFilter !== 'all') {
         const now = new Date()
         const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
@@ -198,14 +169,12 @@ export function useFilters({
         })
       }
 
-      // Apply priority filter
       if (filters.priorities.length > 0) {
         filtered = filtered.filter(
           (card) => card.priority && filters.priorities.includes(card.priority)
         )
       }
 
-      // Apply assignee filter
       if (filters.assignees.length > 0) {
         filtered = filtered.filter((card) => {
           const cardAssignees = card.assignedUserIds || (card.assigneeId ? [card.assigneeId] : [])
@@ -213,7 +182,6 @@ export function useFilters({
         })
       }
 
-      // Apply label filter
       if (filters.labels.length > 0) {
         filtered = filtered.filter((card) => {
           return (
@@ -223,14 +191,12 @@ export function useFilters({
         })
       }
 
-      // Apply column filter
       if (filters.columns.length > 0) {
         filtered = filtered.filter((card) =>
           filters.columns.includes(card.columnId)
         )
       }
 
-      // Apply sorting
       if (sort.by !== 'none') {
         filtered.sort((a, b) => {
           let comparison = 0

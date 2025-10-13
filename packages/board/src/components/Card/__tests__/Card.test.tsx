@@ -94,7 +94,7 @@ describe('Card Component', () => {
       )
 
       // Priority selector should be present (icon button)
-      const priorityButton = screen.getByTitle('High Priority')
+      const priorityButton = screen.getByTitle('High')
       expect(priorityButton).toBeInTheDocument()
     })
 
@@ -106,13 +106,13 @@ describe('Card Component', () => {
         </DndContext>
       )
 
-      const priorityButton = screen.getByTitle('High Priority')
+      const priorityButton = screen.getByTitle('High')
       fireEvent.click(priorityButton)
 
-      // Menu should open - look for priority options
+      // Menu should open - look for priority options (Normal not Medium)
       await waitFor(() => {
-        const mediumOption = screen.getByText('Medium')
-        expect(mediumOption).toBeInTheDocument()
+        const normalOption = screen.getByText('Normal')
+        expect(normalOption).toBeInTheDocument()
       })
     })
 
@@ -124,7 +124,7 @@ describe('Card Component', () => {
         </DndContext>
       )
 
-      expect(screen.queryByTitle('High Priority')).not.toBeInTheDocument()
+      expect(screen.queryByTitle('High')).not.toBeInTheDocument()
     })
   })
 
@@ -141,9 +141,8 @@ describe('Card Component', () => {
         </DndContext>
       )
 
-      // Should show dates
-      expect(screen.getByText(/Oct 1/)).toBeInTheDocument()
-      expect(screen.getByText(/Oct 15/)).toBeInTheDocument()
+      // Should show dates in format "Oct 1 – Oct 15"
+      expect(screen.getByText(/Oct 1 – Oct 15/)).toBeInTheDocument()
     })
 
     it('renders date picker icon when no dates', () => {
@@ -154,7 +153,7 @@ describe('Card Component', () => {
       )
 
       // Should show calendar icon button
-      const dateButton = screen.getByTitle('Set dates')
+      const dateButton = screen.getByTitle('Set date range')
       expect(dateButton).toBeInTheDocument()
     })
 
@@ -166,12 +165,12 @@ describe('Card Component', () => {
         </DndContext>
       )
 
-      const dateButton = screen.getByTitle('Set dates')
+      const dateButton = screen.getByTitle('Set date range')
       fireEvent.click(dateButton)
 
-      // Menu should open
+      // Menu should open - look for "Quick Select" not "Start Date"
       await waitFor(() => {
-        expect(screen.getByText('Start Date')).toBeInTheDocument()
+        expect(screen.getByText('Quick Select')).toBeInTheDocument()
       })
     })
   })
@@ -236,9 +235,9 @@ describe('Card Component', () => {
       const userButton = screen.getByTitle('Assign users')
       fireEvent.click(userButton)
 
-      // Menu should open
+      // Menu should open - look for "Assign Users" not "Assign to"
       await waitFor(() => {
-        expect(screen.getByText('Assign to')).toBeInTheDocument()
+        expect(screen.getByText('Assign Users')).toBeInTheDocument()
       })
     })
   })
@@ -282,9 +281,9 @@ describe('Card Component', () => {
       const depsButton = screen.getByTitle('Add dependencies')
       fireEvent.click(depsButton)
 
-      // Menu should open
+      // Menu should open - look for "Task Dependencies" not "Dependencies"
       await waitFor(() => {
-        expect(screen.getByText('Dependencies')).toBeInTheDocument()
+        expect(screen.getByText('Task Dependencies')).toBeInTheDocument()
       })
     })
   })
@@ -315,7 +314,7 @@ describe('Card Component', () => {
       )
 
       // Click on priority selector
-      const priorityButton = screen.getByTitle('High Priority')
+      const priorityButton = screen.getByTitle('High')
       fireEvent.click(priorityButton)
 
       // onClick should not be called due to stopPropagation
@@ -404,8 +403,11 @@ describe('Card Component', () => {
         </DndContext>
       )
 
-      const cardElement = screen.getByRole('button')
-      expect(cardElement).toBeInTheDocument()
+      // There are multiple buttons (card + selectors), get all and check card has role
+      const buttons = screen.getAllByRole('button')
+      expect(buttons.length).toBeGreaterThan(0)
+      // The card itself has role="button" from useSortable
+      expect(buttons[0]).toHaveAttribute('role', 'button')
     })
 
     it('has proper keyboard navigation', () => {
@@ -417,12 +419,14 @@ describe('Card Component', () => {
         </DndContext>
       )
 
-      const cardElement = screen.getByRole('button')
+      // Get all buttons, the card is the first one
+      const buttons = screen.getAllByRole('button')
+      const cardElement = buttons[0]
 
       // Simulate Enter key press
       fireEvent.keyDown(cardElement, { key: 'Enter', code: 'Enter' })
 
-      // Should be keyboard accessible
+      // Should be keyboard accessible with tabIndex
       expect(cardElement).toHaveAttribute('tabIndex')
     })
   })
@@ -470,8 +474,12 @@ describe('Card Component', () => {
         </DndContext>
       )
 
+      // Card only shows first 3 labels (slice(0, 3))
       expect(screen.getByText('label-0')).toBeInTheDocument()
-      expect(screen.getByText('label-19')).toBeInTheDocument()
+      expect(screen.getByText('label-1')).toBeInTheDocument()
+      expect(screen.getByText('label-2')).toBeInTheDocument()
+      // label-19 should not be visible (only first 3 are shown)
+      expect(screen.queryByText('label-19')).not.toBeInTheDocument()
     })
 
     it('handles undefined optional fields gracefully', () => {

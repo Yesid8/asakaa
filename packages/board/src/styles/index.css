@@ -4,6 +4,34 @@
  * Every pixel matters. Every decision is intentional.
  */
 
+
+/* ============================================================================
+   COMPONENT STYLES - Imported FIRST for PostCSS
+   @import must precede all other statements (besides @charset)
+   ============================================================================ */
+
+/* FilterBar - Advanced filtering and sorting UI */
+@import './components/filter-bar.css';
+
+/* Card Detail Modal - Full card editing experience */
+@import './components/card-detail-modal.css';
+
+/* Command Palette - Keyboard-driven navigation */
+@import './components/command-palette.css';
+
+/* Charts - Analytics and data visualization */
+@import './components/charts.css';
+
+/* Bulk Operations - Multi-select toolbar */
+@import './components/bulk-operations.css';
+
+/* Attachments - File upload and management */
+@import './components/attachments.css';
+
+/* ============================================================================
+   TAILWIND DIRECTIVES
+   ============================================================================ */
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -99,23 +127,23 @@
   --z-tooltip: 800;   /* Tooltips (always on top) */
 
   /* ========== COLOR SYSTEM ========== */
-  /* Base colors */
-  --color-bg-primary: #0a0a0a;
-  --color-bg-secondary: #141414;
-  --color-bg-tertiary: #1a1a1a;
+  /* v0.5.0: Theme-aware colors - fallback to dark theme if ThemeProvider not used */
+  --color-bg-primary: var(--theme-bg-primary, #0a0a0a);
+  --color-bg-secondary: var(--theme-bg-secondary, #141414);
+  --color-bg-tertiary: var(--theme-bg-tertiary, #1a1a1a);
 
-  --color-text-primary: #ffffff;
-  --color-text-secondary: #a3a3a3;
-  --color-text-tertiary: #737373;
+  --color-text-primary: var(--theme-text-primary, #ffffff);
+  --color-text-secondary: var(--theme-text-secondary, #a3a3a3);
+  --color-text-tertiary: var(--theme-text-tertiary, #737373);
 
-  /* Accent colors */
-  --color-blue: #3b82f6;
-  --color-blue-dark: #2563eb;
-  --color-red: #ef4444;
+  /* Accent colors - use theme accent or fallback to blue */
+  --color-blue: var(--theme-accent-primary, #3b82f6);
+  --color-blue-dark: var(--theme-accent-hover, #2563eb);
+  --color-red: var(--theme-error, #ef4444);
   --color-red-dark: #dc2626;
-  --color-orange: #f59e0b;
+  --color-orange: var(--theme-warning, #f59e0b);
   --color-yellow: #fbbf24;
-  --color-green: #10b981;
+  --color-green: var(--theme-success, #10b981);
   --color-purple: #8b5cf6;
 
   /* Semantic colors */
@@ -123,6 +151,10 @@
   --color-warning: var(--color-orange);
   --color-success: var(--color-green);
   --color-info: var(--color-blue);
+
+  /* Border colors from theme */
+  --color-border-primary: var(--theme-border-primary, rgba(255, 255, 255, 0.1));
+  --color-border-secondary: var(--theme-border-secondary, rgba(255, 255, 255, 0.05));
 
   /* ========== COMPONENT SIZES ========== */
   --column-width: 340px;
@@ -165,6 +197,26 @@
     gap: var(--space-6);
     padding: var(--space-6);
     background: var(--color-bg-primary);
+  }
+
+  /* Theme-aware horizontal scrollbar */
+  .asakaa-board::-webkit-scrollbar {
+    height: 10px;
+  }
+
+  .asakaa-board::-webkit-scrollbar-track {
+    background: var(--theme-bg-secondary, rgba(20, 20, 20, 0.4));
+    border-radius: var(--radius-sm);
+  }
+
+  .asakaa-board::-webkit-scrollbar-thumb {
+    background: var(--theme-border-primary, rgba(255, 255, 255, 0.2));
+    border-radius: var(--radius-sm);
+    border: 2px solid var(--theme-bg-secondary, rgba(20, 20, 20, 0.4));
+  }
+
+  .asakaa-board::-webkit-scrollbar-thumb:hover {
+    background: var(--theme-border-secondary, rgba(255, 255, 255, 0.3));
   }
 
   /* ==========================================================================
@@ -238,12 +290,13 @@
   }
 
   .asakaa-column-cards::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, var(--opacity-light));
+    background: var(--theme-text-tertiary);
+    opacity: 0.3;
     border-radius: var(--radius-sm);
   }
 
   .asakaa-column-cards::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, var(--opacity-medium));
+    opacity: 0.5;
   }
 
   /* ==========================================================================
@@ -523,12 +576,13 @@
   }
 
   .scrollbar-custom::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, var(--opacity-light));
+    background: var(--theme-text-tertiary);
+    opacity: 0.3;
     border-radius: var(--radius-sm);
   }
 
   .scrollbar-custom::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, var(--opacity-medium));
+    opacity: 0.5;
   }
 
   .scrollbar-hide {
@@ -564,276 +618,5 @@
     background: rgba(20, 20, 20, var(--opacity-opaque));
     border: 1px solid rgba(255, 255, 255, var(--opacity-faint));
     box-shadow: var(--shadow-glass-lg);
-  }
-}
-/**
- * FilterBar Component Styles
- */
-
-.filter-bar {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-3);
-  padding: var(--space-4);
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: var(--radius-lg);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  margin-bottom: var(--space-4);
-}
-
-.filter-bar--compact {
-  padding: var(--space-3);
-  gap: var(--space-2);
-}
-
-/* Quick Filters */
-.filter-bar__quick {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  padding-bottom: var(--space-3);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.filter-bar__quick-btn {
-  padding: var(--space-2) var(--space-3);
-  background: rgba(59, 130, 246, 0.1);
-  border: 1px solid rgba(59, 130, 246, 0.3);
-  border-radius: var(--radius-md);
-  color: #60a5fa;
-  font-size: var(--font-xs);
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.filter-bar__quick-btn:hover {
-  background: rgba(59, 130, 246, 0.2);
-  border-color: rgba(59, 130, 246, 0.5);
-  color: #93c5fd;
-}
-
-/* Main Filters */
-.filter-bar__main {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-3);
-  align-items: center;
-}
-
-.filter-bar__field {
-  display: flex;
-  flex-direction: row;
-  gap: var(--space-2);
-  align-items: center;
-  min-width: 200px;
-}
-
-.filter-bar__label {
-  font-size: var(--font-xs);
-  color: rgba(255, 255, 255, 0.6);
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-/* Search Input */
-.filter-bar__search {
-  padding: var(--space-2) var(--space-3);
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: var(--radius-md);
-  color: white;
-  font-size: var(--font-sm);
-  min-width: 220px;
-  flex: 1;
-  transition: all 0.2s;
-}
-
-.filter-bar__search:focus {
-  outline: none;
-  border-color: rgba(59, 130, 246, 0.5);
-  background: rgba(255, 255, 255, 0.08);
-}
-
-.filter-bar__search::placeholder {
-  color: rgba(255, 255, 255, 0.4);
-}
-
-/* Select Dropdown */
-.filter-bar__select {
-  padding: var(--space-2) var(--space-3);
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: var(--radius-md);
-  color: white;
-  font-size: var(--font-sm);
-  cursor: pointer;
-  transition: all 0.2s;
-  min-width: 160px;
-}
-
-.filter-bar__select:hover {
-  border-color: rgba(255, 255, 255, 0.2);
-  background: rgba(255, 255, 255, 0.08);
-}
-
-.filter-bar__select:focus {
-  outline: none;
-  border-color: rgba(59, 130, 246, 0.5);
-}
-
-.filter-bar__select--sm {
-  min-width: 140px;
-}
-
-.filter-bar__select option {
-  background: #1e293b;
-  color: white;
-}
-
-/* Multi-Select (Chips) */
-.filter-bar__multi-select {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  flex-wrap: wrap;
-}
-
-.filter-bar__multi-label {
-  font-size: var(--font-xs);
-  color: rgba(255, 255, 255, 0.6);
-  font-weight: 500;
-  white-space: nowrap;
-}
-
-.filter-bar__chip {
-  padding: var(--space-1) var(--space-3);
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: var(--radius-full);
-  color: rgba(255, 255, 255, 0.7);
-  font-size: var(--font-xs);
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s;
-  white-space: nowrap;
-}
-
-.filter-bar__chip:hover {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.2);
-  color: white;
-}
-
-.filter-bar__chip--active {
-  background: rgba(59, 130, 246, 0.2);
-  border-color: rgba(59, 130, 246, 0.5);
-  color: #93c5fd;
-}
-
-/* Priority-specific colors */
-.filter-bar__chip--urgent.filter-bar__chip--active {
-  background: rgba(239, 68, 68, 0.2);
-  border-color: rgba(239, 68, 68, 0.5);
-  color: #fca5a5;
-}
-
-.filter-bar__chip--high.filter-bar__chip--active {
-  background: rgba(251, 146, 60, 0.2);
-  border-color: rgba(251, 146, 60, 0.5);
-  color: #fdba74;
-}
-
-.filter-bar__chip--medium.filter-bar__chip--active {
-  background: rgba(250, 204, 21, 0.2);
-  border-color: rgba(250, 204, 21, 0.5);
-  color: #fde047;
-}
-
-.filter-bar__chip--low.filter-bar__chip--active {
-  background: rgba(34, 197, 94, 0.2);
-  border-color: rgba(34, 197, 94, 0.5);
-  color: #86efac;
-}
-
-.filter-bar__chip--more {
-  background: rgba(255, 255, 255, 0.03);
-  border-color: rgba(255, 255, 255, 0.08);
-  color: rgba(255, 255, 255, 0.5);
-  cursor: default;
-  font-size: var(--font-2xs);
-}
-
-/* Sort Controls */
-.filter-bar__sort {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-}
-
-.filter-bar__sort-toggle {
-  padding: var(--space-2);
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: var(--radius-md);
-  color: rgba(255, 255, 255, 0.7);
-  font-size: var(--font-lg);
-  line-height: 1;
-  cursor: pointer;
-  transition: all 0.2s;
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.filter-bar__sort-toggle:hover {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.2);
-  color: white;
-}
-
-/* Reset Button */
-.filter-bar__reset {
-  padding: var(--space-2) var(--space-4);
-  background: rgba(239, 68, 68, 0.1);
-  border: 1px solid rgba(239, 68, 68, 0.3);
-  border-radius: var(--radius-md);
-  color: #fca5a5;
-  font-size: var(--font-sm);
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s;
-  margin-left: auto;
-}
-
-.filter-bar__reset:hover {
-  background: rgba(239, 68, 68, 0.2);
-  border-color: rgba(239, 68, 68, 0.5);
-  color: #fee2e2;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-  .filter-bar__main {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .filter-bar__field {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .filter-bar__search,
-  .filter-bar__select {
-    width: 100%;
-    min-width: unset;
-  }
-
-  .filter-bar__reset {
-    margin-left: 0;
   }
 }
