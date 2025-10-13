@@ -1,4 +1,5 @@
 import { jsPDF } from 'jspdf'
+import html2canvas from 'html2canvas'
 import type { Board, ExportOptions, ExportFormat } from '../types'
 
 export function exportToJSON(board: Board, _options?: ExportOptions): string {
@@ -58,7 +59,76 @@ export function exportToCSV(board: Board, _options?: ExportOptions): string {
   return csvContent
 }
 
-export function exportToPDF(board: Board, _options?: ExportOptions): jsPDF {
+export async function exportToPDF(
+  board: Board,
+  boardElement?: HTMLElement,
+  _options?: ExportOptions
+): Promise<jsPDF> {
+  // Try to find board element automatically if not provided
+  let element = boardElement
+
+  if (!element) {
+    // Look for the board element in the DOM
+    const boardEl = document.querySelector<HTMLElement>('.asakaa-board')
+    if (boardEl) {
+      element = boardEl.parentElement || boardEl
+    }
+  }
+
+  // If board element is available, capture it visually
+  if (element) {
+    try {
+      const canvas = await html2canvas(element, {
+        backgroundColor: '#0a0a0a',
+        scale: 1.5, // Balance between quality and performance
+        logging: false,
+        useCORS: true,
+        allowTaint: true,
+        windowWidth: element.scrollWidth,
+        windowHeight: element.scrollHeight,
+      })
+
+      const imgData = canvas.toDataURL('image/png')
+
+      // Calculate dimensions for landscape PDF
+      const pdfWidth = 297 // A4 landscape width in mm
+      const pdfHeight = 210 // A4 landscape height in mm
+      const imgAspect = canvas.width / canvas.height
+
+      let imgWidth = pdfWidth - 20 // margins
+      let imgHeight = imgWidth / imgAspect
+
+      // If image is too tall, scale to fit height
+      if (imgHeight > pdfHeight - 20) {
+        imgHeight = pdfHeight - 20
+        imgWidth = imgHeight * imgAspect
+      }
+
+      const doc = new jsPDF({
+        orientation: 'landscape',
+        unit: 'mm',
+        format: 'a4',
+      })
+
+      // Add title
+      doc.setFontSize(16)
+      doc.setTextColor(255, 255, 255)
+      doc.setFillColor(10, 10, 10)
+      doc.rect(0, 0, pdfWidth, 15, 'F')
+      doc.text(board.title || 'Kanban Board', 10, 10)
+
+      // Add board image
+      const xOffset = (pdfWidth - imgWidth) / 2
+      doc.addImage(imgData, 'PNG', xOffset, 20, imgWidth, imgHeight)
+
+      return doc
+    } catch (error) {
+      console.error('Error capturing board:', error)
+      // Fall back to text-based export
+    }
+  }
+
+  // Fallback: Text-based PDF export
   const doc = new jsPDF()
   let yPosition = 20
 
@@ -153,18 +223,19 @@ function escapeCSV(value: string): string {
   return value
 }
 
-export function exportBoard(
+export async function exportBoard(
   board: Board,
   format: ExportFormat,
+  boardElement?: HTMLElement,
   options?: ExportOptions
-): string | jsPDF {
+): Promise<string | jsPDF> {
   switch (format) {
     case 'json':
       return exportToJSON(board, options)
     case 'csv':
       return exportToCSV(board, options)
     case 'pdf':
-      return exportToPDF(board, options)
+      return await exportToPDF(board, boardElement, options)
     default:
       throw new Error(`Unsupported export format: ${format}`)
   }
@@ -177,9 +248,10 @@ export function downloadExport(
 ): void {
   const defaultFilename = `board-export-${new Date().getTime()}`
 
-  if (format === 'pdf' && content instanceof jsPDF) {
+  // Check if content is a jsPDF object by checking for the save method
+  if (format === 'pdf' && typeof content === 'object' && content !== null && 'save' in content) {
     const finalFilename = filename || `${defaultFilename}.pdf`
-    content.save(finalFilename)
+    ;(content as jsPDF).save(finalFilename)
     return
   }
 

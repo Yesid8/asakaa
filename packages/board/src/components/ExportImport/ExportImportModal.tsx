@@ -19,6 +19,8 @@ export interface ExportImportModalProps {
   onClose: () => void
   /** Import handler */
   onImport?: (result: ImportResult, content: string) => void
+  /** Board element ref for PDF export */
+  boardElementRef?: React.RefObject<HTMLElement>
   /** Custom className */
   className?: string
 }
@@ -31,6 +33,7 @@ export function ExportImportModal({
   isOpen,
   onClose,
   onImport,
+  boardElementRef,
   className,
 }: ExportImportModalProps) {
   const [activeTab, setActiveTab] = useState<'export' | 'import'>('export')
@@ -40,8 +43,9 @@ export function ExportImportModal({
 
   if (!isOpen) return null
 
-  const handleExport = () => {
-    const content = exportBoard(board, selectedFormat)
+  const handleExport = async () => {
+    const boardElement = boardElementRef?.current || undefined
+    const content = await exportBoard(board, selectedFormat, boardElement)
     downloadExport(content, selectedFormat)
   }
 
