@@ -680,8 +680,13 @@
   background: rgba(255, 255, 255, 0.08);
 }
 
-.filter-bar__search::placeholder {
-  color: rgba(255, 255, 255, 0.4);
+.filter-bar__search::placeholder,
+.filter-bar__search::-webkit-input-placeholder,
+.filter-bar__search::-moz-placeholder,
+.filter-bar__search:-ms-input-placeholder {
+  color: var(--theme-text-tertiary) !important;
+  opacity: 1 !important;
+  -webkit-text-fill-color: var(--theme-text-tertiary) !important;
 }
 
 /* Select Dropdown */
