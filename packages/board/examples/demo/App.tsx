@@ -619,11 +619,10 @@ export default function App() {
               {/* AI Buttons */}
               <button
                 onClick={() => setIsGeneratePlanModalOpen(true)}
-                className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all border"
+                className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all border text-white"
                 style={{
                   backgroundColor: 'var(--theme-accent-primary)',
                   borderColor: 'var(--theme-accent-primary)',
-                  color: '#FFFFFF'
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.backgroundColor = 'var(--theme-accent-hover)'
