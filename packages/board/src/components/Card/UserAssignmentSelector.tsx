@@ -109,24 +109,18 @@ export function UserAssignmentSelector({
         title={assignedUsers.length > 0 ? `${assignedUsers.length} assigned` : 'Assign users'}
       >
         {assignedUsers.length > 0 ? (
-          <div className="flex items-center">
-            {visibleUsers.map((user, index) => (
+          <div className="asakaa-avatar-group">
+            {visibleUsers.map((user) => (
               <div
                 key={user.id}
-                className="w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-bold border-2 border-[#1a1a1a] shadow-sm"
-                style={{
-                  backgroundColor: user.color,
-                  color: '#fff',
-                  marginLeft: index > 0 ? '-10px' : '0',
-                  zIndex: visibleUsers.length - index,
-                }}
+                className="asakaa-avatar"
                 title={user.name}
               >
                 {user.avatar ? (
                   <img
                     src={user.avatar}
                     alt={user.name}
-                    className="w-full h-full rounded-full object-cover"
+                    className="asakaa-avatar-img"
                   />
                 ) : (
                   user.initials
@@ -134,15 +128,7 @@ export function UserAssignmentSelector({
               </div>
             ))}
             {overflowCount > 0 && (
-              <div
-                className="w-7 h-7 rounded-full flex items-center justify-center text-[9px] font-bold border-2 border-[#1a1a1a] shadow-sm"
-                style={{
-                  backgroundColor: '#666',
-                  color: '#fff',
-                  marginLeft: '-10px',
-                  zIndex: 0,
-                }}
-              >
+              <div className="asakaa-avatar">
                 +{overflowCount}
               </div>
             )}

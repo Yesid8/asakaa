@@ -123,20 +123,10 @@ export const Column = memo<ColumnProps>(
     const wipStatus = getWipLimitStatus()
     const isOverWipLimit = wipStatus.state === 'exceeded'
 
-    // WIP limit badge styling based on status
+    // WIP limit badge styling - simplified without color backgrounds
     const getWipBadgeClasses = () => {
-      if (!column.wipLimit) return 'asakaa-column-count'
-
-      switch (wipStatus.state) {
-        case 'exceeded':
-          return 'asakaa-column-count bg-red-500/20 text-red-400 border border-red-500/30 font-semibold'
-        case 'warning':
-          return 'asakaa-column-count bg-yellow-500/20 text-yellow-400 border border-yellow-500/30'
-        case 'approaching':
-          return 'asakaa-column-count bg-orange-500/20 text-orange-400 border border-orange-500/30'
-        default:
-          return 'asakaa-column-count bg-green-500/20 text-green-400 border border-green-500/30'
-      }
+      // All WIP limits use the same base class for consistent, subtle display
+      return 'asakaa-column-count'
     }
 
     return (

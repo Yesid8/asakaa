@@ -28,6 +28,9 @@
 /* Attachments - File upload and management */
 @import './components/attachments.css';
 
+/* v0.6.0 Design Refinements - Linear-inspired clarity */
+@import './design-refinements.css';
+
 /* ============================================================================
    TAILWIND DIRECTIVES
    ============================================================================ */
@@ -261,11 +264,10 @@
   .asakaa-column-count {
     font-size: var(--font-2xs);
     font-weight: var(--font-semibold);
-    padding: var(--space-1) var(--space-3);
-    color: var(--color-text-secondary);
-    background: rgba(59, 130, 246, var(--opacity-faint));
-    border: 1px solid rgba(59, 130, 246, var(--opacity-light));
-    border-radius: var(--radius-full);
+    padding: 0;
+    color: var(--color-text-tertiary);
+    background: none;
+    border: none;
   }
 
   .asakaa-column-cards {
@@ -402,24 +404,22 @@
   }
 
   /* ==========================================================================
-     LABELS
+     LABELS - v0.6.0 Linear-inspired: Pure text, no backgrounds
      ========================================================================== */
 
   .asakaa-label {
     font-size: var(--font-xs);
     font-weight: var(--font-medium);
-    padding: var(--space-1) var(--space-3);
-    background: rgba(255, 255, 255, var(--opacity-subtle));
-    border: 1px solid rgba(255, 255, 255, var(--opacity-faint));
-    border-radius: var(--radius-full);
-    color: var(--color-text-secondary);
-    transition: all var(--duration-fast) var(--ease-smooth);
+    padding: 0;
+    margin-right: var(--space-2);
+    background: none;
+    border: none;
+    color: var(--color-text-tertiary);
+    transition: color var(--duration-fast) var(--ease-smooth);
   }
 
   .asakaa-label:hover {
-    background: rgba(255, 255, 255, var(--opacity-faint));
-    border-color: rgba(255, 255, 255, var(--opacity-light));
-    transform: translateY(-1px);
+    color: var(--color-text-secondary);
   }
 
   /* ==========================================================================

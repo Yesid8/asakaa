@@ -128,23 +128,31 @@ export function DateRangePicker({
 
   const hasDateSet = startDate && endDate
 
+  // Check if date is overdue
+  const isOverdue = () => {
+    if (!endDate) return false
+    const end = typeof endDate === 'string' ? new Date(endDate) : endDate
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+    return end < today
+  }
+
+  const overdue = isOverdue()
+
   return (
     <div className={`relative ${className || ''}`}>
-      {/* Date button with visual feedback when dates are set */}
+      {/* Date button - plain text with color only if overdue */}
       <button
         ref={buttonRef}
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-xs transition-all hover:bg-white/15 hover:scale-105 active:scale-95"
-        style={{
-          color: hasDateSet ? '#60a5fa' : '#d4d4d4',
-          background: hasDateSet ? 'rgba(96, 165, 250, 0.15)' : 'transparent',
-          boxShadow: hasDateSet ? '0 0 0 2px rgba(96, 165, 250, 0.3) inset' : 'none',
-        }}
+        className={`flex items-center gap-1.5 px-2 py-1 rounded-md text-xs transition-all hover:bg-white/5 ${
+          overdue ? 'asakaa-date-overdue' : 'asakaa-date'
+        }`}
         title={hasDateSet ? `${formatDateRange()}` : 'Set date range'}
       >
         <svg
-          width="18"
-          height="18"
+          width="14"
+          height="14"
           viewBox="0 0 16 16"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
@@ -163,7 +171,7 @@ export function DateRangePicker({
           <path d="M11 2V4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
         </svg>
         {startDate && endDate && (
-          <span className="font-semibold whitespace-nowrap text-sm">{formatDateRange()}</span>
+          <span className="whitespace-nowrap">{formatDateRange()}</span>
         )}
       </button>
 

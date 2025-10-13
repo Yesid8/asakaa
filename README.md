@@ -5,16 +5,45 @@ Project management components for React applications.
 [![License](https://img.shields.io/badge/license-BSL%201.1-blue.svg)](./LICENSE)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.6-blue)](https://www.typescriptlang.org/)
 [![React](https://img.shields.io/badge/React-18+-61dafb)](https://reactjs.org/)
+[![Version](https://img.shields.io/badge/version-0.6.0-green)](https://github.com/asakaa/asakaa)
 
 ## Overview
 
 ASAKAA is a monorepo containing production-ready React components for project management interfaces. The suite currently includes a Kanban board component with planned expansion to todo lists, Gantt charts, and calendar views.
 
-## Interface
+## Three Beautiful Themes
 
-![ASAKAA Kanban Board Interface](./.github/screenshots/board-interface.png)
+ASAKAA v0.6.0 introduces a Linear-inspired design system with three carefully crafted themes:
 
-*Modern Kanban board with drag-and-drop, virtual scrolling, and Design System v2.0*
+### Dark Theme (Linear Style)
+> Speed, efficiency, focus - optimized for developer productivity
+
+![ASAKAA Dark Theme](./.github/screenshots/theme-dark.png)
+
+### Light Theme (Standard)
+> Clarity, legibility, professionalism - WCAG AAA compliant
+
+![ASAKAA Light Theme](./.github/screenshots/theme-light.png)
+
+### Neutral Theme (Zen Mode)
+> Minimalism, calm technology, maximum concentration - pure monochrome
+
+![ASAKAA Neutral Theme](./.github/screenshots/theme-neutral.png)
+
+## ✨ What's New in v0.6.0
+
+**Linear-Inspired Design Refinements:**
+- Three polished themes: Dark (Linear), Light (Standard), Neutral (Zen)
+- Pure text labels without background noise
+- Simplified column indicators
+- 100% grayscale enforcement in Neutral theme
+- SVG icons in theme switcher for better UX
+- Enhanced visual hierarchy: content is king, metadata is secondary
+
+**Theme Philosophy:**
+- **Dark**: Linear-inspired for speed and focus
+- **Light**: High contrast (7:1) for accessibility
+- **Neutral**: Absolute monochrome for distraction-free work
 
 ## Installation
 
@@ -32,35 +61,61 @@ pnpm add @asakaa/board
 ## Usage
 
 ```tsx
-import { Board } from '@asakaa/board'
+import { KanbanBoard, ThemeProvider } from '@asakaa/board'
 import '@asakaa/board/styles.css'
 
 function App() {
-  const initialData = {
-    columns: [
-      { id: 'todo', title: 'To Do', cards: [] },
-      { id: 'in-progress', title: 'In Progress', cards: [] },
-      { id: 'done', title: 'Done', cards: [] }
-    ]
-  }
+  return (
+    <ThemeProvider defaultTheme="dark">
+      <KanbanBoard
+        columns={[
+          { id: 'todo', title: 'To Do', cards: [] },
+          { id: 'in-progress', title: 'In Progress', cards: [] },
+          { id: 'done', title: 'Done', cards: [] }
+        ]}
+      />
+    </ThemeProvider>
+  )
+}
+```
 
-  return <Board initialData={initialData} />
+### Theme Switching
+
+```tsx
+import { ThemeSwitcher, useTheme } from '@asakaa/board'
+
+function MyApp() {
+  const { theme, setTheme } = useTheme()
+
+  return (
+    <div>
+      {/* Quick switcher component */}
+      <ThemeSwitcher />
+
+      {/* Or programmatic control */}
+      <button onClick={() => setTheme('neutral')}>
+        Zen Mode
+      </button>
+    </div>
+  )
 }
 ```
 
 ## Technical Specifications
 
-### @asakaa/board (v0.3.1)
+### @asakaa/board (v0.6.0)
 
 **Core Features:**
 - Drag-and-drop functionality via @dnd-kit
 - Virtual scrolling for lists with 1000+ items (@tanstack/react-virtual)
 - TypeScript-first architecture with complete type definitions
 - Plugin system with 15+ lifecycle hooks
-- Command palette with keyboard shortcuts
+- Command palette with keyboard shortcuts (Cmd/Ctrl+K)
 - Undo/Redo with command pattern implementation
 - Bulk operations API
 - Real-time performance monitoring
+- **NEW**: Three professionally designed themes with instant switching
+- **NEW**: Linear-inspired design refinements
 
 **Architecture:**
 - State management: Jotai atoms
@@ -70,9 +125,10 @@ function App() {
 - Testing: Vitest with 75% coverage
 
 **Bundle Size:**
-- ESM: 40.43 KB minified
-- CJS: 42.67 KB minified
-- CSS: 30 KB minified
+- ESM: 150.99 KB
+- CJS: 163.44 KB
+- CSS: 41.05 KB
+- Tree-shakeable
 
 **Performance:**
 - Virtual scrolling handles 10,000+ cards
@@ -97,6 +153,7 @@ asakaa/
 │       │   ├── stores/     # Jotai state stores
 │       │   ├── types/      # TypeScript definitions
 │       │   ├── utils/      # Utility functions
+│       │   ├── theme/      # Theme system (v0.6.0)
 │       │   └── styles/     # CSS with Design System v2.0
 │       ├── examples/       # Demo applications
 │       └── dist/           # Build output
@@ -140,12 +197,29 @@ pnpm run docs
 ### Board Component
 
 ```tsx
-interface BoardProps {
-  initialData: BoardData
+interface KanbanBoardProps {
+  columns: Column[]
+  onUpdate?: (columns: Column[]) => void
   config?: BoardConfig
   plugins?: Plugin[]
-  onUpdate?: (data: BoardData) => void
 }
+```
+
+### Theme System (v0.6.0)
+
+```tsx
+import { ThemeProvider, useTheme, ThemeSwitcher, ThemeModal } from '@asakaa/board'
+
+// Theme Provider
+<ThemeProvider defaultTheme="dark">
+  <App />
+</ThemeProvider>
+
+// useTheme hook
+const { theme, setTheme, themes } = useTheme()
+
+// Available themes
+type ThemeName = 'dark' | 'light' | 'neutral'
 ```
 
 ### Plugin System
@@ -208,6 +282,13 @@ The board component uses a CSS variables-based design system:
 --opacity-strong: 0.60
 --opacity-opaque: 0.80
 --opacity-full: 1.0
+
+/* Theme Colors (v0.6.0) */
+--color-bg-primary: var(--theme-bg-primary)
+--color-bg-secondary: var(--theme-bg-secondary)
+--color-text-primary: var(--theme-text-primary)
+--color-text-secondary: var(--theme-text-secondary)
+--color-text-tertiary: var(--theme-text-tertiary)
 ```
 
 ## Testing
@@ -239,43 +320,32 @@ pnpm run build
 Output formats:
 - ESM: `dist/index.js`
 - CJS: `dist/index.cjs`
-- Types: `dist/index.d.ts`
+- Types: `dist/index.d.ts` + `dist/index.d.cts`
 - CSS: `dist/styles.css`
 
-## Adding Screenshots
+## Screenshots Guide
 
-To add screenshots to this README:
+To update screenshots for this README:
 
-1. Create the screenshots directory:
-```bash
-mkdir -p .github/screenshots
-```
+1. **Take screenshots** of each theme at `http://localhost:3000`:
+   - Dark theme → `theme-dark.png`
+   - Light theme → `theme-light.png`
+   - Neutral theme → `theme-neutral.png`
 
-2. Take a screenshot of the interface and save it as PNG or JPG
+2. **Save to** `.github/screenshots/`
 
-3. Add the image file to `.github/screenshots/`:
-```bash
-# Example: board-interface.png
-.github/screenshots/board-interface.png
-```
+3. **Specifications**:
+   - Format: PNG
+   - Width: 1600px (ideal)
+   - Quality: High resolution, < 500KB each
+   - Content: Show 3+ columns with cards containing labels
 
-4. Reference in README.md:
-```markdown
-![Board Interface](./.github/screenshots/board-interface.png)
-```
-
-5. Commit and push:
+4. **Commit and push**:
 ```bash
 git add .github/screenshots/
-git commit -m "docs: Add interface screenshots"
+git commit -m "docs: Update theme screenshots for v0.6.0"
 git push
 ```
-
-**Recommended screenshot specifications:**
-- Format: PNG for UI screenshots
-- Width: 1280-1920px (ideal: 1600px)
-- Height: auto (maintain aspect ratio)
-- File size: < 500KB (use compression if needed)
 
 ## Changelog
 
@@ -285,11 +355,17 @@ See [CHANGELOG.md](./CHANGELOG.md) for version history and release notes.
 
 Business Source License 1.1 - See [LICENSE](./LICENSE) for details.
 
+**TLDR**: Free for non-production use (development, testing, evaluation). Converts to Apache 2.0 on 2027-10-12.
+
 ## Packages
 
 | Package | Version | Status |
 |---------|---------|--------|
-| [@asakaa/board](./packages/board) | 0.3.1 | Production |
+| [@asakaa/board](./packages/board) | 0.6.0 | Production |
 | @asakaa/todo | - | Planned |
 | @asakaa/gantt | - | Planned |
 | @asakaa/calendar | - | Planned |
+
+---
+
+Built with TypeScript, React, and love for clean interfaces.
