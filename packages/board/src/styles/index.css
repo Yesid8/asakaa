@@ -28,7 +28,7 @@
 /* Attachments - File upload and management */
 @import './components/attachments.css';
 
-/* v0.6.0 Design Refinements - Linear-inspired clarity */
+/* v0.6.0 Design Refinements - Enhanced clarity */
 @import './design-refinements.css';
 
 /* ============================================================================
@@ -404,7 +404,7 @@
   }
 
   /* ==========================================================================
-     LABELS - v0.6.0 Linear-inspired: Pure text, no backgrounds
+     LABELS - v0.6.0 Enhanced: Pure text, no backgrounds
      ========================================================================== */
 
   .asakaa-label {

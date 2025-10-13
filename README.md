@@ -13,9 +13,9 @@ ASAKAA is a monorepo containing production-ready React components for project ma
 
 ## Three Beautiful Themes
 
-ASAKAA v0.6.0 introduces a Linear-inspired design system with three carefully crafted themes:
+ASAKAA v0.6.0 introduces a Enhanced design system with three carefully crafted themes:
 
-### Dark Theme (Linear Style)
+### Dark Theme (Enhanced)
 > Speed, efficiency, focus - optimized for developer productivity
 
 ![ASAKAA Dark Theme](./.github/screenshots/theme-dark.png)
@@ -32,8 +32,8 @@ ASAKAA v0.6.0 introduces a Linear-inspired design system with three carefully cr
 
 ## ✨ What's New in v0.6.0
 
-**Linear-Inspired Design Refinements:**
-- Three polished themes: Dark (Linear), Light (Standard), Neutral (Zen)
+**Enhanced Design Refinements:**
+- Three polished themes: Dark (Enhanced), Light (Standard), Neutral (Zen)
 - Pure text labels without background noise
 - Simplified column indicators
 - 100% grayscale enforcement in Neutral theme
@@ -41,7 +41,7 @@ ASAKAA v0.6.0 introduces a Linear-inspired design system with three carefully cr
 - Enhanced visual hierarchy: content is king, metadata is secondary
 
 **Theme Philosophy:**
-- **Dark**: Linear-inspired for speed and focus
+- **Dark**: Enhanced for speed and focus
 - **Light**: High contrast (7:1) for accessibility
 - **Neutral**: Absolute monochrome for distraction-free work
 
@@ -115,7 +115,7 @@ function MyApp() {
 - Bulk operations API
 - Real-time performance monitoring
 - **NEW**: Three professionally designed themes with instant switching
-- **NEW**: Linear-inspired design refinements
+- **NEW**: Enhanced design refinements
 
 **Architecture:**
 - State management: Jotai atoms

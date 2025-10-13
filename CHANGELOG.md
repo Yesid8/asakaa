@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.6.0] - 2025-10-13
 
-### Added - Linear-Inspired Design Refinements
+### Added - Enhanced Design System & Visual Refinements
 
 #### Design Philosophy 🎨
 - **Content is King**: Enhanced visual hierarchy putting content first
@@ -22,7 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Light: Sun with rays icon
   - Neutral: Clock/circle icon for better UX clarity
 
-#### Pure Text Labels (Linear-Inspired)
+#### Pure Text Labels
 - **Zero Background Noise**: Labels now display as pure text without colored backgrounds
 - **Low Contrast Design**: Light gray in dark mode, medium gray in light mode
 - **Minimal Visual Weight**: Labels use `--color-text-tertiary` for subtlety
@@ -42,7 +42,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Pure SVG Grayscale**: Force `currentColor` on all SVG elements
 
 ### Technical Details
-- **New File**: `design-refinements.css` - Central file for v0.6.0 Linear aesthetics (194 lines)
+- **New File**: `design-refinements.css` - Central file for v0.6.0 visual enhancements (194 lines)
 - **Modified Files**: `index.css`, `ThemeSwitcher.tsx`, `Column.tsx`, `DateRangePicker.tsx`, `UserAssignmentSelector.tsx`
 - **Bundle Size**: ESM 150.99 KB, CJS 163.44 KB, CSS 41.05 KB
 - **Zero Breaking Changes**: Fully backward compatible

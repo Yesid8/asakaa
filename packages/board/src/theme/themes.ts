@@ -6,13 +6,13 @@
 import type { Theme, ThemeName } from './types'
 
 /**
- * DARK THEME (Linear Style) - DEFAULT
+ * DARK THEME (Enhanced) - DEFAULT
  * Philosophy: Speed, efficiency, focus
  * Optimized for developer productivity
  */
 export const darkTheme: Theme = {
   name: 'dark',
-  displayName: 'Dark (Linear)',
+  displayName: 'Dark (Enhanced)',
   emoji: '🌙',
   colors: {
     bgPrimary: '#222326',
