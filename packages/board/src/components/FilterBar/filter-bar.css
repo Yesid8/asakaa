@@ -29,10 +29,10 @@
 
 .filter-bar__quick-btn {
   padding: var(--space-2) var(--space-3);
-  background: rgba(59, 130, 246, 0.1);
-  border: 1px solid rgba(59, 130, 246, 0.3);
+  background: var(--theme-bg-tertiary);
+  border: 1px solid var(--theme-border-secondary);
   border-radius: var(--radius-md);
-  color: #60a5fa;
+  color: var(--theme-accent-primary);
   font-size: var(--font-xs);
   font-weight: 500;
   cursor: pointer;
@@ -40,9 +40,9 @@
 }
 
 .filter-bar__quick-btn:hover {
-  background: rgba(59, 130, 246, 0.2);
-  border-color: rgba(59, 130, 246, 0.5);
-  color: #93c5fd;
+  background: var(--theme-bg-secondary);
+  border-color: var(--theme-accent-primary);
+  color: var(--theme-accent-hover);
 }
 
 /* Main Filters */
@@ -159,9 +159,9 @@
 }
 
 .filter-bar__chip--active {
-  background: rgba(59, 130, 246, 0.2);
-  border-color: rgba(59, 130, 246, 0.5);
-  color: #93c5fd;
+  background: var(--theme-bg-secondary);
+  border-color: var(--theme-accent-primary);
+  color: var(--theme-accent-primary);
 }
 
 /* Priority-specific colors */
@@ -222,10 +222,10 @@
 /* Reset Button */
 .filter-bar__reset {
   padding: var(--space-2) var(--space-4);
-  background: rgba(239, 68, 68, 0.1);
-  border: 1px solid rgba(239, 68, 68, 0.3);
+  background: var(--theme-bg-tertiary);
+  border: 1px solid var(--theme-border-secondary);
   border-radius: var(--radius-md);
-  color: #fca5a5;
+  color: var(--theme-error, #EF4444);
   font-size: var(--font-sm);
   font-weight: 500;
   cursor: pointer;
@@ -234,9 +234,9 @@
 }
 
 .filter-bar__reset:hover {
-  background: rgba(239, 68, 68, 0.2);
-  border-color: rgba(239, 68, 68, 0.5);
-  color: #fee2e2;
+  background: var(--theme-bg-secondary);
+  border-color: var(--theme-error, #EF4444);
+  color: var(--theme-error, #EF4444);
 }
 
 /* Responsive */
