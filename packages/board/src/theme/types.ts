@@ -34,6 +34,7 @@ export interface ThemeColors {
 export interface Theme {
   name: ThemeName
   displayName: string
+  emoji: string
   colors: ThemeColors
 
   // Additional theme properties

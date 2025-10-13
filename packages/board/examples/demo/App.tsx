@@ -25,6 +25,8 @@ import {
   DEFAULT_TEMPLATES,
   ThemeProvider,
   ThemeSwitcher,
+  ConfigMenu,
+  ThemeModal,
   type User,
   type GeneratedPlan,
   type Card,
@@ -337,6 +339,7 @@ export default function App() {
   const [groupBy, setGroupBy] = useState<GroupByOption>('none')
   const [isKeyboardShortcutsOpen, setIsKeyboardShortcutsOpen] = useState(false)
   const [isExportImportOpen, setIsExportImportOpen] = useState(false)
+  const [isThemeModalOpen, setIsThemeModalOpen] = useState(false)
 
   // v0.4.0: Simplified API with useBoard hook
   const board = useBoard({
@@ -599,64 +602,17 @@ export default function App() {
               {/* AI Actions & Stats */}
               <div className="flex items-center gap-3">
               {/* New Features v0.3.0 */}
-              <GroupBySelector
-                value={groupBy}
-                onChange={setGroupBy}
-              />
-
               <CardTemplateSelector
                 templates={DEFAULT_TEMPLATES}
                 onSelectTemplate={handleSelectTemplate}
               />
 
-              <button
-                onClick={() => setIsKeyboardShortcutsOpen(true)}
-                className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all border"
-                style={{
-                  backgroundColor: 'var(--theme-bg-secondary)',
-                  borderColor: 'var(--theme-border-primary)',
-                  color: 'var(--theme-text-secondary)'
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = 'var(--theme-bg-tertiary)'
-                  e.currentTarget.style.color = 'var(--theme-text-primary)'
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = 'var(--theme-bg-secondary)'
-                  e.currentTarget.style.color = 'var(--theme-text-secondary)'
-                }}
-                title="Keyboard Shortcuts (Press ?)"
-              >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <rect x="2" y="4" width="20" height="16" rx="2" />
-                  <path d="M6 8h.01M10 8h.01M14 8h.01M18 8h.01M8 12h.01M12 12h.01M16 12h.01M7 16h10" />
-                </svg>
-                <span>Shortcuts</span>
-              </button>
-
-              <button
-                onClick={() => setIsExportImportOpen(true)}
-                className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all border"
-                style={{
-                  backgroundColor: 'var(--theme-bg-secondary)',
-                  borderColor: 'var(--theme-border-primary)',
-                  color: 'var(--theme-text-secondary)'
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = 'var(--theme-bg-tertiary)'
-                  e.currentTarget.style.color = 'var(--theme-text-primary)'
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = 'var(--theme-bg-secondary)'
-                  e.currentTarget.style.color = 'var(--theme-text-secondary)'
-                }}
-                title="Export / Import"
-              >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" />
-                </svg>
-                <span>Export</span>
-              </button>
+              {/* v0.5.0: Config Menu */}
+              <ConfigMenu
+                onOpenExport={() => setIsExportImportOpen(true)}
+                onOpenThemes={() => setIsThemeModalOpen(true)}
+                onOpenShortcuts={() => setIsKeyboardShortcutsOpen(true)}
+              />
 
               <div className="w-px h-10" style={{ backgroundColor: 'var(--theme-border-primary)' }} />
 
@@ -777,7 +733,7 @@ export default function App() {
         </div>
       </header>
 
-      {/* v0.4.0: Filter Bar */}
+      {/* v0.5.0: Filter Bar with integrated GroupBySelector */}
       <div className="px-6 pt-4">
         <FilterBar
           filters={filters.filters}
@@ -792,6 +748,8 @@ export default function App() {
           availableLabels={availableLabels}
           availableColumns={board.board.columns.map(col => ({ id: col.id, title: col.title }))}
           showQuickFilters={true}
+          groupBy={groupBy}
+          onGroupByChange={setGroupBy}
         />
       </div>
 
@@ -973,6 +931,12 @@ export default function App() {
         isOpen={isExportImportOpen}
         onClose={() => setIsExportImportOpen(false)}
         onImport={handleImport}
+      />
+
+      {/* v0.5.0: Theme Modal */}
+      <ThemeModal
+        isOpen={isThemeModalOpen}
+        onClose={() => setIsThemeModalOpen(false)}
       />
       </div>
     </ThemeProvider>

@@ -134,7 +134,7 @@ export function ExportImportModal({
                   Select format
                 </label>
                 <div className="grid grid-cols-3 gap-3">
-                  {(['json', 'csv', 'markdown'] as ExportFormat[]).map((format) => (
+                  {(['json', 'csv', 'pdf'] as ExportFormat[]).map((format) => (
                     <button
                       key={format}
                       onClick={() => setSelectedFormat(format)}
@@ -148,7 +148,7 @@ export function ExportImportModal({
                       <div className="text-2xl mb-2">
                         {format === 'json' && '📄'}
                         {format === 'csv' && '📊'}
-                        {format === 'markdown' && '📝'}
+                        {format === 'pdf' && '📝'}
                       </div>
                       <div className="font-semibold uppercase text-xs">
                         {format}

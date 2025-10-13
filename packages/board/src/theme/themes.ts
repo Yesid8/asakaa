@@ -13,6 +13,7 @@ import type { Theme, ThemeName } from './types'
 export const darkTheme: Theme = {
   name: 'dark',
   displayName: 'Dark (Linear)',
+  emoji: '🌙',
   colors: {
     bgPrimary: '#222326',
     bgSecondary: '#2A2B2F',
@@ -57,6 +58,7 @@ export const darkTheme: Theme = {
 export const lightTheme: Theme = {
   name: 'light',
   displayName: 'Light (Standard)',
+  emoji: '☀️',
   colors: {
     bgPrimary: '#FFFFFF',
     bgSecondary: '#F7F7F8',
@@ -100,6 +102,7 @@ export const lightTheme: Theme = {
  */
 export const neutralTheme: Theme = {
   name: 'neutral',
+  emoji: '⚪',
   displayName: 'Neutral (Zen)',
   colors: {
     bgPrimary: '#F5F5F5',

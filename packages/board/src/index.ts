@@ -29,6 +29,8 @@ export {
   DEFAULT_TEMPLATES,
   ExportImportModal,
   FilterBar,
+  ConfigMenu,
+  ThemeModal,
 } from './components'
 export type {
   ColumnProps,
@@ -55,6 +57,8 @@ export type {
   CardTemplateSelectorProps,
   ExportImportModalProps,
   FilterBarProps,
+  ConfigMenuProps,
+  ThemeModalProps,
 } from './components'
 
 // AI Components

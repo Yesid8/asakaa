@@ -895,7 +895,7 @@ export interface CardTemplate {
 /**
  * Export format options
  */
-export type ExportFormat = 'json' | 'csv' | 'markdown'
+export type ExportFormat = 'json' | 'csv' | 'pdf'
 
 /**
  * Export options

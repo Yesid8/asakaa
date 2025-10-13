@@ -184,3 +184,124 @@
   background: var(--theme-bg-primary) !important;
   border-color: var(--theme-border-primary) !important;
 }
+
+/* ============================================================================
+   LIGHT THEME - FilterBar & GroupBySelector Visibility Fix
+   ============================================================================ */
+
+[data-theme="light"] .filter-bar,
+[data-theme="light"] .filter-bar__quick,
+[data-theme="light"] .filter-bar__main {
+  background: rgba(0, 0, 0, 0.03) !important;
+  border-color: rgba(0, 0, 0, 0.1) !important;
+}
+
+[data-theme="light"] .filter-bar__label {
+  color: rgba(0, 0, 0, 0.7) !important;
+}
+
+[data-theme="light"] .filter-bar__search,
+[data-theme="light"] .filter-bar__select {
+  background: rgba(0, 0, 0, 0.05) !important;
+  border-color: rgba(0, 0, 0, 0.15) !important;
+  color: rgba(0, 0, 0, 0.9) !important;
+}
+
+[data-theme="light"] .filter-bar__search::placeholder {
+  color: rgba(0, 0, 0, 0.4) !important;
+}
+
+[data-theme="light"] .filter-bar__select option {
+  background: #ffffff !important;
+  color: #000000 !important;
+}
+
+[data-theme="light"] .filter-bar__chip {
+  background: rgba(0, 0, 0, 0.05) !important;
+  border-color: rgba(0, 0, 0, 0.15) !important;
+  color: rgba(0, 0, 0, 0.7) !important;
+}
+
+[data-theme="light"] .filter-bar__chip:hover {
+  background: rgba(0, 0, 0, 0.1) !important;
+  border-color: rgba(0, 0, 0, 0.25) !important;
+  color: rgba(0, 0, 0, 0.9) !important;
+}
+
+[data-theme="light"] .filter-bar__chip--active {
+  background: rgba(94, 106, 210, 0.15) !important;
+  border-color: rgba(94, 106, 210, 0.4) !important;
+  color: #5E6AD2 !important;
+}
+
+[data-theme="light"] .filter-bar__quick-btn {
+  background: rgba(94, 106, 210, 0.1) !important;
+  border-color: rgba(94, 106, 210, 0.3) !important;
+  color: #5E6AD2 !important;
+}
+
+[data-theme="light"] .filter-bar__quick-btn:hover {
+  background: rgba(94, 106, 210, 0.2) !important;
+  border-color: rgba(94, 106, 210, 0.5) !important;
+}
+
+/* GroupBySelector fix for light theme */
+[data-theme="light"] button[class*="flex items-center gap-2"] {
+  color: rgba(0, 0, 0, 0.8) !important;
+}
+
+[data-theme="light"] select {
+  background: rgba(0, 0, 0, 0.05) !important;
+  border-color: rgba(0, 0, 0, 0.15) !important;
+  color: rgba(0, 0, 0, 0.9) !important;
+}
+
+[data-theme="light"] select option {
+  background: #ffffff !important;
+  color: #000000 !important;
+}
+
+/* ============================================================================
+   NEUTRAL THEME - FilterBar & GroupBySelector Visibility Fix
+   ============================================================================ */
+
+[data-theme="neutral"] .filter-bar,
+[data-theme="neutral"] .filter-bar__quick,
+[data-theme="neutral"] .filter-bar__main {
+  background: rgba(0, 0, 0, 0.04) !important;
+  border-color: rgba(0, 0, 0, 0.12) !important;
+}
+
+[data-theme="neutral"] .filter-bar__label {
+  color: rgba(0, 0, 0, 0.6) !important;
+}
+
+[data-theme="neutral"] .filter-bar__search,
+[data-theme="neutral"] .filter-bar__select {
+  background: rgba(0, 0, 0, 0.06) !important;
+  border-color: rgba(0, 0, 0, 0.18) !important;
+  color: rgba(0, 0, 0, 0.9) !important;
+}
+
+[data-theme="neutral"] .filter-bar__search::placeholder {
+  color: rgba(0, 0, 0, 0.5) !important;
+}
+
+[data-theme="neutral"] .filter-bar__chip {
+  background: rgba(0, 0, 0, 0.06) !important;
+  border-color: rgba(0, 0, 0, 0.18) !important;
+  color: rgba(0, 0, 0, 0.7) !important;
+}
+
+[data-theme="neutral"] .filter-bar__chip:hover {
+  background: rgba(0, 0, 0, 0.12) !important;
+  border-color: rgba(0, 0, 0, 0.28) !important;
+  color: rgba(0, 0, 0, 0.9) !important;
+}
+
+[data-theme="neutral"] .filter-bar__chip--active {
+  background: rgba(0, 0, 0, 0.15) !important;
+  border-color: rgba(0, 0, 0, 0.35) !important;
+  color: rgba(0, 0, 0, 1) !important;
+  font-weight: 600 !important;
+}
