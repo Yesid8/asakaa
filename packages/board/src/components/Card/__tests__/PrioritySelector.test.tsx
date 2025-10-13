@@ -184,36 +184,36 @@ describe('PrioritySelector Component', () => {
     it('applies correct color for Urgent', () => {
       render(<PrioritySelector priority="URGENT" onChange={vi.fn()} />)
       const button = screen.getByTitle('Urgent')
-      const svg = button.querySelector('svg')
-      expect(svg?.getAttribute('fill')).toBe('#E74C3C')
+      const path = button.querySelector('path')
+      expect(path?.getAttribute('fill')).toBe('#E74C3C')
     })
 
     it('applies correct color for High', () => {
       render(<PrioritySelector priority="HIGH" onChange={vi.fn()} />)
       const button = screen.getByTitle('High')
-      const svg = button.querySelector('svg')
-      expect(svg?.getAttribute('fill')).toBe('#E67E22')
+      const path = button.querySelector('path')
+      expect(path?.getAttribute('fill')).toBe('#E67E22')
     })
 
     it('applies correct color for Normal', () => {
       render(<PrioritySelector priority="MEDIUM" onChange={vi.fn()} />)
       const button = screen.getByTitle('Normal')
-      const svg = button.querySelector('svg')
-      expect(svg?.getAttribute('fill')).toBe('#F1C40F')
+      const path = button.querySelector('path')
+      expect(path?.getAttribute('fill')).toBe('#F1C40F')
     })
 
     it('applies correct color for Low', () => {
       render(<PrioritySelector priority="LOW" onChange={vi.fn()} />)
       const button = screen.getByTitle('Low')
-      const svg = button.querySelector('svg')
-      expect(svg?.getAttribute('fill')).toBe('#2ECC71')
+      const path = button.querySelector('path')
+      expect(path?.getAttribute('fill')).toBe('#2ECC71')
     })
 
     it('applies correct color for NONE priority', () => {
       render(<PrioritySelector priority="NONE" onChange={vi.fn()} />)
       const button = screen.getByTitle('Set priority')
-      const svg = button.querySelector('svg')
-      expect(svg?.getAttribute('fill')).toBe('#BDC3C7')
+      const path = button.querySelector('path')
+      expect(path?.getAttribute('fill')).toBe('#BDC3C7')
     })
   })
 

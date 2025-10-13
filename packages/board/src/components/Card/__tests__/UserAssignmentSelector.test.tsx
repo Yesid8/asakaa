@@ -104,7 +104,7 @@ describe('UserAssignmentSelector Component', () => {
       fireEvent.click(button)
 
       await waitFor(() => {
-        expect(screen.getByText('Assign to')).toBeInTheDocument()
+        expect(screen.getByText('Assign Users')).toBeInTheDocument()
         expect(screen.getByPlaceholderText('Search users...')).toBeInTheDocument()
       })
     })
@@ -121,14 +121,14 @@ describe('UserAssignmentSelector Component', () => {
       fireEvent.click(button)
 
       await waitFor(() => {
-        expect(screen.getByText('Assign to')).toBeInTheDocument()
+        expect(screen.getByText('Assign Users')).toBeInTheDocument()
       })
 
       const outside = screen.getByTestId('outside')
       fireEvent.mouseDown(outside)
 
       await waitFor(() => {
-        expect(screen.queryByText('Assign to')).not.toBeInTheDocument()
+        expect(screen.queryByText('Assign Users')).not.toBeInTheDocument()
       })
     })
 
@@ -238,8 +238,9 @@ describe('UserAssignmentSelector Component', () => {
 
       await waitFor(() => {
         const userOption = screen.getByText('Alex Chen')
-        const checkbox = userOption.closest('label')?.querySelector('input[type="checkbox"]')
-        expect(checkbox).toBeChecked()
+        const checkmark = userOption.parentElement?.querySelector('.text-blue-400')
+        expect(checkmark).toBeInTheDocument()
+        expect(checkmark?.textContent).toBe('✓')
       })
     })
   })
