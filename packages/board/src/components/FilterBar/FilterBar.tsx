@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useState, useRef, useEffect } from 'react'
 import type { Priority, User } from '../../types'
 import type { FilterState, SortState, SortBy } from '../../hooks/useFilters'
 import type { GroupByOption } from '../../types'
@@ -58,6 +58,14 @@ export function FilterBar({
   onGroupByChange,
 }: FilterBarProps) {
   const [isCollapsed, setIsCollapsed] = useState(false)
+  const searchInputRef = useRef<HTMLInputElement>(null)
+
+  // Apply placeholder color fix on mount
+  useEffect(() => {
+    if (searchInputRef.current) {
+      searchInputRef.current.setAttribute('data-search-input', 'true')
+    }
+  }, [])
 
   const handleSearchChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -94,12 +102,25 @@ export function FilterBar({
 
   return (
     <>
-      {/* Inject CSS for placeholder color - ensures visibility in all themes */}
+      {/* Inject CSS for placeholder color with data attribute selector - ensures visibility in all themes */}
       <style>{`
-        .filter-bar__search::placeholder,
-        .filter-bar__search::-webkit-input-placeholder,
-        .filter-bar__search::-moz-placeholder,
-        .filter-bar__search:-ms-input-placeholder {
+        input[data-search-input]::placeholder {
+          color: var(--theme-text-tertiary) !important;
+          opacity: 1 !important;
+        }
+        input[data-search-input]::-webkit-input-placeholder {
+          color: var(--theme-text-tertiary) !important;
+          opacity: 1 !important;
+        }
+        input[data-search-input]::-moz-placeholder {
+          color: var(--theme-text-tertiary) !important;
+          opacity: 1 !important;
+        }
+        input[data-search-input]:-ms-input-placeholder {
+          color: var(--theme-text-tertiary) !important;
+          opacity: 1 !important;
+        }
+        input[data-search-input]::-ms-input-placeholder {
           color: var(--theme-text-tertiary) !important;
           opacity: 1 !important;
         }
@@ -201,6 +222,7 @@ export function FilterBar({
           <div className="filter-bar__main">
             <div className="filter-bar__field">
               <input
+                ref={searchInputRef}
                 type="text"
                 placeholder="Search tasks..."
                 value={filters.search}
