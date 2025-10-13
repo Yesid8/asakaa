@@ -171,6 +171,26 @@
     background: var(--color-bg-primary);
   }
 
+  /* Theme-aware horizontal scrollbar */
+  .asakaa-board::-webkit-scrollbar {
+    height: 10px;
+  }
+
+  .asakaa-board::-webkit-scrollbar-track {
+    background: var(--theme-bg-secondary, rgba(20, 20, 20, 0.4));
+    border-radius: var(--radius-sm);
+  }
+
+  .asakaa-board::-webkit-scrollbar-thumb {
+    background: var(--theme-border-primary, rgba(255, 255, 255, 0.2));
+    border-radius: var(--radius-sm);
+    border: 2px solid var(--theme-bg-secondary, rgba(20, 20, 20, 0.4));
+  }
+
+  .asakaa-board::-webkit-scrollbar-thumb:hover {
+    background: var(--theme-border-secondary, rgba(255, 255, 255, 0.3));
+  }
+
   /* ==========================================================================
      COLUMN
      ========================================================================== */
