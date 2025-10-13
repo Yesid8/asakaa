@@ -93,7 +93,14 @@ export function FilterBar({
     sort.by !== 'none'
 
   return (
-    <div className={`filter-bar ${compact ? 'filter-bar--compact' : ''}`}>
+    <div
+      className={`filter-bar ${compact ? 'filter-bar--compact' : ''}`}
+      style={{
+        padding: isCollapsed ? '6px 12px' : undefined,
+        minHeight: isCollapsed ? 'auto' : undefined,
+        border: isCollapsed ? '1px solid var(--theme-border-secondary)' : undefined,
+      }}
+    >
       <div
         className="filter-bar__header"
         onClick={() => setIsCollapsed(!isCollapsed)}
@@ -103,9 +110,9 @@ export function FilterBar({
           alignItems: 'center',
           gap: '8px',
           marginBottom: isCollapsed ? '0' : '12px',
-          padding: '8px 12px',
-          borderRadius: '8px',
-          transition: 'background-color 0.2s',
+          padding: '4px 6px',
+          borderRadius: '6px',
+          transition: 'all 0.2s ease',
         }}
         onMouseEnter={(e) => {
           e.currentTarget.style.backgroundColor = 'var(--theme-bg-tertiary)'
@@ -115,8 +122,8 @@ export function FilterBar({
         }}
       >
         <svg
-          width="16"
-          height="16"
+          width="14"
+          height="14"
           viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"
@@ -124,11 +131,12 @@ export function FilterBar({
           style={{
             transform: isCollapsed ? 'rotate(-90deg)' : 'rotate(0deg)',
             transition: 'transform 0.2s',
+            color: 'var(--theme-text-secondary)',
           }}
         >
           <polyline points="6 9 12 15 18 9" />
         </svg>
-        <span className="filter-bar__label" style={{ fontWeight: 600, color: 'var(--theme-text-primary)' }}>
+        <span className="filter-bar__label" style={{ fontWeight: 500, fontSize: '0.875rem', color: 'var(--theme-text-primary)' }}>
           Filters & Grouping
         </span>
         {hasActiveFilters && (
@@ -180,26 +188,6 @@ export function FilterBar({
           )}
 
           <div className="filter-bar__main">
-            {onGroupByChange && (
-              <div className="filter-bar__field">
-                <select
-                  value={groupBy}
-                  onChange={(e) => onGroupByChange(e.target.value as GroupByOption)}
-                  className="filter-bar__select"
-                  style={{
-                    fontWeight: 500,
-                    borderWidth: '2px',
-                  }}
-                >
-                  {GROUPBY_OPTIONS.map((option) => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            )}
-
             <div className="filter-bar__field">
               <input
                 type="text"
@@ -310,6 +298,26 @@ export function FilterBar({
                 </button>
               )}
             </div>
+
+            {onGroupByChange && (
+              <div className="filter-bar__field">
+                <select
+                  value={groupBy}
+                  onChange={(e) => onGroupByChange(e.target.value as GroupByOption)}
+                  className="filter-bar__select"
+                  style={{
+                    fontWeight: 500,
+                    borderWidth: '2px',
+                  }}
+                >
+                  {GROUPBY_OPTIONS.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
 
             {hasActiveFilters && (
               <button

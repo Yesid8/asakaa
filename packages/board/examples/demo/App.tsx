@@ -753,61 +753,72 @@ export default function App() {
         />
       </div>
 
-      {/* Board Container */}
-      <div className="asakaa-board">
-        {groupBy === 'none' ? (
-          <KanbanBoard
-            {...board.props}
-            callbacks={{
-              ...board.callbacks,
-              onWipLimitExceeded: handleWipLimitExceeded,
-            }}
-            onCardClick={handleCardClick}
-            config={{
-              showCardCount: true,
-              showWipLimits: true,
-              enableVirtualization: false,
-            }}
-          />
-        ) : (
-          <SwimlaneBoardView
-            board={board.board}
-            swimlaneConfig={{
-              groupBy,
-              collapsible: true,
-              showEmptyLanes: false,
-            }}
-            availableUsers={sampleUsers}
-            callbacks={{
-              ...board.callbacks,
-              onWipLimitExceeded: handleWipLimitExceeded,
-            }}
-          />
-        )}
+      {/* Board Container with horizontal scroll */}
+      <div className="px-6 pb-6">
+        <div className="asakaa-board" style={{ minHeight: 'calc(100vh - 320px)' }}>
+          {groupBy === 'none' ? (
+            <KanbanBoard
+              {...board.props}
+              callbacks={{
+                ...board.callbacks,
+                onWipLimitExceeded: handleWipLimitExceeded,
+              }}
+              onCardClick={handleCardClick}
+              config={{
+                showCardCount: true,
+                showWipLimits: true,
+                enableVirtualization: false,
+              }}
+            />
+          ) : (
+            <SwimlaneBoardView
+              board={board.board}
+              swimlaneConfig={{
+                groupBy,
+                collapsible: true,
+                showEmptyLanes: false,
+              }}
+              availableUsers={sampleUsers}
+              callbacks={{
+                ...board.callbacks,
+                onWipLimitExceeded: handleWipLimitExceeded,
+              }}
+            />
+          )}
 
-        {/* Add Group Button - Inside scrollable area */}
-        <div style={{ paddingTop: '16px' }}>
-          <button
-            onClick={handleAddColumn}
-            className="flex items-center gap-2 px-2 py-1 text-sm font-medium transition-all rounded-md"
-            style={{
-              background: 'transparent',
-              border: 'none',
-              color: '#60a5fa',
-              cursor: 'pointer',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.background = 'rgba(59, 130, 246, 0.08)'
-              e.currentTarget.style.color = '#93c5fd'
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background = 'transparent'
-              e.currentTarget.style.color = '#60a5fa'
-            }}
-          >
-            <span className="text-base font-bold">+</span>
-            <span>Add Group</span>
-          </button>
+          {/* Add Group Button - Inline at end of columns */}
+          <div style={{
+            display: 'flex',
+            flexDirection: 'column',
+            minWidth: 'fit-content',
+            paddingTop: '4px'
+          }}>
+            <button
+              onClick={handleAddColumn}
+              className="flex items-center gap-2 px-4 py-2 text-sm font-medium transition-all rounded-lg"
+              style={{
+                background: 'transparent',
+                border: '2px dashed rgba(96, 165, 250, 0.3)',
+                color: 'var(--theme-text-secondary)',
+                cursor: 'pointer',
+                minWidth: '160px',
+                height: 'fit-content',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = 'rgba(59, 130, 246, 0.05)'
+                e.currentTarget.style.borderColor = 'rgba(96, 165, 250, 0.5)'
+                e.currentTarget.style.color = 'var(--theme-accent-primary)'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = 'transparent'
+                e.currentTarget.style.borderColor = 'rgba(96, 165, 250, 0.3)'
+                e.currentTarget.style.color = 'var(--theme-text-secondary)'
+              }}
+            >
+              <span className="text-xl font-light">+</span>
+              <span>Add Group</span>
+            </button>
+          </div>
         </div>
       </div>
 
