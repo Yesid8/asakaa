@@ -58,14 +58,19 @@ export function useBoard({
         })
       },
       addColumn: (title: string, position?: number) => {
+        // Calculate next position based on highest existing position + 1000
+        const maxPosition = board.columns.length > 0
+          ? Math.max(...board.columns.map(col => col.position))
+          : 0
+
         helpers.addColumn({
           title,
-          position: position ?? board.columns.length,
+          position: position ?? (maxPosition + 1000),
         })
       },
       reset: helpers.clearBoard,
     }),
-    [board.cards, board.columns.length, helpers]
+    [board.cards, board.columns, helpers]
   )
 
   const props = useMemo(

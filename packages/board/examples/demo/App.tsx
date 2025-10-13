@@ -753,48 +753,30 @@ export default function App() {
       </div>
 
       {/* Board Container with horizontal scroll */}
-      <div className="px-6 pb-6">
-        <div className="asakaa-board" style={{ minHeight: 'calc(100vh - 320px)' }}>
-          {groupBy === 'none' ? (
-            <KanbanBoard
-              {...board.props}
-              callbacks={{
-                ...board.callbacks,
-                onWipLimitExceeded: handleWipLimitExceeded,
-              }}
-              onCardClick={handleCardClick}
-              config={{
-                showCardCount: true,
-                showWipLimits: true,
-                enableVirtualization: false,
-              }}
-            />
-          ) : (
-            <SwimlaneBoardView
-              board={board.board}
-              swimlaneConfig={{
-                groupBy,
-                collapsible: true,
-                showEmptyLanes: false,
-              }}
-              availableUsers={sampleUsers}
-              callbacks={{
-                ...board.callbacks,
-                onWipLimitExceeded: handleWipLimitExceeded,
-              }}
-            />
-          )}
-
-          {/* Add Group Button - Inline with column headers */}
-          {groupBy === 'none' && (
+      <div className="pb-12">
+        {groupBy === 'none' ? (
+          <KanbanBoard
+            {...board.props}
+            callbacks={{
+              ...board.callbacks,
+              onWipLimitExceeded: handleWipLimitExceeded,
+            }}
+            onCardClick={handleCardClick}
+            config={{
+              showCardCount: true,
+              showWipLimits: true,
+              enableVirtualization: false,
+            }}
+            style={{ minHeight: 'calc(100vh - 200px)' }}
+          >
+            {/* Add Group Button - Inline with columns */}
             <div
-              className="asakaa-column"
               style={{
+                display: 'flex',
+                flexDirection: 'column',
                 minWidth: 'var(--column-width)',
                 maxWidth: 'var(--column-width)',
-                background: 'transparent',
-                border: 'none',
-                boxShadow: 'none',
+                flexShrink: 0,
                 padding: 'var(--space-4)',
               }}
             >
@@ -835,12 +817,26 @@ export default function App() {
                 <span>Add Group</span>
               </button>
             </div>
-          )}
-        </div>
+          </KanbanBoard>
+        ) : (
+          <SwimlaneBoardView
+            board={board.board}
+            swimlaneConfig={{
+              groupBy,
+              collapsible: true,
+              showEmptyLanes: false,
+            }}
+            availableUsers={sampleUsers}
+            callbacks={{
+              ...board.callbacks,
+              onWipLimitExceeded: handleWipLimitExceeded,
+            }}
+          />
+        )}
       </div>
 
       {/* Footer */}
-      <footer className="fixed bottom-0 left-0 right-0 backdrop-blur-xl border-t px-6 py-3" style={{
+      <footer className="fixed bottom-0 left-0 right-0 backdrop-blur-xl border-t px-6 py-1.5" style={{
         backgroundColor: 'var(--theme-bg-secondary)',
         borderColor: 'var(--theme-border-primary)'
       }}>

@@ -290,19 +290,9 @@ export const Column = memo<ColumnProps>(
         )}
       </div>
     )
-  },
-  // Memoization comparison
-  (prevProps, nextProps) => {
-    return (
-      prevProps.column.id === nextProps.column.id &&
-      prevProps.column.title === nextProps.column.title &&
-      prevProps.cards.length === nextProps.cards.length &&
-      prevProps.isCollapsed === nextProps.isCollapsed &&
-      // Check if card IDs changed (position changes)
-      JSON.stringify(prevProps.cards.map((c) => c.id)) ===
-        JSON.stringify(nextProps.cards.map((c) => c.id))
-    )
   }
+  // Memoization removed to allow card property updates to trigger re-renders
+  // The individual Card components are still memoized for performance
 )
 
 Column.displayName = 'Column'

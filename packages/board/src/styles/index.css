@@ -4,6 +4,34 @@
  * Every pixel matters. Every decision is intentional.
  */
 
+
+/* ============================================================================
+   COMPONENT STYLES - Imported FIRST for PostCSS
+   @import must precede all other statements (besides @charset)
+   ============================================================================ */
+
+/* FilterBar - Advanced filtering and sorting UI */
+@import './components/filter-bar.css';
+
+/* Card Detail Modal - Full card editing experience */
+@import './components/card-detail-modal.css';
+
+/* Command Palette - Keyboard-driven navigation */
+@import './components/command-palette.css';
+
+/* Charts - Analytics and data visualization */
+@import './components/charts.css';
+
+/* Bulk Operations - Multi-select toolbar */
+@import './components/bulk-operations.css';
+
+/* Attachments - File upload and management */
+@import './components/attachments.css';
+
+/* ============================================================================
+   TAILWIND DIRECTIVES
+   ============================================================================ */
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -262,12 +290,13 @@
   }
 
   .asakaa-column-cards::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, var(--opacity-light));
+    background: var(--theme-text-tertiary);
+    opacity: 0.3;
     border-radius: var(--radius-sm);
   }
 
   .asakaa-column-cards::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, var(--opacity-medium));
+    opacity: 0.5;
   }
 
   /* ==========================================================================
@@ -547,12 +576,13 @@
   }
 
   .scrollbar-custom::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, var(--opacity-light));
+    background: var(--theme-text-tertiary);
+    opacity: 0.3;
     border-radius: var(--radius-sm);
   }
 
   .scrollbar-custom::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, var(--opacity-medium));
+    opacity: 0.5;
   }
 
   .scrollbar-hide {

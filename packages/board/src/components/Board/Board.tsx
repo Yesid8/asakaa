@@ -30,7 +30,8 @@ export function KanbanBoard({
   style,
   isLoading,
   error,
-}: KanbanBoardProps) {
+  children,
+}: KanbanBoardProps & { children?: React.ReactNode }) {
   const [dragState, setDragState] = useAtom(dragStateAtom)
 
   const handleCardUpdate = useCallback(
@@ -238,6 +239,7 @@ export function KanbanBoard({
               />
             )
           })}
+        {children}
       </div>
 
       <DragOverlay>
