@@ -195,6 +195,10 @@ export function FilterBar({
                 value={filters.search}
                 onChange={handleSearchChange}
                 className="filter-bar__search"
+                style={{
+                  color: 'var(--theme-text-primary)',
+                  backgroundColor: 'var(--theme-bg-secondary)',
+                }}
               />
             </div>
 
@@ -203,6 +207,10 @@ export function FilterBar({
                 value={filters.dateFilter}
                 onChange={handleDateFilterChange}
                 className="filter-bar__select"
+                style={{
+                  color: 'var(--theme-text-primary)',
+                  backgroundColor: 'var(--theme-bg-secondary)',
+                }}
               >
                 <option value="all">All Dates</option>
                 <option value="overdue">Overdue</option>
@@ -221,6 +229,10 @@ export function FilterBar({
                   })
                 }}
                 className="filter-bar__select"
+                style={{
+                  color: 'var(--theme-text-primary)',
+                  backgroundColor: 'var(--theme-bg-secondary)',
+                }}
               >
                 <option value="all">All Priorities</option>
                 {PRIORITY_OPTIONS.map((priority) => (
@@ -242,6 +254,10 @@ export function FilterBar({
                     })
                   }}
                   className="filter-bar__select"
+                  style={{
+                    color: 'var(--theme-text-primary)',
+                    backgroundColor: 'var(--theme-bg-secondary)',
+                  }}
                 >
                   <option value="all">All Assignees</option>
                   {availableUsers.map((user) => (
@@ -264,6 +280,10 @@ export function FilterBar({
                     })
                   }}
                   className="filter-bar__select"
+                  style={{
+                    color: 'var(--theme-text-primary)',
+                    backgroundColor: 'var(--theme-bg-secondary)',
+                  }}
                 >
                   <option value="all">All Labels</option>
                   {availableLabels.map((label) => (
@@ -276,11 +296,15 @@ export function FilterBar({
             )}
 
             <div className="filter-bar__field filter-bar__sort">
-              <span className="filter-bar__label">Sort:</span>
+              <span className="filter-bar__label" style={{ color: 'var(--theme-text-secondary)' }}>Sort:</span>
               <select
                 value={sort.by}
                 onChange={handleSortChange}
                 className="filter-bar__select filter-bar__select--sm"
+                style={{
+                  color: 'var(--theme-text-primary)',
+                  backgroundColor: 'var(--theme-bg-secondary)',
+                }}
               >
                 {SORT_OPTIONS.map((option) => (
                   <option key={option.value} value={option.value}>
@@ -308,6 +332,8 @@ export function FilterBar({
                   style={{
                     fontWeight: 500,
                     borderWidth: '2px',
+                    color: 'var(--theme-text-primary)',
+                    backgroundColor: 'var(--theme-bg-secondary)',
                   }}
                 >
                   {GROUPBY_OPTIONS.map((option) => (
