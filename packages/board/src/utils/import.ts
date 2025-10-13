@@ -47,14 +47,14 @@ export function importFromCSV(csvString: string): ImportResult {
   try {
     const lines = csvString.trim().split('\n')
 
-    if (lines.length < 2) {
+    if (lines.length < 1 || !lines[0]) {
       return {
         success: false,
         errors: ['CSV file is empty or invalid'],
       }
     }
 
-    const headers = parseCSVLine(lines[0] || '')
+    const headers = parseCSVLine(lines[0])
     const cards: Card[] = []
     const columnsMap = new Map<string, Column>()
     const errors: string[] = []
@@ -63,9 +63,21 @@ export function importFromCSV(csvString: string): ImportResult {
       try {
         const values = parseCSVLine(lines[i] || '')
 
-        if (values.length !== headers.length) {
-          errors.push(`Line ${i + 1}: Column count mismatch`)
+        if (values.length > headers.length) {
+          errors.push(`Line ${i + 1}: Too many columns`)
           continue
+        }
+
+        // If missing more than 3 columns, likely a malformed row
+        const missingColumns = headers.length - values.length
+        if (missingColumns > 3) {
+          errors.push(`Line ${i + 1}: Column count mismatch (expected ${headers.length}, got ${values.length})`)
+          continue
+        }
+
+        // Pad trailing empty columns
+        while (values.length < headers.length) {
+          values.push('')
         }
 
         const cardData: Record<string, string> = {}
