@@ -71,49 +71,53 @@
 /* Search Input */
 .filter-bar__search {
   padding: var(--space-2) var(--space-3);
-  background: var(--theme-bg-secondary);
+  background: var(--theme-bg-secondary) !important;
   border: 1px solid var(--theme-border-primary);
   border-radius: var(--radius-md);
-  color: var(--theme-text-primary);
+  color: var(--theme-text-primary) !important;
   font-size: var(--font-sm);
   width: 100%;
   transition: all 0.2s;
+  -webkit-text-fill-color: var(--theme-text-primary);
 }
 
 .filter-bar__search:focus {
   outline: none;
   border-color: var(--theme-accent-primary);
-  background: var(--theme-bg-primary);
+  background: var(--theme-bg-primary) !important;
 }
 
 .filter-bar__search::placeholder {
-  color: var(--theme-text-tertiary);
+  color: var(--theme-text-tertiary) !important;
   opacity: 1;
+  -webkit-text-fill-color: var(--theme-text-tertiary);
 }
 
 /* Select Dropdown */
 .filter-bar__select {
   padding: var(--space-2) var(--space-3);
-  background: var(--theme-bg-secondary);
+  background: var(--theme-bg-secondary) !important;
   border: 1px solid var(--theme-border-primary);
   border-radius: var(--radius-md);
-  color: var(--theme-text-primary);
+  color: var(--theme-text-primary) !important;
   font-size: var(--font-sm);
   cursor: pointer;
   transition: all 0.2s;
   width: 100%;
   appearance: auto;
+  -webkit-text-fill-color: var(--theme-text-primary);
+  -webkit-appearance: menulist;
 }
 
 .filter-bar__select:hover {
   border-color: var(--theme-accent-primary);
-  background: var(--theme-bg-primary);
+  background: var(--theme-bg-primary) !important;
 }
 
 .filter-bar__select:focus {
   outline: none;
   border-color: var(--theme-accent-primary);
-  background: var(--theme-bg-primary);
+  background: var(--theme-bg-primary) !important;
 }
 
 .filter-bar__select--sm {
@@ -121,8 +125,8 @@
 }
 
 .filter-bar__select option {
-  background: var(--theme-bg-primary);
-  color: var(--theme-text-primary);
+  background: var(--theme-bg-primary) !important;
+  color: var(--theme-text-primary) !important;
   padding: 8px;
 }
 
