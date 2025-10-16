@@ -16,6 +16,7 @@ import {
   AIUsageDashboard,
   CommandPalette,
   CardDetailModal,
+  CardDetailModalV2,
   BulkOperationsToolbar,
   SwimlaneBoardView,
   GroupBySelector,
@@ -27,6 +28,14 @@ import {
   ThemeSwitcher,
   ConfigMenu,
   ThemeModal,
+  // v0.6.0: New Features
+  CardStack,
+  useCardStacking,
+  CardHistoryTimeline,
+  CardHistoryReplay,
+  useCardHistory,
+  CardRelationshipsGraph,
+  useRelationshipsGraph,
   type User,
   type GeneratedPlan,
   type Card,
@@ -36,6 +45,7 @@ import {
   type GroupByOption,
   type CardTemplate,
   type ImportResult,
+  type CardRelationship,
 } from '@asakaa/board'
 import '@asakaa/board/styles.css'
 
@@ -341,6 +351,11 @@ export default function App() {
   const [isExportImportOpen, setIsExportImportOpen] = useState(false)
   const [isThemeModalOpen, setIsThemeModalOpen] = useState(false)
 
+  // v0.6.0: New Features State
+  const [isHistoryViewOpen, setIsHistoryViewOpen] = useState(false)
+  const [isGraphViewOpen, setIsGraphViewOpen] = useState(false)
+  const [historySelectedCard, setHistorySelectedCard] = useState<Card | null>(null)
+
   // v0.4.0: Simplified API with useBoard hook
   const board = useBoard({
     initialData: demoBoard,
@@ -409,7 +424,10 @@ export default function App() {
 
   // Handler for card click - open detail modal
   const handleCardClick = (card: Card) => {
+    console.log('🎯 Card clicked:', card.id, card.title)
+    console.log('📍 Setting selectedCard:', card)
     setSelectedCard(card)
+    console.log('🚪 Opening modal, setting isOpen to true')
     setIsCardDetailModalOpen(true)
   }
 
@@ -693,6 +711,61 @@ export default function App() {
 
               <div className="w-px h-10 bg-white/10" />
 
+              {/* v0.6.0: New Features Buttons */}
+              <button
+                onClick={() => {
+                  const demoCard = board.board.cards.find(c => c.columnId === 'col-progress')
+                  if (demoCard) {
+                    setHistorySelectedCard(demoCard)
+                    setIsHistoryViewOpen(true)
+                  }
+                }}
+                className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all border"
+                style={{
+                  backgroundColor: 'var(--theme-bg-secondary)',
+                  borderColor: 'var(--theme-border-primary)',
+                  color: 'var(--theme-text-secondary)'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = 'var(--theme-bg-tertiary)'
+                  e.currentTarget.style.color = 'var(--theme-text-primary)'
+                  e.currentTarget.style.borderColor = 'var(--theme-border-secondary)'
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = 'var(--theme-bg-secondary)'
+                  e.currentTarget.style.color = 'var(--theme-text-secondary)'
+                  e.currentTarget.style.borderColor = 'var(--theme-border-primary)'
+                }}
+                title="Time Travel - View card history"
+              >
+                ⏰
+              </button>
+
+              <button
+                onClick={() => setIsGraphViewOpen(true)}
+                className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all border"
+                style={{
+                  backgroundColor: 'var(--theme-bg-secondary)',
+                  borderColor: 'var(--theme-border-primary)',
+                  color: 'var(--theme-text-secondary)'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = 'var(--theme-bg-tertiary)'
+                  e.currentTarget.style.color = 'var(--theme-text-primary)'
+                  e.currentTarget.style.borderColor = 'var(--theme-border-secondary)'
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = 'var(--theme-bg-secondary)'
+                  e.currentTarget.style.color = 'var(--theme-text-secondary)'
+                  e.currentTarget.style.borderColor = 'var(--theme-border-primary)'
+                }}
+                title="Relationships Graph"
+              >
+                🕸️
+              </button>
+
+              <div className="w-px h-10 bg-white/10" />
+
               {/* Stats */}
               <div className="text-center">
                 <div className="text-2xl font-bold" style={{ color: 'var(--theme-text-primary)' }}>
@@ -907,8 +980,8 @@ export default function App() {
         onOpenAIUsage={() => setIsAIUsageDashboardOpen(true)}
       />
 
-      {/* Card Detail Modal */}
-      <CardDetailModal
+      {/* Card Detail Modal V2.0 */}
+      <CardDetailModalV2
         card={selectedCard}
         isOpen={isCardDetailModalOpen}
         onClose={() => {
@@ -920,12 +993,9 @@ export default function App() {
         availableUsers={sampleUsers}
         comments={selectedCard ? comments.filter((c) => c.cardId === selectedCard.id) : []}
         activities={selectedCard ? activities.filter((a) => a.cardId === selectedCard.id) : []}
-        aiInsights={selectedCard?.id === 'card-5' ? sampleInsights : []}
         onAddComment={handleAddComment}
         onDeleteComment={handleDeleteComment}
-        onSuggestAssignee={onSuggestAssignee}
-        onGenerateSubtasks={onGenerateSubtasks}
-        onEstimateEffort={onEstimateEffort}
+        currentUser={sampleUsers[0]}
       />
 
       {/* Bulk Operations Toolbar */}
@@ -962,6 +1032,137 @@ export default function App() {
         isOpen={isThemeModalOpen}
         onClose={() => setIsThemeModalOpen(false)}
       />
+
+      {/* v0.6.0: Time Travel Demo Modal */}
+      {isHistoryViewOpen && historySelectedCard && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'rgba(0, 0, 0, 0.8)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 1000,
+          }}
+          onClick={() => setIsHistoryViewOpen(false)}
+        >
+          <div
+            style={{
+              background: 'var(--theme-bg-secondary)',
+              borderRadius: '16px',
+              padding: '32px',
+              maxWidth: '600px',
+              width: '90%',
+              border: '1px solid var(--theme-border-primary)',
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h2 style={{ color: 'var(--theme-text-primary)', marginBottom: '16px', fontSize: '24px', fontWeight: 'bold' }}>
+              ⏰ Time Travel - Card History
+            </h2>
+            <p style={{ color: 'var(--theme-text-secondary)', marginBottom: '24px' }}>
+              Viewing history for: <strong style={{ color: 'var(--theme-text-primary)' }}>{historySelectedCard.title}</strong>
+            </p>
+            <p style={{ color: 'var(--theme-text-tertiary)', fontSize: '14px', marginBottom: '24px' }}>
+              This feature allows you to:
+            </p>
+            <ul style={{ color: 'var(--theme-text-secondary)', marginBottom: '24px', paddingLeft: '20px' }}>
+              <li>View complete card history with 14 tracked event types</li>
+              <li>Replay changes with video player-style controls</li>
+              <li>Speed control (0.5x - 3x)</li>
+              <li>Reconstruct past states of cards</li>
+              <li>localStorage persistence</li>
+            </ul>
+            <p style={{ color: 'var(--theme-text-warning, #F59E0B)', fontSize: '13px', marginBottom: '24px', fontStyle: 'italic' }}>
+              Note: This is a demo view. Full functionality requires actual card history data generated through card interactions.
+            </p>
+            <button
+              onClick={() => setIsHistoryViewOpen(false)}
+              style={{
+                background: 'var(--theme-accent-primary)',
+                color: 'white',
+                padding: '10px 20px',
+                borderRadius: '8px',
+                border: 'none',
+                cursor: 'pointer',
+                fontWeight: '600',
+              }}
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* v0.6.0: Relationships Graph Demo Modal */}
+      {isGraphViewOpen && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'rgba(0, 0, 0, 0.8)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 1000,
+          }}
+          onClick={() => setIsGraphViewOpen(false)}
+        >
+          <div
+            style={{
+              background: 'var(--theme-bg-secondary)',
+              borderRadius: '16px',
+              padding: '32px',
+              maxWidth: '600px',
+              width: '90%',
+              border: '1px solid var(--theme-border-primary)',
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h2 style={{ color: 'var(--theme-text-primary)', marginBottom: '16px', fontSize: '24px', fontWeight: 'bold' }}>
+              🕸️ Card Relationships Graph
+            </h2>
+            <p style={{ color: 'var(--theme-text-secondary)', marginBottom: '24px' }}>
+              Interactive dependency and relationship visualization
+            </p>
+            <p style={{ color: 'var(--theme-text-tertiary)', fontSize: '14px', marginBottom: '24px' }}>
+              This feature provides:
+            </p>
+            <ul style={{ color: 'var(--theme-text-secondary)', marginBottom: '24px', paddingLeft: '20px' }}>
+              <li>9 relationship types (blocks, depends_on, relates_to, etc.)</li>
+              <li>Custom force-directed graph simulation (no D3.js dependency)</li>
+              <li>Critical path detection for project management</li>
+              <li>AI-powered relationship detection</li>
+              <li>Interactive drag & zoom controls</li>
+              <li>Cluster analysis and bottleneck identification</li>
+            </ul>
+            <p style={{ color: 'var(--theme-text-warning, #F59E0B)', fontSize: '13px', marginBottom: '24px', fontStyle: 'italic' }}>
+              Note: This is a demo view. Full graph visualization requires cards with defined relationships (dependencies field).
+            </p>
+            <button
+              onClick={() => setIsGraphViewOpen(false)}
+              style={{
+                background: 'var(--theme-accent-primary)',
+                color: 'white',
+                padding: '10px 20px',
+                borderRadius: '8px',
+                border: 'none',
+                cursor: 'pointer',
+                fontWeight: '600',
+              }}
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
       </div>
     </ThemeProvider>
   )

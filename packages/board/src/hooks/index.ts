@@ -12,6 +12,8 @@ export {
   useMetricValue,
 } from './usePerformanceMonitor'
 export { useKeyboardShortcuts, DEFAULT_SHORTCUTS } from './keyboard/useKeyboardShortcuts'
+export { useCardStacking } from './useCardStacking'
+export type { UseCardStackingOptions, UseCardStackingResult } from './useCardStacking'
 
 export type { UseKanbanStateOptions, UseKanbanStateReturn } from './useKanbanState'
 export type { UseBoardOptions, UseBoardReturn } from './useBoard'

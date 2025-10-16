@@ -2,7 +2,7 @@
   "name": "@asakaa/board",
   "version": "0.6.0",
   "type": "module",
-  "description": "Elite Kanban board for React with theming, advanced accessibility, and 60fps performance. Built for 2025 with superior DX.",
+  "description": "React Kanban Board Component - Professional drag-and-drop task management with TypeScript, themes, filtering, and 60fps performance for agile project management",
   "author": "Asakaa",
   "license": "BUSL-1.1",
   "keywords": [

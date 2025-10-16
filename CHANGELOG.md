@@ -7,7 +7,54 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.6.0] - 2025-10-13
+## [0.6.0] - 2025-10-16
+
+### Added - Card Detail Modal V2, Time Travel & Card Relationships
+
+#### CardDetailModalV2 Component 🎨
+- **Complete CSS Redesign**: 1014-line CSS rewrite with modal-specific variables
+  - New `--modal-v2-*` CSS variables replacing global `--color-*` variables
+  - Enhanced visual hierarchy and spacing
+  - Improved theming support across Dark, Light, and Neutral themes
+  - Better contrast ratios and accessibility
+
+#### Time Travel & Card History 📜
+- **CardHistoryTimeline Component**: Visual timeline of all card changes
+  - Event grouping by date
+  - Color-coded event types (created, updated, status changed, etc.)
+  - Detailed change descriptions with before/after values
+  - Type-safe event system with proper TypeScript definitions
+
+#### Card Relationships Graph 🔗
+- **CardRelationshipsGraph Component**: Visual dependency graph
+  - D3.js force-directed graph visualization
+  - Multiple relationship types: blocks, depends_on, relates_to, duplicates
+  - Interactive node selection and filtering
+  - Critical path detection
+  - Graph statistics (nodes, edges, clusters)
+  - Color schemes by status, priority, or assignee
+
+### Fixed - TypeScript Build Errors
+- **CardHistoryTimeline.tsx**: Fixed Map.get() type handling and unused parameters
+- **CardRelationshipsGraph.tsx**:
+  - Fixed priority comparisons (changed from numbers to 'LOW'|'MEDIUM'|'HIGH'|'URGENT' strings)
+  - Fixed property name from `assignedTo` to `assigneeId`
+  - Removed unused imports and parameters
+- **card-relationships.ts**: Prefixed unused parameter with underscore
+
+### Technical Details
+- **New Components**: CardDetailModalV2, CardHistoryTimeline, CardRelationshipsGraph
+- **New Types**: CardHistoryEvent, GraphNode, GraphEdge, GraphConfig, CriticalPath
+- **New Hooks**: useCardHistory, useCardStacking, useRelationshipsGraph
+- **Bundle Size**: ESM 198.27 KB, CJS 215.41 KB, CSS 61.14 KB, DTS 74.71 KB
+- **Zero Breaking Changes**: Fully backward compatible
+
+### Developer Experience
+- All TypeScript errors resolved - clean build
+- Enhanced type safety for card relationships and history
+- Comprehensive test coverage for new components
+
+## [0.6.0-beta] - 2025-10-13
 
 ### Added - Enhanced Design System & Visual Refinements
 

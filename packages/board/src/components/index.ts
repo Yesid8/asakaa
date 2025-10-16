@@ -9,7 +9,7 @@ export {
 } from './Card'
 export { ErrorBoundary, withErrorBoundary } from './ErrorBoundary'
 export { CommandPalette } from './CommandPalette'
-export { CardDetailModal } from './CardDetailModal'
+export { CardDetailModal, CardDetailModalV2 } from './CardDetailModal'
 export { AttachmentUploader } from './Attachments'
 export { VelocityChart, BurnDownChart, DistributionCharts } from './Charts'
 export { BulkOperationsToolbar } from './BulkOperations'
@@ -30,7 +30,7 @@ export type {
 } from './Card'
 export type { ErrorBoundaryProps } from './ErrorBoundary'
 export type { CommandPaletteProps } from './CommandPalette'
-export type { CardDetailModalProps } from './CardDetailModal'
+export type { CardDetailModalProps, CardDetailModalV2Props } from './CardDetailModal'
 export type { AttachmentUploaderProps } from './Attachments'
 export type {
   VelocityChartProps,

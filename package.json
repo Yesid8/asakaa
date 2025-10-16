@@ -2,7 +2,7 @@
   "name": "asakaa-monorepo",
   "version": "0.0.0",
   "private": true,
-  "description": "ASAKAA - AI-native Kanban board library",
+  "description": "React Kanban Board Component - Modern drag-and-drop task management library for agile teams and project management",
   "workspaces": [
     "packages/*",
     "apps/*"

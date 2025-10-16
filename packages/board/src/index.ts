@@ -17,6 +17,7 @@ export {
   withErrorBoundary,
   CommandPalette,
   CardDetailModal,
+  CardDetailModalV2,
   AttachmentUploader,
   VelocityChart,
   BurnDownChart,
@@ -32,6 +33,19 @@ export {
   ConfigMenu,
   ThemeModal,
 } from './components'
+
+// v0.6.0: Smart Card Stacking
+export { CardStack } from './components/CardStack/CardStack'
+export type { CardStackProps } from './components/CardStack/CardStack'
+
+// v0.6.0: Card History & Time Travel
+export { CardHistoryTimeline, CardHistoryReplay } from './components/CardHistory'
+export type { CardHistoryTimelineProps, CardHistoryReplayProps } from './components/CardHistory'
+
+// v0.6.0: Card Relationships Graph
+export { CardRelationshipsGraph } from './components/CardRelationships'
+export type { CardRelationshipsGraphProps } from './components/CardRelationships'
+
 export type {
   ColumnProps,
   CardProps,
@@ -43,6 +57,7 @@ export type {
   ErrorBoundaryProps,
   CommandPaletteProps,
   CardDetailModalProps,
+  CardDetailModalV2Props,
   AttachmentUploaderProps,
   VelocityChartProps,
   VelocityDataPoint,
@@ -74,6 +89,7 @@ export {
   useMultiSelect,
   useKeyboardShortcuts,
   DEFAULT_SHORTCUTS,
+  useCardStacking,
 } from './hooks'
 export type {
   UseKanbanStateOptions,
@@ -92,6 +108,8 @@ export type {
   UseMultiSelectReturn,
   UseKeyboardShortcutsOptions,
   UseKeyboardShortcutsReturn,
+  UseCardStackingOptions,
+  UseCardStackingResult,
 } from './hooks'
 
 // Types
@@ -130,6 +148,10 @@ export type {
   ExportFormat,
   ExportOptions,
   ImportResult,
+  CardStack as CardStackType,
+  StackingStrategy,
+  StackingConfig,
+  StackSuggestion,
 } from './types'
 
 // Utilities

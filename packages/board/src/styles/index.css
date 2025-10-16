@@ -16,6 +16,16 @@
 /* Card Detail Modal - Full card editing experience */
 @import './components/card-detail-modal.css';
 
+/* Card Detail Modal V2 - Enhanced task detail view */
+@import '../components/CardDetailModal/card-detail-modal-v2.css';
+
+/* Card Stack - Smart grouping of related cards (v0.6.0) */
+@import '../components/CardStack/card-stack.css';
+
+/* Card History - Time travel and replay functionality (v0.6.0) */
+@import '../components/CardHistory/card-history.css';
+
+/* Card Relationships - Interactive graph visualization (v0.6.0) */@import '../components/CardRelationships/card-relationships.css';
 /* Command Palette - Keyboard-driven navigation */
 @import './components/command-palette.css';
 

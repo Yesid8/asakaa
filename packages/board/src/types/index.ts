@@ -958,3 +958,9 @@ export type CallbackFn<T extends (...args: any[]) => any> = T extends (
 ) => infer R
   ? (...args: P) => R
   : never
+
+// ============================================================================
+// CARD STACKING TYPES (v0.6.0)
+// ============================================================================
+
+export type { CardStack, StackingStrategy, StackingConfig, StackSuggestion } from './card-stack'

@@ -1,6 +1,6 @@
-# ASAKAA
+# ASAKAA - React Kanban Board Component Library
 
-Project management components for React applications.
+Modern Kanban board component for React applications. Drag-and-drop task management, customizable workflows, and beautiful themes for agile teams.
 
 [![License](https://img.shields.io/badge/license-BSL%201.1-blue.svg)](./LICENSE)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.6-blue)](https://www.typescriptlang.org/)
@@ -9,7 +9,7 @@ Project management components for React applications.
 
 ## Overview
 
-ASAKAA is a monorepo containing production-ready React components for project management interfaces. The suite currently includes a Kanban board component with planned expansion to todo lists, Gantt charts, and calendar views.
+ASAKAA is a production-ready React Kanban board component library for building modern project management interfaces. Perfect for agile teams, task tracking, workflow management, and visual project organization. Features drag-and-drop cards, customizable columns, filtering, and three beautiful themes. Built with TypeScript for type safety and developer experience.
 
 ## Three Beautiful Themes
 
