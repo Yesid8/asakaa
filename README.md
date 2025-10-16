@@ -1,15 +1,68 @@
-# ASAKAA - React Kanban Board Component Library
+<div align="center">
 
-Modern Kanban board component for React applications. Drag-and-drop task management, customizable workflows, and beautiful themes for agile teams.
+# 🎯 ASAKAA
 
-[![License](https://img.shields.io/badge/license-BSL%201.1-blue.svg)](./LICENSE)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.6-blue)](https://www.typescriptlang.org/)
-[![React](https://img.shields.io/badge/React-18+-61dafb)](https://reactjs.org/)
-[![Version](https://img.shields.io/badge/version-0.6.0-green)](https://github.com/asakaa/asakaa)
+### Production-Ready React Kanban Board Component
 
-## Overview
+*Modern, TypeScript-first Kanban board for React applications*
 
-ASAKAA is a production-ready React Kanban board component library for building modern project management interfaces. Perfect for agile teams, task tracking, workflow management, and visual project organization. Features drag-and-drop cards, customizable columns, filtering, and three beautiful themes. Built with TypeScript for type safety and developer experience.
+[![License: BSL 1.1](https://img.shields.io/badge/license-BSL%201.1-blue.svg)](./LICENSE)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.6-blue?logo=typescript)](https://www.typescriptlang.org/)
+[![React](https://img.shields.io/badge/React-18+-61dafb?logo=react)](https://reactjs.org/)
+[![Version](https://img.shields.io/badge/version-0.6.0-green)](https://github.com/Yesid8/asakaa)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](./CONTRIBUTING.md)
+[![Stars](https://img.shields.io/github/stars/Yesid8/asakaa?style=social)](https://github.com/Yesid8/asakaa/stargazers)
+
+[Demo (Coming Soon)]() • [Documentation](#-quick-start) • [Examples](#usage) • [Contributing](./CONTRIBUTING.md)
+
+</div>
+
+---
+
+## 🚀 Why ASAKAA?
+
+**Stop wrestling with low-level drag-and-drop libraries.** ASAKAA gives you a complete, production-ready Kanban board in minutes, not weeks.
+
+### ✨ All-in-One Solution
+- ✅ **Drag & Drop** - Smooth 60fps animations powered by @dnd-kit
+- ✅ **3 Beautiful Themes** - Dark, Light, and Neutral (Zen mode)
+- ✅ **Advanced Filtering** - Search, filter by assignee, labels, priority, dates
+- ✅ **Virtual Scrolling** - Handle 10,000+ cards without performance issues
+- ✅ **TypeScript First** - Complete type definitions out of the box
+- ✅ **Keyboard Shortcuts** - Power users rejoice (Cmd+K, undo/redo, bulk ops)
+- ✅ **Export/Import** - JSON, CSV, PDF exports built-in
+- ✅ **Plugin System** - 15+ lifecycle hooks for customization
+- ✅ **Accessibility** - WCAG AAA compliant (7:1 contrast ratios)
+
+### 📦 vs. Competitors
+
+| Feature | ASAKAA | react-beautiful-dnd | @dnd-kit/sortable | react-dnd |
+|---------|--------|---------------------|-------------------|-----------|
+| **Kanban UI included** | ✅ Built-in | ❌ DIY | ❌ DIY | ❌ DIY |
+| **Themes** | ✅ 3 themes | ❌ None | ❌ None | ❌ None |
+| **Filtering** | ✅ Advanced | ❌ None | ❌ None | ❌ None |
+| **TypeScript** | ✅ Full | ⚠️ Partial | ✅ Full | ✅ Full |
+| **Maintained** | ✅ Active | ❌ Deprecated | ✅ Active | ✅ Active |
+| **Bundle size** | 198 KB | ~40 KB* | ~20 KB* | ~45 KB* |
+| **Learning curve** | 5 min | 2-3 days | 2-3 days | 3-4 days |
+
+*\*Without UI, theming, filtering, virtualization, or keyboard shortcuts*
+
+**ASAKAA = Everything you need, nothing you don't.**
+
+---
+
+## 📸 See It In Action
+
+> **Note**: Demo GIF coming soon! For now, run the demo locally:
+> ```bash
+> git clone https://github.com/Yesid8/asakaa.git
+> cd asakaa/packages/board/examples/demo
+> npm install && npm run dev
+> # Open http://localhost:3000
+> ```
+
+### Three Themes, Instant Switching
 
 ## Three Beautiful Themes
 
