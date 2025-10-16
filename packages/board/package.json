@@ -5,14 +5,32 @@
   "description": "React Kanban Board Component - Professional drag-and-drop task management with TypeScript, themes, filtering, and 60fps performance for agile project management",
   "author": "Asakaa",
   "license": "BUSL-1.1",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Yesid8/asakaa.git",
+    "directory": "packages/board"
+  },
+  "homepage": "https://github.com/Yesid8/asakaa#readme",
+  "bugs": {
+    "url": "https://github.com/Yesid8/asakaa/issues"
+  },
   "keywords": [
     "kanban",
-    "board",
-    "react",
-    "typescript",
-    "ai",
+    "kanban-board",
+    "react-kanban",
+    "trello",
+    "task-management",
+    "project-management",
+    "agile",
+    "scrum",
     "drag-and-drop",
-    "project-management"
+    "dnd-kit",
+    "react-component",
+    "typescript",
+    "todo",
+    "workflow",
+    "productivity",
+    "team-collaboration"
   ],
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
