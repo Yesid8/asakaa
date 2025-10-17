@@ -493,18 +493,6 @@ export function CardDetailModalV2({
           role="dialog"
           aria-modal="true"
           aria-labelledby="modal-title"
-          style={{
-            position: 'relative',
-            width: '90%',
-            maxWidth: '800px',
-            maxHeight: '90vh',
-            padding: '24px',
-            background: '#FFFFFF',
-            color: '#1a1a1a',
-            borderRadius: '16px',
-            overflowY: 'auto',
-            boxShadow: '0 20px 60px rgba(0, 0, 0, 0.5)',
-          }}
         >
           {/* HEADER */}
           <header className="modal-v2-header">
