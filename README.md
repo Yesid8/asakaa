@@ -13,7 +13,7 @@
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](./CONTRIBUTING.md)
 [![Stars](https://img.shields.io/github/stars/Yesid8/asakaa?style=social)](https://github.com/Yesid8/asakaa/stargazers)
 
-[Demo (Coming Soon)]() • [Documentation](#-quick-start) • [Examples](#usage) • [Contributing](./CONTRIBUTING.md)
+[🚀 Live Demo](https://asakaa-kanban.vercel.app/) • [Documentation](#installation) • [Examples](#usage) • [Contributing](./CONTRIBUTING.md)
 
 </div>
 
