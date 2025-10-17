@@ -9,7 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@asakaa/board": "workspace:*",
+    "@asakaa/board": "file:../..",
     "react": "^18.3.0",
     "react-dom": "^18.3.0"
   },
