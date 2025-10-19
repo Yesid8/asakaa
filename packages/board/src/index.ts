@@ -80,7 +80,7 @@ export type {
 export { GeneratePlanModal, AIUsageDashboard } from './components/AI'
 export type { GeneratePlanModalProps, AIUsageDashboardProps } from './components/AI'
 
-// Hooks
+// Hooks (Jotai-based - legacy, will be deprecated in v0.8.0)
 export {
   useKanbanState,
   useBoard,
@@ -111,6 +111,17 @@ export type {
   UseCardStackingOptions,
   UseCardStackingResult,
 } from './hooks'
+
+// React Adapters (@asakaa/core integration - v0.7.0)
+export { BoardProvider, useBoardStore } from './adapters/react'
+export type { BoardProviderProps } from './adapters/react'
+
+// Export with alias to avoid conflict with legacy useBoard hook
+export { useBoard as useBoardCore } from './adapters/react'
+export type { UseBoardReturn as UseBoardCoreReturn } from './adapters/react'
+
+export { useFilteredCards, useSortedCards } from './adapters/react'
+export type { CardFilters } from './adapters/react'
 
 // Types
 export type {
@@ -190,3 +201,24 @@ export type { Plugin, PluginContext, PluginHooks, IPluginManager } from './plugi
 // Theme System (v0.5.0)
 export { ThemeProvider, useTheme, ThemeSwitcher, themes, darkTheme, lightTheme, neutralTheme, defaultTheme } from './theme'
 export type { ThemeName, Theme, ThemeColors, ThemeContextValue } from './theme'
+
+// Re-export @asakaa/core (v0.7.0 - framework-agnostic models and store)
+export {
+  Card as CardModel,
+  Column as ColumnModel,
+  Board as BoardModel,
+  BoardStore,
+  Store,
+} from '@asakaa/core'
+
+export type {
+  CardData,
+  ColumnData,
+  BoardData,
+  UserData,
+  BaseEntity,
+  BoardState,
+  StoreEvent,
+} from '@asakaa/core'
+
+// Note: Priority type already exported from ./types above

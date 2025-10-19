@@ -34,3 +34,7 @@ export type {
   AnyEvent,
   EventType,
 } from './types'
+
+// Adapters
+export { BoardController } from './adapters/vanilla'
+export type { BoardControllerOptions, EventHandler } from './adapters/vanilla'

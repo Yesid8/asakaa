@@ -81,7 +81,7 @@ export function BoardProvider({ children, initialData, onStateChange }: BoardPro
   useEffect(() => {
     if (!onStateChange) return
 
-    return store.subscribeAll((event) => {
+    return store.subscribeAll((_event) => {
       onStateChange(store.getState())
     })
   }, [store, onStateChange])
