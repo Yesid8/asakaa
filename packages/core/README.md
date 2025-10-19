@@ -4,20 +4,26 @@
 
 Pure TypeScript business logic with 0 UI dependencies. Use with React, Vue, Svelte, or Vanilla JS.
 
-## Status: 🚧 Work in Progress (v0.7.0 - Phase 1)
+## Status: ✅ Phase 1 Complete | 🚧 Phase 2 In Progress (v0.7.0)
 
-### ✅ Completed
+### ✅ Phase 1 Completed (100%)
 - [x] Package structure and build setup
 - [x] TypeScript configuration (strict mode)
 - [x] Base types (Card, Column, Board, User)
 - [x] Event types for store
-- [x] Immutable Card model with utility methods
+- [x] Immutable Card model with 15+ utility methods
+- [x] Immutable Column model with WIP limits
+- [x] Immutable Board model with column management
+- [x] Generic Store<T> with pub/sub pattern
+- [x] Specialized BoardStore with CRUD operations
+- [x] Build system (20KB bundle, tree-shakeable)
 
-### 🔄 In Progress
-- [ ] Column and Board models
-- [ ] Event-based Store (pub/sub pattern)
-- [ ] Services (CardService, BoardService, FilterService)
-- [ ] Algorithms (drag-drop, search, filter)
+### 🔄 Phase 2 In Progress (60%)
+- [x] React adapters (BoardProvider, useBoard, useFilteredCards)
+- [x] Linked to @asakaa/board package
+- [ ] Export from main index (name conflict to resolve)
+- [ ] Refactor existing components to use adapters
+- [ ] Remove Jotai dependency
 - [ ] Unit tests (target: >95% coverage)
 
 ## Installation
