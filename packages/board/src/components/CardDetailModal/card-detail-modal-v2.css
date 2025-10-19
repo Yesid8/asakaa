@@ -109,7 +109,7 @@
   box-shadow: var(--modal-v2-shadow);
   overflow-y: auto;
   animation: modalSlideIn 90ms cubic-bezier(0.16, 1, 0.3, 1);
-  will-change: transform, opacity;
+  /* Removed will-change to fix popover positioning with scroll */
 }
 
 @keyframes modalSlideIn {
