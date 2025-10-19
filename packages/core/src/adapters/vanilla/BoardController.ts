@@ -31,7 +31,8 @@
  */
 
 import { BoardStore, Board, Column, Card } from '../../index'
-import type { BoardData, ColumnData, CardData, BoardState, StoreEvent } from '../../store'
+import type { BoardData, ColumnData, CardData, StoreEvent } from '../../types'
+import type { BoardState } from '../../store'
 
 export interface BoardControllerOptions {
   /**
@@ -308,7 +309,7 @@ export class BoardController {
   render(): void {
     const state = this.getState()
 
-    if (this.renderers.renderBoard) {
+    if (this.renderers?.renderBoard) {
       this.renderers.renderBoard(this.container, state)
     } else {
       this.defaultRender(state)
@@ -393,7 +394,7 @@ export class BoardController {
    * Render a card element
    */
   private renderCardElement(card: Card): HTMLElement {
-    if (this.renderers.renderCard) {
+    if (this.renderers?.renderCard) {
       const cardEl = document.createElement('div')
       this.renderers.renderCard(cardEl, card)
       return cardEl

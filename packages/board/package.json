@@ -1,6 +1,6 @@
 {
   "name": "@asakaa/board",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "type": "module",
   "description": "React Kanban Board Component - Professional drag-and-drop task management with TypeScript, themes, filtering, and 60fps performance for agile project management",
   "author": "Asakaa",
