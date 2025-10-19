@@ -120,7 +120,7 @@ export function CardDetailModalV2({
   const [showDatePicker, setShowDatePicker] = useState(false)
   const [showTimePicker, setShowTimePicker] = useState(false)
 
-  // Refs
+// Refs
   const titleRef = useRef<HTMLHeadingElement>(null)
   const descriptionRef = useRef<HTMLTextAreaElement>(null)
   const commentRef = useRef<HTMLTextAreaElement>(null)
@@ -251,7 +251,8 @@ export function CardDetailModalV2({
 
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [isOpen, onClose, showStatusMenu, showPriorityMenu, showAssigneeMenu, showLabelMenu, showDatePicker, showTimePicker])
+    }, [isOpen, onClose, showStatusMenu, showPriorityMenu, showAssigneeMenu, showLabelMenu, showDatePicker, showTimePicker])
+
 
   // Handlers
   const handleTitleChange = useCallback(
