@@ -381,6 +381,12 @@ export default function App() {
     return filters.applyFilters(board.board.cards)
   }, [board.board.cards, filters])
 
+  // Create board with filtered cards
+  const filteredBoard = useMemo(() => ({
+    ...board.board,
+    cards: filteredAndSortedCards
+  }), [board.board, filteredAndSortedCards])
+
   // Multi-select functionality
   const {
     selectedCardIds,
@@ -829,7 +835,8 @@ export default function App() {
       <div className="pb-12">
         {groupBy === 'none' ? (
           <KanbanBoard
-            {...board.props}
+            board={filteredBoard}
+            availableUsers={board.props.availableUsers}
             callbacks={{
               ...board.callbacks,
               onWipLimitExceeded: handleWipLimitExceeded,
@@ -893,7 +900,7 @@ export default function App() {
           </KanbanBoard>
         ) : (
           <SwimlaneBoardView
-            board={board.board}
+            board={filteredBoard}
             swimlaneConfig={{
               groupBy,
               collapsible: true,
