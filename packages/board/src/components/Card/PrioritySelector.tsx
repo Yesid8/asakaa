@@ -1,8 +1,3 @@
-/**
- * Priority Selector Component
- * Configurable priority selector with flag icon and contextual menu
- */
-
 import { useState, useRef, useEffect } from 'react'
 import { Portal } from '../Portal'
 import type { Priority } from '../../types'
@@ -22,7 +17,6 @@ const PRIORITY_CONFIG = {
 
 const CLEAR_COLOR = '#BDC3C7'
 
-// SVG Icon Component for Priority
 const PriorityIcon = ({ color }: { color: string }) => (
   <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
     <circle cx="8" cy="8" r="6" fill={color} opacity="0.9" />
@@ -40,7 +34,6 @@ export function PrioritySelector({
   const menuRef = useRef<HTMLDivElement>(null)
   const buttonRef = useRef<HTMLButtonElement>(null)
 
-  // Update menu position when opened
   useEffect(() => {
     if (isOpen && buttonRef.current) {
       const rect = buttonRef.current.getBoundingClientRect()
@@ -51,7 +44,6 @@ export function PrioritySelector({
     }
   }, [isOpen])
 
-  // Close menu when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -70,12 +62,9 @@ export function PrioritySelector({
     return undefined
   }, [isOpen])
 
-  // Close on escape
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        setIsOpen(false)
-      }
+      if (e.key === 'Escape') setIsOpen(false)
     }
 
     if (isOpen) {
@@ -95,7 +84,6 @@ export function PrioritySelector({
 
   return (
     <div className={`relative ${className || ''}`}>
-      {/* Flag button with visual feedback when priority is set */}
       <button
         ref={buttonRef}
         onClick={() => setIsOpen(!isOpen)}
@@ -125,37 +113,52 @@ export function PrioritySelector({
         </svg>
       </button>
 
-      {/* Priority menu - Using Portal to escape stacking context */}
       {isOpen && (
         <Portal>
           <div
             ref={menuRef}
-            className="fixed rounded-lg shadow-2xl border min-w-[160px]"
+            className="priority-selector-menu"
             style={{
+              position: 'absolute',
               top: `${menuPosition.top}px`,
               left: `${menuPosition.left}px`,
-              background: 'linear-gradient(135deg, #1f1f1f 0%, #1a1a1a 100%)',
-              borderColor: 'rgba(255, 255, 255, 0.15)',
-              boxShadow: '0 10px 40px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.1)',
               zIndex: 99999,
+              minWidth: '160px',
+              borderRadius: '8px',
+              background: 'var(--modal-v2-bg, #1f1f1f)',
+              border: '1px solid var(--modal-v2-border, rgba(255, 255, 255, 0.15))',
+              boxShadow: '0 10px 40px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.1)',
             }}
           >
-          {/* Header - más compacto */}
-          <div className="px-3 py-1.5 border-b border-white/10">
-            <span className="text-[10px] font-bold text-white/70 uppercase tracking-wider">
+          <div
+            className="px-3 py-1.5 border-b"
+            style={{ borderColor: 'var(--modal-v2-border, rgba(255, 255, 255, 0.1))' }}
+          >
+            <span
+              className="text-[10px] font-bold uppercase tracking-wider"
+              style={{ color: 'var(--modal-v2-text-secondary, rgba(255, 255, 255, 0.7))' }}
+            >
               Priority
             </span>
           </div>
 
-          {/* Options */}
           <div className="py-1">
             {(Object.entries(PRIORITY_CONFIG) as [Priority, typeof PRIORITY_CONFIG[Priority]][]).map(
               ([key, config]) => (
                 <button
                   key={key}
                   onClick={() => handleSelect(key)}
-                  className="w-full px-3 py-1.5 flex items-center gap-2 text-xs font-medium transition-all hover:bg-white/15 active:scale-[0.98]"
-                  style={{ color: config.color }}
+                  className="w-full px-3 py-1.5 flex items-center gap-2 text-xs font-medium transition-all active:scale-[0.98] priority-option"
+                  style={{
+                    color: config.color,
+                    background: 'transparent'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = 'var(--modal-v2-bg-tertiary, rgba(255, 255, 255, 0.15))'
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = 'transparent'
+                  }}
                 >
                   <PriorityIcon color={config.color} />
                   <span className="font-semibold text-sm">{config.label}</span>
@@ -168,12 +171,23 @@ export function PrioritySelector({
               )
             )}
 
-            {/* Clear option */}
-            <div className="mt-0.5 pt-0.5 border-t border-white/10">
+            <div
+              className="mt-0.5 pt-0.5 border-t"
+              style={{ borderColor: 'var(--modal-v2-border, rgba(255, 255, 255, 0.1))' }}
+            >
               <button
                 onClick={() => handleSelect(undefined)}
-                className="w-full px-3 py-1.5 flex items-center gap-2 text-xs font-medium transition-all hover:bg-white/15 active:scale-[0.98]"
-                style={{ color: '#e5e5e5' }}
+                className="w-full px-3 py-1.5 flex items-center gap-2 text-xs font-medium transition-all active:scale-[0.98]"
+                style={{
+                  color: 'var(--modal-v2-text-primary, #e5e5e5)',
+                  background: 'transparent'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = 'var(--modal-v2-bg-tertiary, rgba(255, 255, 255, 0.15))'
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = 'transparent'
+                }}
               >
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                   <circle cx="8" cy="8" r="6" stroke="#9CA3AF" strokeWidth="1.5" strokeDasharray="2 2" opacity="0.6" />

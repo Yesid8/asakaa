@@ -94,15 +94,21 @@
   font-weight: var(--font-semibold);
 }
 
-/* ==========================================================================
-   NEUTRAL THEME - Pure grayscale, ZERO color exceptions
-   Philosophy: Absolute monochrome. Visual hierarchy through typography,
-   spacing, and subtle shades of gray only.
-   ========================================================================== */
-
-/* Global grayscale enforcement - covers ALL elements including inline styles */
+/* Neutral theme: monochromatic design using grayscale filter */
 [data-theme="neutral"] * {
   filter: grayscale(100%) !important;
+}
+
+/* Dropdown menus: excluded from grayscale to maintain readability */
+html[data-theme="neutral"] .priority-selector-menu,
+html[data-theme="neutral"] .priority-selector-menu *,
+html[data-theme="neutral"] .date-picker-menu,
+html[data-theme="neutral"] .date-picker-menu *,
+html[data-theme="neutral"] .user-selector-menu,
+html[data-theme="neutral"] .user-selector-menu *,
+html[data-theme="neutral"] .dependencies-selector-menu,
+html[data-theme="neutral"] .dependencies-selector-menu * {
+  filter: none !important;
 }
 
 /* Priority indicators - grayscale only */
@@ -192,3 +198,8 @@
 [data-theme="neutral"] [style*="border"] {
   filter: grayscale(100%) !important;
 }
+
+/* ==========================================================================
+   MODAL V2 VARIABLES - Defined in card-detail-modal-v2.css
+   No need to redefine here - avoiding CSS conflicts
+   ========================================================================== */

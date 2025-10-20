@@ -34,7 +34,6 @@ export function DependenciesSelector({
   const menuRef = useRef<HTMLDivElement>(null)
   const buttonRef = useRef<HTMLButtonElement>(null)
 
-  // Update menu position when opened
   useEffect(() => {
     if (isOpen && buttonRef.current) {
       const rect = buttonRef.current.getBoundingClientRect()
@@ -45,7 +44,6 @@ export function DependenciesSelector({
     }
   }, [isOpen])
 
-  // Close menu when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -65,7 +63,6 @@ export function DependenciesSelector({
     return undefined
   }, [isOpen])
 
-  // Close on escape
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
@@ -157,35 +154,35 @@ export function DependenciesSelector({
         <Portal>
           <div
             ref={menuRef}
-            className="fixed rounded-xl shadow-2xl border min-w-[300px]"
+            className="dependencies-selector-menu absolute rounded-xl shadow-2xl border min-w-[300px]"
             style={{
               top: `${menuPosition.top}px`,
               left: `${menuPosition.left}px`,
-              background: 'linear-gradient(135deg, #1f1f1f 0%, #1a1a1a 100%)',
-              borderColor: 'rgba(255, 255, 255, 0.15)',
+              background: 'var(--modal-v2-bg, #1f1f1f)',
+              border: '1px solid var(--modal-v2-border, rgba(255, 255, 255, 0.15))',
               boxShadow: '0 20px 60px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.1)',
               zIndex: 99999,
             }}
           >
           {/* Header */}
-          <div className="px-4 py-2 border-b border-white/5">
-            <span className="text-xs font-semibold text-white/70 uppercase tracking-wide">
+          <div className="px-4 py-2 border-b" style={{ borderColor: 'var(--modal-v2-border, rgba(255, 255, 255, 0.05))' }}>
+            <span className="text-xs font-semibold uppercase tracking-wide" style={{ color: 'var(--modal-v2-text-secondary, rgba(255, 255, 255, 0.7))' }}>
               Task Dependencies
             </span>
           </div>
 
           {/* Has dependencies checkbox */}
-          <div className="px-4 py-3 border-b border-white/5">
+          <div className="px-4 py-3 border-b" style={{ borderColor: 'var(--modal-v2-border, rgba(255, 255, 255, 0.05))' }}>
             <label
               className="flex items-center gap-2 cursor-pointer group"
               onClick={handleToggleHasDependencies}
             >
               <div
-                className={`w-4 h-4 rounded border-2 flex items-center justify-center transition-all ${
-                  hasDependencies
-                    ? 'bg-blue-600 border-blue-600'
-                    : 'border-white/30 group-hover:border-white/50'
-                }`}
+                className="w-4 h-4 rounded border-2 flex items-center justify-center transition-all"
+                style={{
+                  background: hasDependencies ? '#3b82f6' : 'transparent',
+                  borderColor: hasDependencies ? '#3b82f6' : 'var(--modal-v2-border, rgba(255, 255, 255, 0.3))',
+                }}
               >
                 {hasDependencies && (
                   <svg
@@ -205,7 +202,7 @@ export function DependenciesSelector({
                   </svg>
                 )}
               </div>
-              <span className="text-sm text-white/80 font-medium">
+              <span className="text-sm font-medium" style={{ color: 'var(--modal-v2-text-primary, rgba(255, 255, 255, 0.8))' }}>
                 Has dependencies
               </span>
             </label>
@@ -215,13 +212,18 @@ export function DependenciesSelector({
           {hasDependencies && (
             <>
               {/* Search input */}
-              <div className="px-3 py-2 border-b border-white/5">
+              <div className="px-3 py-2 border-b" style={{ borderColor: 'var(--modal-v2-border, rgba(255, 255, 255, 0.05))' }}>
                 <input
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search by name or ID..."
-                  className="w-full px-3 py-2 rounded-md text-xs bg-white/5 border border-white/10 text-white placeholder-white/40 outline-none focus:border-blue-500/50"
+                  className="w-full px-3 py-2 rounded-md text-xs border outline-none transition-all"
+                  style={{
+                    background: 'var(--modal-v2-bg-secondary, rgba(255, 255, 255, 0.05))',
+                    borderColor: 'var(--modal-v2-border, rgba(255, 255, 255, 0.1))',
+                    color: 'var(--modal-v2-text-primary, #ffffff)',
+                  }}
                   autoFocus
                 />
               </div>
@@ -229,7 +231,7 @@ export function DependenciesSelector({
               {/* Task list */}
               <div className="py-2 max-h-[280px] overflow-y-auto">
                 {filteredTasks.length === 0 ? (
-                  <div className="px-4 py-3 text-xs text-white/50 text-center">
+                  <div className="px-4 py-3 text-xs text-center" style={{ color: 'var(--modal-v2-text-tertiary, rgba(255, 255, 255, 0.5))' }}>
                     No tasks found
                   </div>
                 ) : (
@@ -240,15 +242,22 @@ export function DependenciesSelector({
                       <button
                         key={task.id}
                         onClick={() => handleToggleDependency(task.id)}
-                        className="w-full px-4 py-2 flex items-start gap-3 text-sm transition-colors hover:bg-white/5"
+                        className="w-full px-4 py-2 flex items-start gap-3 text-sm transition-colors"
+                        style={{ background: 'transparent' }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.background = 'var(--modal-v2-bg-secondary, rgba(255, 255, 255, 0.05))'
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.background = 'transparent'
+                        }}
                       >
                         {/* Checkbox */}
                         <div
-                          className={`w-4 h-4 rounded border-2 flex items-center justify-center flex-shrink-0 mt-0.5 transition-all ${
-                            isDependency
-                              ? 'bg-blue-600 border-blue-600'
-                              : 'border-white/30'
-                          }`}
+                          className="w-4 h-4 rounded border-2 flex items-center justify-center flex-shrink-0 mt-0.5 transition-all"
+                          style={{
+                            background: isDependency ? '#3b82f6' : 'transparent',
+                            borderColor: isDependency ? '#3b82f6' : 'var(--modal-v2-border, rgba(255, 255, 255, 0.3))',
+                          }}
                         >
                           {isDependency && (
                             <svg
@@ -271,10 +280,10 @@ export function DependenciesSelector({
 
                         {/* Task info */}
                         <div className="flex-1 text-left">
-                          <div className="text-white/90 font-medium">
+                          <div className="font-medium" style={{ color: 'var(--modal-v2-text-primary, rgba(255, 255, 255, 0.9))' }}>
                             {task.title}
                           </div>
-                          <div className="text-white/50 text-xs mt-0.5">
+                          <div className="text-xs mt-0.5" style={{ color: 'var(--modal-v2-text-tertiary, rgba(255, 255, 255, 0.5))' }}>
                             {task.id}
                           </div>
                         </div>

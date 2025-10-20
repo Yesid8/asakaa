@@ -33,7 +33,6 @@ export function DateRangePicker({
   const menuRef = useRef<HTMLDivElement>(null)
   const buttonRef = useRef<HTMLButtonElement>(null)
 
-  // Update menu position when opened
   useEffect(() => {
     if (isOpen && buttonRef.current) {
       const rect = buttonRef.current.getBoundingClientRect()
@@ -44,7 +43,6 @@ export function DateRangePicker({
     }
   }, [isOpen])
 
-  // Close menu when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -63,7 +61,6 @@ export function DateRangePicker({
     return undefined
   }, [isOpen])
 
-  // Close on escape
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
@@ -180,19 +177,19 @@ export function DateRangePicker({
         <Portal>
           <div
             ref={menuRef}
-            className="fixed rounded-xl shadow-2xl border min-w-[320px]"
+            className="date-picker-menu absolute rounded-xl shadow-2xl border min-w-[320px]"
             style={{
               top: `${menuPosition.top}px`,
               left: `${menuPosition.left}px`,
-              background: 'linear-gradient(135deg, #1f1f1f 0%, #1a1a1a 100%)',
-              borderColor: 'rgba(255, 255, 255, 0.15)',
+              background: 'var(--modal-v2-bg, #1f1f1f)',
+              border: '1px solid var(--modal-v2-border, rgba(255, 255, 255, 0.15))',
               boxShadow: '0 20px 60px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.1)',
               zIndex: 99999,
             }}
           >
           {/* Quick selection */}
-          <div className="p-4 border-b border-white/10">
-            <span className="text-xs font-bold text-white/80 uppercase tracking-wider block mb-3">
+          <div className="p-4 border-b" style={{ borderColor: 'var(--modal-v2-border, rgba(255, 255, 255, 0.1))' }}>
+            <span className="text-xs font-bold uppercase tracking-wider block mb-3" style={{ color: 'var(--modal-v2-text-secondary, rgba(255, 255, 255, 0.8))' }}>
               Quick Select
             </span>
             <div className="grid grid-cols-2 gap-2">
@@ -200,11 +197,17 @@ export function DateRangePicker({
                 <button
                   key={option.label}
                   onClick={() => handleQuickSelect(option.days)}
-                  className="px-3 py-2.5 rounded-lg text-xs font-semibold transition-all hover:bg-blue-600/30 active:scale-95 border"
+                  className="px-3 py-2.5 rounded-lg text-xs font-semibold transition-all active:scale-95 border"
                   style={{
-                    color: '#60a5fa',
-                    borderColor: 'rgba(96, 165, 250, 0.3)',
-                    background: 'rgba(96, 165, 250, 0.08)',
+                    color: 'var(--modal-v2-text-primary, #60a5fa)',
+                    borderColor: 'var(--modal-v2-border, rgba(96, 165, 250, 0.3))',
+                    background: 'var(--modal-v2-bg-secondary, rgba(96, 165, 250, 0.08))',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = 'var(--modal-v2-bg-tertiary, rgba(96, 165, 250, 0.15))'
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = 'var(--modal-v2-bg-secondary, rgba(96, 165, 250, 0.08))'
                   }}
                 >
                   {option.label}
@@ -215,7 +218,7 @@ export function DateRangePicker({
 
           {/* Manual date inputs */}
           <div className="p-4">
-            <span className="text-xs font-bold text-white/80 uppercase tracking-wider block mb-3">
+            <span className="text-xs font-bold uppercase tracking-wider block mb-3" style={{ color: 'var(--modal-v2-text-secondary, rgba(255, 255, 255, 0.8))' }}>
               Custom Range
             </span>
             <div className="space-y-3">
@@ -223,15 +226,23 @@ export function DateRangePicker({
                 type="date"
                 value={startDate || ''}
                 onChange={(e) => onChange(e.target.value, endDate)}
-                className="w-full px-3 py-2.5 rounded-lg text-sm bg-white/5 border border-white/20 text-white placeholder-white/50 focus:border-blue-500/50 focus:outline-none transition-all"
-                style={{ colorScheme: 'dark' }}
+                className="w-full px-3 py-2.5 rounded-lg text-sm border focus:outline-none transition-all"
+                style={{
+                  background: 'var(--modal-v2-bg-secondary, rgba(255, 255, 255, 0.05))',
+                  borderColor: 'var(--modal-v2-border, rgba(255, 255, 255, 0.2))',
+                  color: 'var(--modal-v2-text-primary, #ffffff)',
+                }}
               />
               <input
                 type="date"
                 value={endDate || ''}
                 onChange={(e) => onChange(startDate, e.target.value)}
-                className="w-full px-3 py-2.5 rounded-lg text-sm bg-white/5 border border-white/20 text-white placeholder-white/50 focus:border-blue-500/50 focus:outline-none transition-all"
-                style={{ colorScheme: 'dark' }}
+                className="w-full px-3 py-2.5 rounded-lg text-sm border focus:outline-none transition-all"
+                style={{
+                  background: 'var(--modal-v2-bg-secondary, rgba(255, 255, 255, 0.05))',
+                  borderColor: 'var(--modal-v2-border, rgba(255, 255, 255, 0.2))',
+                  color: 'var(--modal-v2-text-primary, #ffffff)',
+                }}
               />
             </div>
 

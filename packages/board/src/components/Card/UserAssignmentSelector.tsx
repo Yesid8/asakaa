@@ -35,7 +35,6 @@ export function UserAssignmentSelector({
   const menuRef = useRef<HTMLDivElement>(null)
   const buttonRef = useRef<HTMLButtonElement>(null)
 
-  // Update menu position when opened
   useEffect(() => {
     if (isOpen && buttonRef.current) {
       const rect = buttonRef.current.getBoundingClientRect()
@@ -46,7 +45,6 @@ export function UserAssignmentSelector({
     }
   }, [isOpen])
 
-  // Close menu when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -66,7 +64,6 @@ export function UserAssignmentSelector({
     return undefined
   }, [isOpen])
 
-  // Close on escape
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
@@ -183,31 +180,36 @@ export function UserAssignmentSelector({
         <Portal>
           <div
             ref={menuRef}
-            className="fixed rounded-xl shadow-2xl border min-w-[300px]"
+            className="user-selector-menu absolute rounded-xl shadow-2xl border min-w-[300px]"
             style={{
               top: `${menuPosition.top}px`,
               left: `${menuPosition.left}px`,
-              background: 'linear-gradient(135deg, #1f1f1f 0%, #1a1a1a 100%)',
-              borderColor: 'rgba(255, 255, 255, 0.15)',
+              background: 'var(--modal-v2-bg, #1f1f1f)',
+              border: '1px solid var(--modal-v2-border, rgba(255, 255, 255, 0.15))',
               boxShadow: '0 20px 60px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.1)',
               zIndex: 99999,
             }}
           >
           {/* Header */}
-          <div className="px-4 py-3 border-b border-white/10">
-            <span className="text-xs font-bold text-white/80 uppercase tracking-wider">
+          <div className="px-4 py-3 border-b" style={{ borderColor: 'var(--modal-v2-border, rgba(255, 255, 255, 0.1))' }}>
+            <span className="text-xs font-bold uppercase tracking-wider" style={{ color: 'var(--modal-v2-text-secondary, rgba(255, 255, 255, 0.8))' }}>
               Assign Users
             </span>
           </div>
 
           {/* Search input */}
-          <div className="px-3 py-3 border-b border-white/10">
+          <div className="px-3 py-3 border-b" style={{ borderColor: 'var(--modal-v2-border, rgba(255, 255, 255, 0.1))' }}>
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search users..."
-              className="w-full px-3 py-2.5 rounded-lg text-sm bg-white/5 border border-white/20 text-white placeholder-white/50 outline-none focus:border-blue-500/50 transition-all"
+              className="w-full px-3 py-2.5 rounded-lg text-sm border outline-none transition-all"
+              style={{
+                background: 'var(--modal-v2-bg-secondary, rgba(255, 255, 255, 0.05))',
+                borderColor: 'var(--modal-v2-border, rgba(255, 255, 255, 0.2))',
+                color: 'var(--modal-v2-text-primary, #ffffff)',
+              }}
               autoFocus
             />
           </div>
@@ -215,7 +217,7 @@ export function UserAssignmentSelector({
           {/* User list */}
           <div className="py-2 max-h-[300px] overflow-y-auto">
             {filteredUsers.length === 0 ? (
-              <div className="px-4 py-3 text-sm text-white/60 text-center">
+              <div className="px-4 py-3 text-sm text-center" style={{ color: 'var(--modal-v2-text-tertiary, rgba(255, 255, 255, 0.6))' }}>
                 No users found
               </div>
             ) : (
@@ -226,7 +228,14 @@ export function UserAssignmentSelector({
                   <button
                     key={user.id}
                     onClick={() => handleToggleUser(user)}
-                    className="w-full px-4 py-2.5 flex items-center gap-3 text-sm transition-all hover:bg-white/10 active:scale-98"
+                    className="w-full px-4 py-2.5 flex items-center gap-3 text-sm transition-all active:scale-98"
+                    style={{ background: 'transparent' }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.background = 'var(--modal-v2-bg-tertiary, rgba(255, 255, 255, 0.1))'
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.background = 'transparent'
+                    }}
                   >
                     {/* Avatar */}
                     <div
@@ -248,13 +257,13 @@ export function UserAssignmentSelector({
                     </div>
 
                     {/* Name */}
-                    <span className="text-white/95 font-semibold flex-1 text-left">
+                    <span className="font-semibold flex-1 text-left" style={{ color: 'var(--modal-v2-text-primary, rgba(255, 255, 255, 0.95))' }}>
                       {user.name}
                     </span>
 
                     {/* Checkmark */}
                     {isAssigned && (
-                      <span className="text-blue-400 text-lg">✓</span>
+                      <span className="text-lg" style={{ color: '#3b82f6' }}>✓</span>
                     )}
                   </button>
                 )
