@@ -3,6 +3,10 @@
  * @packageDocumentation
  */
 
+// Views (v0.7.0 - ViewAdapter pattern)
+export { KanbanViewAdapter, createKanbanView } from './views'
+export type { KanbanViewConfig } from './views'
+
 // Components
 export {
   KanbanBoard,
@@ -30,6 +34,8 @@ export {
   DEFAULT_TEMPLATES,
   ExportImportModal,
   FilterBar,
+  // GanttView,
+  // GanttTimeline,
   ConfigMenu,
   ThemeModal,
 } from './components'
@@ -72,6 +78,8 @@ export type {
   CardTemplateSelectorProps,
   ExportImportModalProps,
   FilterBarProps,
+  // GanttViewProps,
+  // GanttTimelineProps,
   ConfigMenuProps,
   ThemeModalProps,
 } from './components'
@@ -186,17 +194,61 @@ export type {
 export { AI_MODELS, AI_FEATURES, RATE_LIMITS } from './lib/ai/config'
 export type { AIModelKey } from './lib/ai/config'
 
-// State (advanced usage)
-export {
-  boardAtom,
-  cardAtomFamily,
-  columnAtomFamily,
-  dragStateAtom,
-} from './state/atoms'
+// State (advanced usage) - Now using @asakaa/core stores
+export { useDragState } from './hooks/useDragState'
+export { useSelectionState } from './hooks/useSelectionState'
+export type { UseDragStateReturn } from './hooks/useDragState'
+export type { UseSelectionStateReturn } from './hooks/useSelectionState'
 
 // Plugins
 export { PluginManager, pluginManager } from './plugins'
 export type { Plugin, PluginContext, PluginHooks, IPluginManager } from './plugins'
+
+// Virtual Scrolling Components (v0.7.0)
+export { VirtualList, useVirtualList } from './components/VirtualList'
+export type { VirtualListProps } from './components/VirtualList'
+export { VirtualGrid, useVirtualGrid, shouldVirtualizeGrid } from './components/VirtualGrid'
+export type { VirtualGridProps } from './components/VirtualGrid'
+
+// Design Tokens (v0.7.0)
+export {
+  designTokens,
+  spacing,
+  borderRadius,
+  fontSize,
+  fontWeight,
+  lineHeight,
+  zIndex,
+  duration,
+  easing,
+  shadows,
+  opacity,
+  kanban as kanbanTokens,
+  gantt as ganttTokens,
+  getToken,
+  generateCSSVariables,
+  generateThemeVariables,
+  generateCompleteCSS,
+  exportTokensToCSS,
+  darkTheme as darkTokenTheme,
+  lightTheme as lightTokenTheme,
+  neutralTheme as neutralTokenTheme,
+} from './tokens'
+export type {
+  SpacingToken,
+  BorderRadiusToken,
+  FontSizeToken,
+  FontWeightToken,
+  LineHeightToken,
+  ZIndexToken,
+  DurationToken,
+  EasingToken,
+  ShadowToken,
+  OpacityToken,
+  DesignTokens,
+  TokenValue,
+  ThemeColors as TokenThemeColors,
+} from './tokens'
 
 // Theme System (v0.5.0)
 export { ThemeProvider, useTheme, ThemeSwitcher, themes, darkTheme, lightTheme, neutralTheme, defaultTheme } from './theme'
@@ -209,6 +261,7 @@ export {
   Board as BoardModel,
   BoardStore,
   Store,
+  DependencyEngine,
 } from '@asakaa/core'
 
 export type {
@@ -219,6 +272,22 @@ export type {
   BaseEntity,
   BoardState,
   StoreEvent,
+  Dependency,
+  DependencyType,
+  // Gantt types
+  Milestone,
+  Baseline,
+  BaselineCardSnapshot,
+  CriticalPath,
+  ScheduledTask,
+  ResourceAllocation,
+  ResourceUtilization,
+  GanttConfig,
+  GanttState,
+  DependencyValidation,
+  AutoScheduleOptions,
+  TaskConstraintType,
+  TaskConstraint,
 } from '@asakaa/core'
 
 // Note: Priority type already exported from ./types above

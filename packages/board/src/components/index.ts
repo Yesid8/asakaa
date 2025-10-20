@@ -50,3 +50,12 @@ export { ConfigMenu } from './ConfigMenu'
 export { ThemeModal } from './ThemeModal'
 export type { ConfigMenuProps } from './ConfigMenu'
 export type { ThemeModalProps } from './ThemeModal'
+
+// Gantt Components (v0.8.0 - coming soon)
+// export { GanttView, GanttTimeline } from './Gantt'
+// export type { GanttViewProps, GanttTimelineProps } from './Gantt'
+// export * from './Gantt/renderers'
+
+// Dropdown System (v0.7.1)
+export { Dropdown, createDropdownItem } from './Dropdown'
+export type { DropdownProps } from './Dropdown'
