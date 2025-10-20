@@ -9,15 +9,65 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.7.0] - 2025-10-20
 
-### Added - Core Architecture & Multi-Framework Foundation
+### Added - Headless Architecture & Multi-Framework Foundation
+
+#### 🎯 NEW PACKAGE: `@asakaa/headless` v0.7.1
+**Framework-agnostic headless UI hooks - Use with React, Vue, Svelte, or Vanilla JS**
+
+**The Big Picture**: Following industry best practices (Radix UI, TanStack Query, Headless UI), we've formalized the "Headless UI" philosophy. Business logic is now completely separated from UI framework, enabling true multi-framework support.
+
+##### Core Hooks (640 LOC)
+- **`useBoardState`** (214 lines): Complete board state management
+  - All CRUD operations for boards, columns, and cards
+  - Dependency management with Critical Path Method (CPM)
+  - Auto-scheduling with forward/backward pass
+  - Framework-agnostic state access
+
+- **`useCardDrag`** (134 lines): Drag & drop logic without UI dependencies
+  - Drag lifecycle management (start, update, end, cancel)
+  - Position tracking without DOM dependencies
+  - Event callbacks for framework integration
+
+- **`useMultiSelect`** (147 lines): Multi-selection logic
+  - Single and bulk selection operations
+  - Selection state management
+  - Event-driven updates
+
+- **`useKeyboardNav`** (145 lines): Keyboard shortcuts
+  - Configurable keyboard shortcuts
+  - Input detection (skip shortcuts in text fields)
+  - Lifecycle management (init/destroy)
+
+##### Bundle & Performance
+- **Size**: ~9KB (ESM + CJS) - extremely lightweight
+- **Tree-shakeable**: Import only what you need
+- **Zero UI Dependencies**: Pure TypeScript business logic
+- **Type-Safe**: Complete TypeScript definitions
+- **Framework Support**: React ✅ Vue ✅ Svelte ✅ Vanilla JS ✅
+
+##### Documentation (1,830+ lines)
+- **README.md** (450 lines): Complete API documentation with examples for all frameworks
+- **INTEGRATION_GUIDE.md** (800+ lines): 70+ code examples, migration guides, best practices
+- **Vanilla JS Example** (580 lines): Complete working demo without build step
+
+##### Strategic Impact
+- **Zero Vendor Lock-in**: Use any framework, switch anytime
+- **Similar to Industry Leaders**: Radix UI, TanStack Query, Headless UI approach
+- **Plugin Foundation**: Extensible architecture for custom integrations
+- **Future-Proof**: New frameworks can be supported by creating simple adapters
 
 #### Framework-Agnostic Core (`@asakaa/core`)
 - **Pure TypeScript Models**: Card, Column, Board with immutable operations
-- **Event-Based Store**: Generic Store class with pub/sub pattern
-- **BoardStore**: Specialized store for board state management
-- **DependencyEngine**: Intelligent task dependency resolution
-- **Vanilla JS Adapter**: Framework-agnostic BoardController for vanilla JavaScript
-- **Multi-Framework Ready**: Foundation for Vue, Svelte, and other framework adapters
+- **Event-Based Stores**: BoardStore, DragStore, SelectionStore with pub/sub pattern
+- **DependencyEngine**: Critical Path Method (CPM) with 459 lines of algorithms
+  - Topological sort (Kahn's algorithm O(V+E))
+  - Cycle detection (DFS with recursion stack)
+  - Float calculation (early/late start/finish)
+  - Auto-scheduling based on dependencies
+- **Gantt Foundation**: Complete type system for Gantt features
+  - Milestone, Baseline, CriticalPath, ScheduledTask types
+  - ResourceAllocation, GanttConfig
+  - Ready for Gantt UI implementation (v0.8.0)
 
 #### Performance Improvements
 - **70% Smaller Bundle**: Reduced from 254KB to 80KB through core extraction
