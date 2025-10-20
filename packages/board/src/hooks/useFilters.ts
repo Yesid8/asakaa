@@ -155,19 +155,39 @@ export function useFilters({
 
           const due = typeof dueDate === 'string' ? new Date(dueDate) : dueDate
 
+          // Normalize both dates to UTC date parts for comparison
+          // This fixes timezone issues when comparing date strings like '2025-10-20'
+          const normalizeToDateParts = (date: Date) => ({
+            year: date.getUTCFullYear(),
+            month: date.getUTCMonth(),
+            date: date.getUTCDate(),
+          })
+
+          const todayParts = {
+            year: today.getFullYear(),
+            month: today.getMonth(),
+            date: today.getDate(),
+          }
+          const dueParts = normalizeToDateParts(due)
+
           switch (filters.dateFilter) {
             case 'overdue':
-              return due < today
+              // Compare as UTC dates - overdue means due date is before today
+              const todayUTC = new Date(Date.UTC(todayParts.year, todayParts.month, todayParts.date))
+              const dueUTC = new Date(Date.UTC(dueParts.year, dueParts.month, dueParts.date))
+              return dueUTC < todayUTC
             case 'today':
               return (
-                due.getFullYear() === today.getFullYear() &&
-                due.getMonth() === today.getMonth() &&
-                due.getDate() === today.getDate()
+                dueParts.year === todayParts.year &&
+                dueParts.month === todayParts.month &&
+                dueParts.date === todayParts.date
               )
             case 'this-week':
-              const weekFromNow = new Date(today)
-              weekFromNow.setDate(weekFromNow.getDate() + 7)
-              return due >= today && due <= weekFromNow
+              // This week means from today until 7 days from now
+              const todayTime = new Date(Date.UTC(todayParts.year, todayParts.month, todayParts.date)).getTime()
+              const dueTime = new Date(Date.UTC(dueParts.year, dueParts.month, dueParts.date)).getTime()
+              const weekFromNow = todayTime + (7 * 24 * 60 * 60 * 1000)
+              return dueTime >= todayTime && dueTime <= weekFromNow
             case 'custom':
               if (filters.dateRange) {
                 return (
