@@ -381,7 +381,7 @@ export default function App() {
   // Apply filters to cards
   const filteredAndSortedCards = useMemo(() => {
     return filters.applyFilters(board.board.cards)
-  }, [board.board.cards, filters])
+  }, [board.board.cards, filters.filters, filters.sort, filters.applyFilters])
 
   // Create board with filtered cards
   const filteredBoard = useMemo(() => ({
