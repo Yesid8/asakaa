@@ -231,6 +231,7 @@ const demoBoard = {
       priority: 'MEDIUM' as const,
       labels: ['ai', 'feature', 'ml'],
       estimatedHours: 16,
+      dueDate: '2025-10-15', // Overdue - 5 days ago
     },
     {
       id: 'card-2',
@@ -241,6 +242,7 @@ const demoBoard = {
       priority: 'LOW' as const,
       labels: ['analytics', 'feature', 'ui'],
       estimatedHours: 24,
+      dueDate: '2025-10-20', // Today
     },
     {
       id: 'card-3',
@@ -272,8 +274,8 @@ const demoBoard = {
       columnId: 'col-progress',
       priority: 'URGENT' as const,
       labels: ['performance', 'dnd', 'optimization'],
-      startDate: '2025-10-25',
-      endDate: '2025-10-30',
+      startDate: '2025-10-19',
+      endDate: '2025-10-23', // This Week (3 days from now)
       estimatedHours: 8,
       assignedUserIds: ['user-1', 'user-2'],
       dependencies: ['card-3'],
