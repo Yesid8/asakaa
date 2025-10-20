@@ -185,32 +185,35 @@ describe('exportToCSV', () => {
 })
 
 describe('exportBoard', () => {
-  it('exports to JSON when format is json', () => {
-    const result = exportBoard(mockBoard, 'json')
+  it('exports to JSON when format is json', async () => {
+    const result = await exportBoard(mockBoard, 'json')
 
     expect(result).toBeTruthy()
-    const parsed = JSON.parse(result)
+    expect(typeof result).toBe('string')
+    const parsed = JSON.parse(result as string)
     expect(parsed.board.id).toBe('board-1')
   })
 
-  it('exports to CSV when format is csv', () => {
-    const result = exportBoard(mockBoard, 'csv')
+  it('exports to CSV when format is csv', async () => {
+    const result = await exportBoard(mockBoard, 'csv')
 
     expect(result).toBeTruthy()
-    expect(result.includes('Card ID,Title')).toBe(true)
+    expect(typeof result).toBe('string')
+    expect((result as string).includes('Card ID,Title')).toBe(true)
   })
 
-  it('throws error for unsupported format', () => {
-    expect(() => {
-      exportBoard(mockBoard, 'xml' as any)
-    }).toThrow('Unsupported export format')
+  it('throws error for unsupported format', async () => {
+    await expect(async () => {
+      await exportBoard(mockBoard, 'xml' as any)
+    }).rejects.toThrow('Unsupported export format')
   })
 
-  it('passes options to export functions', () => {
+  it('passes options to export functions', async () => {
     const options = { includeArchived: true }
 
-    const result = exportBoard(mockBoard, 'json', options)
-    const parsed = JSON.parse(result)
+    const result = await exportBoard(mockBoard, 'json', undefined, options)
+    expect(typeof result).toBe('string')
+    const parsed = JSON.parse(result as string)
 
     expect(parsed.options).toEqual(options)
   })

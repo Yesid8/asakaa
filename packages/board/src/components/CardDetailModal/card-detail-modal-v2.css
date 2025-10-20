@@ -232,6 +232,13 @@
 
 .modal-v2-field-wrapper {
   position: relative;
+  /* Ensure dropdowns appear above other content */
+  z-index: 1;
+}
+
+.modal-v2-field-wrapper:has(.modal-v2-popover) {
+  /* Increase z-index when dropdown is open */
+  z-index: 100;
 }
 
 .modal-v2-field {
@@ -824,11 +831,10 @@
 
 .modal-v2-popover {
   position: absolute;
-  top: 100%;
+  top: calc(100% + 4px);
   left: 0;
   right: 0;
-  z-index: 100;
-  margin-top: 4px;
+  z-index: 1000;
   padding: 6px;
   background: var(--modal-v2-bg);
   border: 1px solid var(--modal-v2-border);

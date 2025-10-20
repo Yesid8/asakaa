@@ -613,11 +613,14 @@ export function CardDetailModal({
                   <label className="card-detail-label">Dependencies</label>
                   <div className="card-detail-dependencies">
                     {currentCard.dependencies && currentCard.dependencies.length > 0 ? (
-                      currentCard.dependencies.map((depId) => (
-                        <span key={depId} className="card-detail-dependency">
-                          Card #{depId.slice(-4)}
-                        </span>
-                      ))
+                      currentCard.dependencies.map((dep) => {
+                        const depId = typeof dep === 'string' ? dep : dep.taskId
+                        return (
+                          <span key={depId} className="card-detail-dependency">
+                            Card #{depId.slice(-4)}
+                          </span>
+                        )
+                      })
                     ) : (
                       <span className="card-detail-empty">No dependencies</span>
                     )}

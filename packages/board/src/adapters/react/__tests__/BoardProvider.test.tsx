@@ -122,17 +122,21 @@ describe('BoardProvider', () => {
     console.error = () => {}
 
     function ComponentOutsideProvider() {
-      try {
-        useBoardStore()
-        return <div>Should not render</div>
-      } catch (error) {
-        return <div data-testid="error">Error caught</div>
-      }
+      useBoardStore() // This will throw
+      return <div>Should not render</div>
     }
 
-    expect(() => render(<ComponentOutsideProvider />)).toThrow()
-
-    console.error = originalError
+    // React catches errors during render, so we need to check if error was thrown
+    try {
+      render(<ComponentOutsideProvider />)
+      // If we get here, test should fail
+      expect(true).toBe(false)
+    } catch (error) {
+      // Error was thrown as expected
+      expect((error as Error).message).toContain('useBoardStore must be used within BoardProvider')
+    } finally {
+      console.error = originalError
+    }
   })
 
   it('should call onStateChange when state updates', async () => {

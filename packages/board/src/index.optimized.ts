@@ -26,6 +26,13 @@
  */
 
 // ============================================================================
+// VIEWS (v0.7.0 - ViewAdapter Pattern)
+// ============================================================================
+
+export { KanbanViewAdapter, createKanbanView } from './views'
+export type { KanbanViewConfig } from './views'
+
+// ============================================================================
 // CORE COMPONENTS (Eager - ~80KB)
 // ============================================================================
 
@@ -274,15 +281,13 @@ export type { AIModelKey } from './lib/ai/config'
 // ============================================================================
 
 /**
- * Direct atom access - for advanced usage only
- * @deprecated Will be removed in v0.8.0 - Use @asakaa/core adapters instead
+ * State management hooks - using @asakaa/core stores
+ * Replacement for Jotai atoms
  */
-export {
-  boardAtom,
-  cardAtomFamily,
-  columnAtomFamily,
-  dragStateAtom,
-} from './state/atoms'
+export { useDragState } from './hooks/useDragState'
+export { useSelectionState } from './hooks/useSelectionState'
+export type { UseDragStateReturn } from './hooks/useDragState'
+export type { UseSelectionStateReturn } from './hooks/useSelectionState'
 
 // ============================================================================
 // PLUGINS (Advanced Usage)

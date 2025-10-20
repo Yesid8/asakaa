@@ -5,8 +5,7 @@
  */
 
 import { useCallback } from 'react'
-import { useAtom, useAtomValue } from 'jotai'
-import { selectionStateAtom, boardAtom } from '../state/atoms'
+import { useSelectionState } from './useSelectionState'
 import type { Card } from '../types'
 
 export interface UseMultiSelectReturn {
@@ -30,12 +29,19 @@ export interface UseMultiSelectReturn {
   getSelectedCards: () => Card[]
 }
 
+export interface UseMultiSelectOptions {
+  /** Board cards (required for range selection and selectAll) */
+  cards: Card[]
+}
+
 /**
  * Hook for multi-select functionality
+ *
+ * @param options - Configuration options
  */
-export function useMultiSelect(): UseMultiSelectReturn {
-  const [selectionState, setSelectionState] = useAtom(selectionStateAtom)
-  const board = useAtomValue(boardAtom)
+export function useMultiSelect(options: UseMultiSelectOptions): UseMultiSelectReturn {
+  const { cards } = options
+  const [selectionState, setSelectionState] = useSelectionState()
 
   const isCardSelected = useCallback(
     (cardId: string) => {
@@ -73,12 +79,12 @@ export function useMultiSelect(): UseMultiSelectReturn {
         }
       } else if (isShift && selectionState.lastSelectedCardId) {
         // Shift+Click: Range selection within same column
-        const card = board.cards.find((c) => c.id === cardId)
-        const lastCard = board.cards.find((c) => c.id === selectionState.lastSelectedCardId)
+        const card = cards.find((c) => c.id === cardId)
+        const lastCard = cards.find((c) => c.id === selectionState.lastSelectedCardId)
 
         if (card && lastCard && card.columnId === lastCard.columnId) {
           // Get all cards in the column
-          const columnCards = board.cards
+          const columnCards = cards
             .filter((c) => c.columnId === card.columnId)
             .sort((a, b) => a.position - b.position)
 
@@ -117,7 +123,7 @@ export function useMultiSelect(): UseMultiSelectReturn {
         })
       }
     },
-    [board.cards, selectionState, setSelectionState]
+    [cards, selectionState, setSelectionState]
   )
 
   const deselectCard = useCallback(
@@ -139,10 +145,10 @@ export function useMultiSelect(): UseMultiSelectReturn {
 
   const selectAll = useCallback(() => {
     setSelectionState({
-      selectedCardIds: board.cards.map((card) => card.id),
-      lastSelectedCardId: board.cards[board.cards.length - 1]?.id || null,
+      selectedCardIds: cards.map((card) => card.id),
+      lastSelectedCardId: cards[cards.length - 1]?.id || null,
     })
-  }, [board.cards, setSelectionState])
+  }, [cards, setSelectionState])
 
   const toggleCard = useCallback(
     (cardId: string) => {
@@ -159,10 +165,10 @@ export function useMultiSelect(): UseMultiSelectReturn {
   )
 
   const getSelectedCards = useCallback(() => {
-    return board.cards.filter((card) =>
+    return cards.filter((card) =>
       selectionState.selectedCardIds.includes(card.id)
     )
-  }, [board.cards, selectionState.selectedCardIds])
+  }, [cards, selectionState.selectedCardIds])
 
   return {
     selectedCardIds: selectionState.selectedCardIds,

@@ -120,7 +120,7 @@ export function CardDetailModalV2({
   const [showDatePicker, setShowDatePicker] = useState(false)
   const [showTimePicker, setShowTimePicker] = useState(false)
 
-// Refs
+  // Refs
   const titleRef = useRef<HTMLHeadingElement>(null)
   const descriptionRef = useRef<HTMLTextAreaElement>(null)
   const commentRef = useRef<HTMLTextAreaElement>(null)

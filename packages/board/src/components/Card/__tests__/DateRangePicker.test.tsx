@@ -269,7 +269,7 @@ describe('DateRangePicker Component', () => {
       render(<DateRangePicker onChange={vi.fn()} />)
       const button = screen.getByTitle('Set date range')
       // Check for correct hover class
-      expect(button).toHaveClass('hover:bg-white/15')
+      expect(button).toHaveClass('hover:bg-white/5')
     })
 
     it('date inputs have proper labels', async () => {

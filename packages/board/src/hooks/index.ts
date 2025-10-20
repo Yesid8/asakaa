@@ -13,7 +13,10 @@ export {
 } from './usePerformanceMonitor'
 export { useKeyboardShortcuts, DEFAULT_SHORTCUTS } from './keyboard/useKeyboardShortcuts'
 export { useCardStacking } from './useCardStacking'
+export { useClickOutside } from './useClickOutside'
+export { useKeyboardNav } from './useKeyboardNav'
 export type { UseCardStackingOptions, UseCardStackingResult } from './useCardStacking'
+export type { UseKeyboardNavOptions, UseKeyboardNavReturn } from './useKeyboardNav'
 
 export type { UseKanbanStateOptions, UseKanbanStateReturn } from './useKanbanState'
 export type { UseBoardOptions, UseBoardReturn } from './useBoard'

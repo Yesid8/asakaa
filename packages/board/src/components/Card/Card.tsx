@@ -178,7 +178,11 @@ export const Card = memo<CardProps>(
           <div onClick={(e) => e.stopPropagation()} className="dependencies-selector">
             <DependenciesSelector
               currentCardId={card.id}
-              dependencies={card.dependencies}
+              dependencies={
+                Array.isArray(card.dependencies)
+                  ? card.dependencies.map((d) => (typeof d === 'string' ? d : d.taskId))
+                  : []
+              }
               availableTasks={allCards}
               onChange={(dependencies) => onUpdate?.(card.id, { dependencies })}
             />

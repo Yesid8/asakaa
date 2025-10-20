@@ -16,8 +16,7 @@ import type { KanbanBoardProps } from '../../types'
 import { Column } from '../Column'
 import { Card } from '../Card'
 import { cn, calculateDropPosition } from '../../utils'
-import { useAtom } from 'jotai'
-import { dragStateAtom } from '../../state/atoms'
+import { useDragState } from '../../hooks/useDragState'
 
 export function KanbanBoard({
   board,
@@ -32,7 +31,7 @@ export function KanbanBoard({
   error,
   children,
 }: KanbanBoardProps & { children?: React.ReactNode }) {
-  const [dragState, setDragState] = useAtom(dragStateAtom)
+  const [dragState, setDragState] = useDragState()
 
   const handleCardUpdate = useCallback(
     (cardId: string, updates: Partial<typeof board.cards[0]>) => {
@@ -109,13 +108,13 @@ export function KanbanBoard({
       }
 
       if (targetColumnId && targetColumnId !== dragState.targetColumnId) {
-        setDragState((prev) => ({
-          ...prev,
+        setDragState({
+          ...dragState,
           targetColumnId,
-        }))
+        })
       }
     },
-    [board.cards, dragState.targetColumnId, setDragState]
+    [board.cards, dragState, setDragState]
   )
 
   const handleDragEnd = useCallback(

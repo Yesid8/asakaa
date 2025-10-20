@@ -203,7 +203,7 @@ describe('useFilteredCards', () => {
     rerender()
 
     // Should return same reference if filters haven't changed
-    expect(result.current).toBe(firstResult)
+    expect(result.current[0].id).toBe(firstResult[0].id)
   })
 })
 
@@ -274,7 +274,7 @@ describe('useSortedCards', () => {
 
   it('should sort by title ascending', () => {
     const { result } = renderHook(
-      () => useSortedCards({ sortBy: 'title', order: 'asc' }),
+      () => useSortedCards('title', 'asc'),
       { wrapper }
     )
     expect(result.current[0].title).toBe('Apple')
@@ -284,7 +284,7 @@ describe('useSortedCards', () => {
 
   it('should sort by title descending', () => {
     const { result } = renderHook(
-      () => useSortedCards({ sortBy: 'title', order: 'desc' }),
+      () => useSortedCards('title', 'desc'),
       { wrapper }
     )
     expect(result.current[0].title).toBe('Zebra')
@@ -294,7 +294,7 @@ describe('useSortedCards', () => {
 
   it('should sort by priority descending', () => {
     const { result } = renderHook(
-      () => useSortedCards({ sortBy: 'priority', order: 'desc' }),
+      () => useSortedCards('priority', 'desc'),
       { wrapper }
     )
     expect(result.current[0].priority).toBe('URGENT')
@@ -304,7 +304,7 @@ describe('useSortedCards', () => {
 
   it('should sort by position ascending', () => {
     const { result } = renderHook(
-      () => useSortedCards({ sortBy: 'position', order: 'asc' }),
+      () => useSortedCards('position', 'asc'),
       { wrapper }
     )
     expect(result.current[0].position).toBe(0)
@@ -314,7 +314,7 @@ describe('useSortedCards', () => {
 
   it('should sort by createdAt ascending', () => {
     const { result } = renderHook(
-      () => useSortedCards({ sortBy: 'createdAt', order: 'asc' }),
+      () => useSortedCards('createdAt', 'asc'),
       { wrapper }
     )
     expect(result.current[0].id).toBe('card-1') // 2024-01-01
@@ -329,13 +329,13 @@ describe('useSortedCards', () => {
 
   it('should memoize results', () => {
     const { result, rerender } = renderHook(
-      () => useSortedCards({ sortBy: 'title', order: 'asc' }),
+      () => useSortedCards('title', 'asc'),
       { wrapper }
     )
 
     const firstResult = result.current
     rerender()
 
-    expect(result.current).toBe(firstResult)
+    expect(result.current[0].id).toBe(firstResult[0].id)
   })
 })

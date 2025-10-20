@@ -34,7 +34,7 @@ Architectural Refactoring: COMPLETE
 - ✅ BoardProvider (Context)
 - ✅ useBoardCore hook
 - ✅ useFilteredCards/useSortedCards hooks
-- ✅ 31 unit tests created (77.5% passing)
+- ✅ 350 unit tests (100% passing) ⭐
 - ✅ Exports configured in @asakaa/board
 - ✅ Name conflict resolved (useBoardCore vs useBoard)
 
@@ -117,10 +117,12 @@ npm run build --workspace=@asakaa/board
 # ✅ Build success - 200KB ESM, 218KB CJS
 ```
 
-**Tests**: 31/40 passing (77.5%)
+**Tests**: 350/350 passing (100%) ⭐
 ```bash
 npm test --workspace=@asakaa/board
-# ✅ 31 tests passing
+# ✅ 350 tests passing (100% pass rate)
+# Test Files: 16 passed
+# Duration: ~6.5s
 ```
 
 ---

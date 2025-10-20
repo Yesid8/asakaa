@@ -3,6 +3,8 @@
  * @module types
  */
 
+import type { Dependency } from '@asakaa/core'
+
 // ============================================================================
 // CORE DATA TYPES
 // ============================================================================
@@ -48,10 +50,12 @@ export interface Card {
   startDate?: Date | string
   /** Date range - end date */
   endDate?: Date | string
-  /** Task dependencies (card IDs this task depends on) */
-  dependencies?: string[]
+  /** Task dependencies - supports both legacy format (string[]) and new format (Dependency[]) */
+  dependencies?: string[] | Dependency[]
   /** Estimated time (in hours) */
   estimatedTime?: number
+  /** Manual progress override (0-100%) */
+  progress?: number
   /** Custom metadata */
   metadata?: Record<string, unknown>
 

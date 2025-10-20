@@ -1,12 +1,21 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { resolve } from 'path'
+/// <reference types="vitest" />
 
 export default defineConfig({
   plugins: [react()],
   resolve: {
     alias: {
       '@': resolve(__dirname, './src'),
+    },
+  },
+  server: {
+    // Disable all caching to force fresh code on every reload
+    headers: {
+      'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+      'Pragma': 'no-cache',
+      'Expires': '0',
     },
   },
   test: {

@@ -23,7 +23,7 @@ describe('useBoard', () => {
       id: 'col-1',
       title: 'To Do',
       position: 0,
-      cardIds: [],
+      cardIds: ['card-1'], // card-1 is in this column
       createdAt: new Date(),
       updatedAt: new Date(),
     },

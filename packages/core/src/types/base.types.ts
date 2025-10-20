@@ -14,6 +14,27 @@ export type Priority = 'LOW' | 'MEDIUM' | 'HIGH' | 'URGENT'
 export type CardStatus = 'TODO' | 'IN_PROGRESS' | 'REVIEW' | 'DONE' | 'BLOCKED'
 
 /**
+ * Dependency types for Gantt chart
+ * - finish-to-start: Task B can't start until Task A finishes (most common)
+ * - start-to-start: Task B can't start until Task A starts
+ * - finish-to-finish: Task B can't finish until Task A finishes
+ * - start-to-finish: Task B can't finish until Task A starts (rare)
+ */
+export type DependencyType = 'finish-to-start' | 'start-to-start' | 'finish-to-finish' | 'start-to-finish'
+
+/**
+ * Dependency configuration for Gantt scheduling
+ */
+export interface Dependency {
+  /** ID of the task this task depends on */
+  taskId: string
+  /** Type of dependency relationship */
+  type: DependencyType
+  /** Lag time in days (positive = delay, negative = lead time) */
+  lag?: number
+}
+
+/**
  * Base entity with common properties
  */
 export interface BaseEntity {
@@ -53,12 +74,14 @@ export interface CardData extends BaseEntity {
   startDate?: Date
   /** Date range - end date */
   endDate?: Date
-  /** Task dependencies (card IDs this task depends on) */
-  dependencies?: string[]
+  /** Task dependencies with relationship types */
+  dependencies?: Dependency[]
   /** Estimated time (in hours) */
   estimatedTime?: number
   /** Actual time spent (in hours) */
   actualTime?: number
+  /** Manual progress override (0-100%) - takes precedence over calculated progress */
+  progress?: number
 }
 
 /**

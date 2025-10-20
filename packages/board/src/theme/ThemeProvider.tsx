@@ -6,7 +6,6 @@
 import { createContext, useContext, useEffect, useState, useCallback, type ReactNode } from 'react'
 import type { ThemeName, ThemeContextValue } from './types'
 import { themes, defaultTheme } from './themes'
-import './theme-overrides.css'
 
 const ThemeContext = createContext<ThemeContextValue | undefined>(undefined)
 
@@ -51,29 +50,72 @@ export function ThemeProvider({
     const root = document.documentElement
     const currentTheme = themes[theme]
 
-    // Set CSS variables
+    // DUAL SYSTEM: Generate BOTH --theme-* AND --asakaa-color-* variables
+    // This ensures compatibility during migration from old to new system
+
+    // 1. Generate --theme-* variables (legacy compatibility)
     Object.entries(currentTheme.colors).forEach(([key, value]) => {
       if (value) {
         root.style.setProperty(`--theme-${camelToKebab(key)}`, value)
       }
     })
 
-    Object.entries(currentTheme.shadows).forEach(([key, value]) => {
-      root.style.setProperty(`--theme-shadow-${key}`, value)
+    // 2. Generate --asakaa-color-* variables (new system - following tokens.css naming)
+    const colorMap: Record<string, string> = {
+      // Background
+      bgPrimary: '--asakaa-color-background-primary',
+      bgSecondary: '--asakaa-color-background-secondary',
+      bgTertiary: '--asakaa-color-background-tertiary',
+      bgCard: '--asakaa-color-background-card',
+      bgHover: '--asakaa-color-background-hover',
+      bgActive: '--asakaa-color-background-active',
+      bgInput: '--asakaa-color-background-input',
+
+      // Text
+      textPrimary: '--asakaa-color-text-primary',
+      textSecondary: '--asakaa-color-text-secondary',
+      textTertiary: '--asakaa-color-text-tertiary',
+      textDisabled: '--asakaa-color-text-disabled',
+      textInverse: '--asakaa-color-text-inverse',
+
+      // Border
+      borderPrimary: '--asakaa-color-border-primary',
+      borderSecondary: '--asakaa-color-border-secondary',
+      borderDefault: '--asakaa-color-border-default',
+      borderHover: '--asakaa-color-border-hover',
+      borderSubtle: '--asakaa-color-border-subtle',
+
+      // Interactive
+      accentPrimary: '--asakaa-color-accent-primary',
+      accentHover: '--asakaa-color-accent-hover',
+      interactivePrimary: '--asakaa-color-interactive-primary',
+      interactivePrimaryHover: '--asakaa-color-interactive-primaryHover',
+      interactivePrimaryBorder: '--asakaa-color-interactive-primaryBorder',
+      interactivePrimaryBackground: '--asakaa-color-interactive-primaryBackground',
+      interactivePrimaryBackgroundHover: '--asakaa-color-interactive-primaryBackgroundHover',
+
+      // Status & Danger
+      success: '--asakaa-color-status-success',
+      warning: '--asakaa-color-status-warning',
+      error: '--asakaa-color-status-error',
+      info: '--asakaa-color-status-info',
+      danger: '--asakaa-color-danger',
+      dangerBorder: '--asakaa-color-danger-border',
+      dangerBackground: '--asakaa-color-danger-background',
+      dangerBackgroundHover: '--asakaa-color-danger-backgroundHover',
+    }
+
+    Object.entries(colorMap).forEach(([themeKey, cssVar]) => {
+      const value = currentTheme.colors[themeKey as keyof typeof currentTheme.colors]
+      if (value) {
+        root.style.setProperty(cssVar, value)
+      }
     })
 
-    Object.entries(currentTheme.radii).forEach(([key, value]) => {
-      root.style.setProperty(`--theme-radius-${key}`, value)
-    })
-
-    Object.entries(currentTheme.spacing).forEach(([key, value]) => {
-      root.style.setProperty(`--theme-spacing-${key}`, value)
-    })
-
-    // Set data attribute for theme-specific styles
+    // 3. Set data-theme attribute for CSS selectors
     root.setAttribute('data-theme', theme)
 
-    // Set class for backward compatibility
+    // 4. Set class for backward compatibility
     root.classList.remove('theme-dark', 'theme-light', 'theme-neutral')
     root.classList.add(`theme-${theme}`)
   }, [theme])

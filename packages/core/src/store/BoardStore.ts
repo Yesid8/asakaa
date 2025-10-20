@@ -5,7 +5,8 @@
 
 import { Store } from './Store'
 import { Card, Column, Board } from '../models'
-import type { CardData, ColumnData, BoardData } from '../types'
+import type { CardData, ColumnData, BoardData, Dependency } from '../types'
+import { DependencyEngine } from '../lib/DependencyEngine'
 
 /**
  * Board state structure
@@ -42,12 +43,15 @@ export interface BoardState {
  * ```
  */
 export class BoardStore extends Store<BoardState> {
+  private dependencyEngine: DependencyEngine
+
   constructor(initialState?: Partial<BoardState>) {
     super({
       board: initialState?.board || null,
       columns: initialState?.columns || new Map(),
       cards: initialState?.cards || new Map(),
     })
+    this.dependencyEngine = new DependencyEngine()
   }
 
   // ========================================================================
@@ -339,5 +343,187 @@ export class BoardStore extends Store<BoardState> {
     return column.cardIds
       .map(cardId => this.getState().cards.get(cardId))
       .filter((card): card is Card => card !== undefined)
+  }
+
+  // ========================================================================
+  // DEPENDENCY OPERATIONS
+  // ========================================================================
+
+  /**
+   * Add a dependency to a card
+   *
+   * @param cardId - Card to add dependency to
+   * @param dependency - Dependency configuration
+   * @throws Error if dependency would create a cycle
+   */
+  addDependency(cardId: string, dependency: Dependency): void {
+    const card = this.getCard(cardId)
+    if (!card) {
+      throw new Error(`Card ${cardId} not found`)
+    }
+
+    // Check if dependency task exists
+    const depTask = this.getCard(dependency.taskId)
+    if (!depTask) {
+      throw new Error(`Dependency task ${dependency.taskId} not found`)
+    }
+
+    // Check if would create circular dependency
+    if (this.dependencyEngine.wouldCreateCycle(this.getAllCards(), cardId, dependency.taskId)) {
+      throw new Error(`Adding dependency would create a circular dependency`)
+    }
+
+    // Add dependency to card
+    const updatedCard = card.addDependency(dependency)
+    const newCards = new Map(this.getState().cards)
+    newCards.set(cardId, updatedCard)
+
+    this.setState(state => ({
+      ...state,
+      cards: newCards,
+    }))
+
+    this.emit('card:dependency:added', { cardId, dependency })
+  }
+
+  /**
+   * Remove a dependency from a card
+   *
+   * @param cardId - Card to remove dependency from
+   * @param dependencyTaskId - ID of task to remove dependency for
+   */
+  removeDependency(cardId: string, dependencyTaskId: string): void {
+    const card = this.getCard(cardId)
+    if (!card) {
+      throw new Error(`Card ${cardId} not found`)
+    }
+
+    const updatedCard = card.removeDependency(dependencyTaskId)
+
+    // Only update if changed
+    if (updatedCard !== card) {
+      const newCards = new Map(this.getState().cards)
+      newCards.set(cardId, updatedCard)
+
+      this.setState(state => ({
+        ...state,
+        cards: newCards,
+      }))
+
+      this.emit('card:dependency:removed', { cardId, dependencyTaskId })
+    }
+  }
+
+  /**
+   * Get all dependencies for a card
+   *
+   * @param cardId - Card ID to get dependencies for
+   * @returns Array of cards this card depends on
+   */
+  getDependencies(cardId: string): Card[] {
+    const card = this.getCard(cardId)
+    if (!card || !card.dependencies) return []
+
+    const dependentTaskIds = card.getDependentTaskIds()
+    return this.getAllCards().filter(c => dependentTaskIds.includes(c.id))
+  }
+
+  /**
+   * Get all cards that depend on a given card (successors)
+   *
+   * @param cardId - Card ID to find dependents for
+   * @returns Array of cards that depend on this card
+   */
+  getDependentCards(cardId: string): Card[] {
+    return this.dependencyEngine.getSuccessors(this.getAllCards(), cardId)
+  }
+
+  /**
+   * Validate all dependencies in the board
+   *
+   * @throws Error if validation fails
+   */
+  validateDependencies(): void {
+    this.dependencyEngine.validateDependencies(this.getAllCards())
+  }
+
+  /**
+   * Resolve all dependencies and get topological order
+   *
+   * @returns Dependency resolution result with ordered tasks and critical path
+   */
+  resolveDependencies() {
+    return this.dependencyEngine.resolveDependencies(this.getAllCards())
+  }
+
+  /**
+   * Get cards in dependency order (dependencies first)
+   *
+   * @returns Cards sorted in topological order
+   */
+  getCardsInDependencyOrder(): Card[] {
+    const result = this.dependencyEngine.resolveDependencies(this.getAllCards())
+    return result.orderedTasks
+  }
+
+  /**
+   * Get critical path task IDs
+   *
+   * @returns Array of task IDs on the critical path
+   */
+  getCriticalPath(): string[] {
+    const result = this.dependencyEngine.resolveDependencies(this.getAllCards())
+    return result.criticalPath
+  }
+
+  /**
+   * Check if a card is on the critical path
+   *
+   * @param cardId - Card ID to check
+   * @returns true if card is on critical path
+   */
+  isOnCriticalPath(cardId: string): boolean {
+    const criticalPath = this.getCriticalPath()
+    return criticalPath.includes(cardId)
+  }
+
+  /**
+   * Update card dates based on dependencies (auto-schedule)
+   *
+   * This recalculates start dates for all cards based on their dependencies
+   */
+  autoSchedule(): void {
+    const result = this.dependencyEngine.resolveDependencies(this.getAllCards())
+
+    // Update each card with its calculated earliest start
+    const newCards = new Map(this.getState().cards)
+
+    result.orderedTasks.forEach(task => {
+      const earliestStart = result.earliestStarts.get(task.id)
+      if (earliestStart && task.startDate) {
+        const currentStart = new Date(task.startDate)
+
+        // Only update if calculated start is later than current start
+        if (earliestStart > currentStart) {
+          const duration = task.getDuration() || 0
+          const newEnd = new Date(earliestStart)
+          newEnd.setDate(newEnd.getDate() + duration)
+
+          const updatedCard = task.update({
+            startDate: earliestStart,
+            endDate: newEnd,
+          })
+
+          newCards.set(task.id, updatedCard)
+        }
+      }
+    })
+
+    this.setState(state => ({
+      ...state,
+      cards: newCards,
+    }))
+
+    this.emit('cards:auto-scheduled', { count: result.orderedTasks.length })
   }
 }
