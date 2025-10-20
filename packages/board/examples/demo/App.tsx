@@ -386,7 +386,7 @@ export default function App() {
     selectedCardIds,
     getSelectedCards,
     clearSelection,
-  } = useMultiSelect()
+  } = useMultiSelect({ cards: board.board.cards })
 
   // AI Hook - Use real API or mock
   const {
