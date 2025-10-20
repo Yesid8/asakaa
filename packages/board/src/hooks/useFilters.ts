@@ -95,16 +95,28 @@ export function useFilters({
 
   const filterMyTasks = useCallback(() => {
     if (!currentUserId) return
-    setFilters({ assignees: [currentUserId] })
-  }, [currentUserId, setFilters])
+    // Reset all filters before applying "My Tasks"
+    setFiltersState({
+      ...DEFAULT_FILTERS,
+      assignees: [currentUserId]
+    })
+  }, [currentUserId])
 
   const filterOverdue = useCallback(() => {
-    setFilters({ dateFilter: 'overdue' })
-  }, [setFilters])
+    // Reset all filters before applying "Overdue"
+    setFiltersState({
+      ...DEFAULT_FILTERS,
+      dateFilter: 'overdue'
+    })
+  }, [])
 
   const filterHighPriority = useCallback(() => {
-    setFilters({ priorities: ['HIGH', 'URGENT'] })
-  }, [setFilters])
+    // Reset all filters before applying "High Priority"
+    setFiltersState({
+      ...DEFAULT_FILTERS,
+      priorities: ['HIGH', 'URGENT']
+    })
+  }, [])
 
   const hasActiveFilters = useMemo(() => {
     return (
