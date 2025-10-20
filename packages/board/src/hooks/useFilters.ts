@@ -145,7 +145,8 @@ export function useFilters({
 
       if (filters.dateFilter !== 'all') {
         const now = new Date()
-        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+        // Get today's date in UTC to match how date inputs store dates
+        const todayUTC = new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()))
 
         filtered = filtered.filter((card) => {
           if (!card.endDate && !card.dueDate) return false
@@ -155,39 +156,27 @@ export function useFilters({
 
           const due = typeof dueDate === 'string' ? new Date(dueDate) : dueDate
 
-          // Normalize both dates to UTC date parts for comparison
-          // This fixes timezone issues when comparing date strings like '2025-10-20'
-          const normalizeToDateParts = (date: Date) => ({
-            year: date.getUTCFullYear(),
-            month: date.getUTCMonth(),
-            date: date.getUTCDate(),
-          })
-
-          const todayParts = {
-            year: today.getFullYear(),
-            month: today.getMonth(),
-            date: today.getDate(),
+          // Get date parts in UTC (date strings like '2025-10-20' are parsed as UTC)
+          const getDayStartUTC = (date: Date) => {
+            return new Date(Date.UTC(
+              date.getUTCFullYear(),
+              date.getUTCMonth(),
+              date.getUTCDate()
+            ))
           }
-          const dueParts = normalizeToDateParts(due)
+
+          const todayStart = getDayStartUTC(todayUTC)
+          const dueStart = getDayStartUTC(due)
 
           switch (filters.dateFilter) {
             case 'overdue':
-              // Compare as UTC dates - overdue means due date is before today
-              const todayUTC = new Date(Date.UTC(todayParts.year, todayParts.month, todayParts.date))
-              const dueUTC = new Date(Date.UTC(dueParts.year, dueParts.month, dueParts.date))
-              return dueUTC < todayUTC
+              return dueStart.getTime() < todayStart.getTime()
             case 'today':
-              return (
-                dueParts.year === todayParts.year &&
-                dueParts.month === todayParts.month &&
-                dueParts.date === todayParts.date
-              )
+              return dueStart.getTime() === todayStart.getTime()
             case 'this-week':
               // This week means from today until 7 days from now
-              const todayTime = new Date(Date.UTC(todayParts.year, todayParts.month, todayParts.date)).getTime()
-              const dueTime = new Date(Date.UTC(dueParts.year, dueParts.month, dueParts.date)).getTime()
-              const weekFromNow = todayTime + (7 * 24 * 60 * 60 * 1000)
-              return dueTime >= todayTime && dueTime <= weekFromNow
+              const weekFromNow = todayStart.getTime() + (7 * 24 * 60 * 60 * 1000)
+              return dueStart.getTime() >= todayStart.getTime() && dueStart.getTime() <= weekFromNow
             case 'custom':
               if (filters.dateRange) {
                 return (
