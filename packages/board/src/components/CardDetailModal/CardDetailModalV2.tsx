@@ -359,6 +359,18 @@ export function CardDetailModalV2({
     (e: React.ChangeEvent<HTMLInputElement>) => {
       if (localCard) {
         const newDate = e.target.value
+        const now = new Date()
+        const systemDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`
+
+        console.log('🚨🚨🚨 DATE ASSIGNED 🚨🚨🚨')
+        console.log('System current date:', systemDate)
+        console.log('System current time:', now.toString())
+        console.log('Date assigned to card:', newDate)
+        console.log('Card ID:', localCard.id)
+        console.log('Card title:', localCard.title)
+        console.log('Old date:', localCard.endDate)
+        console.log('🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨')
+
         const updated = { ...localCard, endDate: newDate }
         setLocalCard(updated)
         onUpdate?.(localCard.id, { endDate: newDate })
@@ -759,6 +771,10 @@ export function CardDetailModalV2({
             <button
               className="modal-v2-field"
               onClick={() => {
+                console.log('🗓️ OPENING DATE PICKER:', {
+                  currentEndDate: displayCard.endDate,
+                  inputValue: datePickerRef.current?.value
+                })
                 setShowDatePicker(!showDatePicker)
                 setTimeout(() => datePickerRef.current?.showPicker?.(), 0)
               }}

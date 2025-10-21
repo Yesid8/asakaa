@@ -380,14 +380,27 @@ export default function App() {
 
   // Apply filters to cards
   const filteredAndSortedCards = useMemo(() => {
-    return filters.applyFilters(board.board.cards)
+    const result = filters.applyFilters(board.board.cards)
+    console.log('🔍 FILTER APPLIED:', {
+      totalCards: board.board.cards.length,
+      filteredCards: result.length,
+      activeFilter: filters.filters.dateFilter,
+      cardDates: board.board.cards.map(c => ({
+        id: c.id,
+        title: c.title,
+        dueDate: c.dueDate,
+        endDate: c.endDate
+      })),
+      filteredCardIds: result.map(c => c.id)
+    })
+    return result
   }, [board.board.cards, filters.filters, filters.sort, filters.applyFilters])
 
   // Create board with filtered cards AND updated column cardIds
   const filteredBoard = useMemo(() => {
     const filteredCardIds = new Set(filteredAndSortedCards.map(c => c.id))
 
-    return {
+    const result = {
       ...board.board,
       cards: filteredAndSortedCards,
       columns: board.board.columns.map(col => ({
@@ -395,6 +408,18 @@ export default function App() {
         cardIds: col.cardIds.filter(id => filteredCardIds.has(id))
       }))
     }
+
+    console.log('📊 FILTERED BOARD:', {
+      totalCards: result.cards.length,
+      columns: result.columns.map(col => ({
+        id: col.id,
+        title: col.title,
+        originalCardIds: board.board.columns.find(c => c.id === col.id)?.cardIds,
+        filteredCardIds: col.cardIds
+      }))
+    })
+
+    return result
   }, [board.board, filteredAndSortedCards])
 
   // Multi-select functionality
