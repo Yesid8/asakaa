@@ -145,8 +145,13 @@ export function useFilters({
 
       if (filters.dateFilter !== 'all') {
         const now = new Date()
-        // Get today's date in UTC to match how date inputs store dates
-        const todayUTC = new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()))
+
+        // Get today's date string in local timezone (YYYY-MM-DD format)
+        // This matches what the date input produces when user selects a date
+        const year = now.getFullYear()
+        const month = String(now.getMonth() + 1).padStart(2, '0')
+        const day = String(now.getDate()).padStart(2, '0')
+        const todayString = `${year}-${month}-${day}`
 
         filtered = filtered.filter((card) => {
           if (!card.endDate && !card.dueDate) return false
@@ -154,31 +159,35 @@ export function useFilters({
           const dueDate = card.endDate || card.dueDate
           if (!dueDate) return false
 
-          const due = typeof dueDate === 'string' ? new Date(dueDate) : dueDate
-
-          // Get date parts in UTC (date strings like '2025-10-20' are parsed as UTC)
-          const getDayStartUTC = (date: Date) => {
-            return new Date(Date.UTC(
-              date.getUTCFullYear(),
-              date.getUTCMonth(),
-              date.getUTCDate()
-            ))
+          // Convert date to YYYY-MM-DD string for comparison
+          let dueDateString: string
+          if (typeof dueDate === 'string') {
+            // Already a string, extract YYYY-MM-DD part
+            const parts = dueDate.split('T')
+            dueDateString = parts[0] || dueDate
+          } else {
+            // Date object - convert to YYYY-MM-DD in UTC (how date inputs store dates)
+            const y = dueDate.getUTCFullYear()
+            const m = String(dueDate.getUTCMonth() + 1).padStart(2, '0')
+            const d = String(dueDate.getUTCDate()).padStart(2, '0')
+            dueDateString = `${y}-${m}-${d}`
           }
-
-          const todayStart = getDayStartUTC(todayUTC)
-          const dueStart = getDayStartUTC(due)
 
           switch (filters.dateFilter) {
             case 'overdue':
-              return dueStart.getTime() < todayStart.getTime()
+              return dueDateString < todayString
             case 'today':
-              return dueStart.getTime() === todayStart.getTime()
+              return dueDateString === todayString
             case 'this-week':
               // This week means from today until 7 days from now
-              const weekFromNow = todayStart.getTime() + (7 * 24 * 60 * 60 * 1000)
-              return dueStart.getTime() >= todayStart.getTime() && dueStart.getTime() <= weekFromNow
+              const todayDate = new Date(todayString + 'T00:00:00')
+              const cardDueDate = new Date(dueDateString + 'T00:00:00')
+              const weekFromNow = new Date(todayDate)
+              weekFromNow.setDate(weekFromNow.getDate() + 7)
+              return cardDueDate >= todayDate && cardDueDate <= weekFromNow
             case 'custom':
               if (filters.dateRange) {
+                const due = typeof dueDate === 'string' ? new Date(dueDate) : dueDate
                 return (
                   due >= filters.dateRange.start && due <= filters.dateRange.end
                 )

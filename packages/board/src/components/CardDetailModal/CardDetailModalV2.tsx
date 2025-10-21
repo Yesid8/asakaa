@@ -790,9 +790,16 @@ export function CardDetailModalV2({
                 type="date"
                 value={
                   typeof displayCard.endDate === 'string'
-                    ? displayCard.endDate
+                    ? displayCard.endDate.split('T')[0]
                     : displayCard.endDate
-                    ? new Date(displayCard.endDate).toISOString().split('T')[0]
+                    ? (() => {
+                        // Convert Date to YYYY-MM-DD using UTC to avoid timezone shifts
+                        const d = new Date(displayCard.endDate)
+                        const year = d.getUTCFullYear()
+                        const month = String(d.getUTCMonth() + 1).padStart(2, '0')
+                        const day = String(d.getUTCDate()).padStart(2, '0')
+                        return `${year}-${month}-${day}`
+                      })()
                     : ''
                 }
                 onChange={handleDateChange}
