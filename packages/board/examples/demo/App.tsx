@@ -383,11 +383,19 @@ export default function App() {
     return filters.applyFilters(board.board.cards)
   }, [board.board.cards, filters.filters, filters.sort, filters.applyFilters])
 
-  // Create board with filtered cards
-  const filteredBoard = useMemo(() => ({
-    ...board.board,
-    cards: filteredAndSortedCards
-  }), [board.board, filteredAndSortedCards])
+  // Create board with filtered cards AND updated column cardIds
+  const filteredBoard = useMemo(() => {
+    const filteredCardIds = new Set(filteredAndSortedCards.map(c => c.id))
+
+    return {
+      ...board.board,
+      cards: filteredAndSortedCards,
+      columns: board.board.columns.map(col => ({
+        ...col,
+        cardIds: col.cardIds.filter(id => filteredCardIds.has(id))
+      }))
+    }
+  }, [board.board, filteredAndSortedCards])
 
   // Multi-select functionality
   const {
