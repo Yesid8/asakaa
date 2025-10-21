@@ -99,11 +99,8 @@ export function CardDetailModalV2({
   availableColumns = [],
   availableLabels = [],
 }: CardDetailModalV2Props) {
-  console.log('🔵 CardDetailModalV2 render:', { isOpen, cardId: card?.id, cardTitle: card?.title })
-
   // Local state - Initialize immediately from card prop to avoid render delay
   const [localCard, setLocalCard] = useState<Card | null>(card)
-  console.log('🟢 localCard state:', { localCardId: localCard?.id, localCardTitle: localCard?.title })
 
   const [isEditingDescription, setIsEditingDescription] = useState(false)
   const [subtasks, setSubtasks] = useState<Subtask[]>([])
@@ -134,10 +131,8 @@ export function CardDetailModalV2({
   // Initialize local card immediately when card prop is available
   useEffect(() => {
     if (card && !localCard) {
-      console.log('🔧 EFFECT: Initializing localCard from card prop:', card.id)
       setLocalCard({ ...card })
     } else if (card && localCard && card.id !== localCard.id) {
-      console.log('🔧 EFFECT: Card changed, updating localCard:', card.id)
       setLocalCard({ ...card })
     }
   }, [card, localCard])
@@ -359,18 +354,6 @@ export function CardDetailModalV2({
     (e: React.ChangeEvent<HTMLInputElement>) => {
       if (localCard) {
         const newDate = e.target.value
-        const now = new Date()
-        const systemDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`
-
-        console.log('🚨🚨🚨 DATE ASSIGNED 🚨🚨🚨')
-        console.log('System current date:', systemDate)
-        console.log('System current time:', now.toString())
-        console.log('Date assigned to card:', newDate)
-        console.log('Card ID:', localCard.id)
-        console.log('Card title:', localCard.title)
-        console.log('Old date:', localCard.endDate)
-        console.log('🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨')
-
         const updated = { ...localCard, endDate: newDate }
         setLocalCard(updated)
         onUpdate?.(localCard.id, { endDate: newDate })
@@ -469,12 +452,8 @@ export function CardDetailModalV2({
   // CRITICAL FIX: Use card prop directly for early return check
   // Using localCard causes race condition with Portal mount + useEffect timing
   if (!isOpen || !card) {
-    console.log('❌ Modal NOT rendering - isOpen:', isOpen, 'card:', !!card)
     return null
   }
-
-  console.log('✅ Modal IS rendering!')
-  console.log('🚀 RENDERING PORTAL - backdrop and container should be visible!')
 
   // Use localCard if available (for live edits), fallback to card prop
   const displayCard = localCard || card
@@ -521,7 +500,7 @@ export function CardDetailModalV2({
               {displayCard.title}
             </h1>
 
-            <p className="modal-v2-ai-prompt" onClick={() => console.log('AI assist')}>
+            <p className="modal-v2-ai-prompt">
               <span className="modal-v2-ai-icon">✨</span>
               Ask AI to write a description, create subtasks, or find similar tasks
             </p>
@@ -771,10 +750,6 @@ export function CardDetailModalV2({
             <button
               className="modal-v2-field"
               onClick={() => {
-                console.log('🗓️ OPENING DATE PICKER:', {
-                  currentEndDate: displayCard.endDate,
-                  inputValue: datePickerRef.current?.value
-                })
                 setShowDatePicker(!showDatePicker)
                 setTimeout(() => datePickerRef.current?.showPicker?.(), 0)
               }}
@@ -884,10 +859,7 @@ export function CardDetailModalV2({
                 <polyline points="10 9 9 9 8 9" />
               </svg>
               <h2>Description</h2>
-              <button
-                className="modal-v2-ai-button"
-                onClick={() => console.log('AI assist description')}
-              >
+              <button className="modal-v2-ai-button">
                 <svg
                   width="16"
                   height="16"

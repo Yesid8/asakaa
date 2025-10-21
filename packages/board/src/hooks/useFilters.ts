@@ -153,13 +153,6 @@ export function useFilters({
         const day = String(now.getDate()).padStart(2, '0')
         const todayString = `${year}-${month}-${day}`
 
-        console.log('📅 DATE FILTER:', {
-          filterType: filters.dateFilter,
-          now: now.toString(),
-          todayString: todayString,
-          cardsToCheck: filtered.length
-        })
-
         filtered = filtered.filter((card) => {
           if (!card.endDate && !card.dueDate) return false
 
@@ -179,16 +172,6 @@ export function useFilters({
             const d = String(dueDate.getUTCDate()).padStart(2, '0')
             dueDateString = `${y}-${m}-${d}`
           }
-
-          const passes = dueDateString === todayString
-          console.log('  📌 Card:', {
-            id: card.id,
-            title: card.title.substring(0, 30),
-            dueDateRaw: dueDate,
-            dueDateString: dueDateString,
-            todayString: todayString,
-            passes: passes
-          })
 
           switch (filters.dateFilter) {
             case 'overdue':

@@ -231,7 +231,6 @@ const demoBoard = {
       priority: 'MEDIUM' as const,
       labels: ['ai', 'feature', 'ml'],
       estimatedHours: 16,
-      dueDate: '2025-10-15', // Overdue - 5 days ago
     },
     {
       id: 'card-2',
@@ -242,7 +241,6 @@ const demoBoard = {
       priority: 'LOW' as const,
       labels: ['analytics', 'feature', 'ui'],
       estimatedHours: 24,
-      dueDate: '2025-10-20', // Today
     },
     {
       id: 'card-3',
@@ -252,7 +250,6 @@ const demoBoard = {
       columnId: 'col-todo',
       priority: 'HIGH' as const,
       labels: ['realtime', 'backend', 'websocket'],
-      dueDate: '2025-11-15',
       estimatedHours: 20,
     },
     {
@@ -263,7 +260,6 @@ const demoBoard = {
       columnId: 'col-todo',
       priority: 'HIGH' as const,
       labels: ['mobile', 'ui', 'responsive'],
-      dueDate: '2025-11-20',
       estimatedHours: 12,
     },
     {
@@ -274,8 +270,6 @@ const demoBoard = {
       columnId: 'col-progress',
       priority: 'URGENT' as const,
       labels: ['performance', 'dnd', 'optimization'],
-      startDate: '2025-10-19',
-      endDate: '2025-10-23', // This Week (3 days from now)
       estimatedHours: 8,
       assignedUserIds: ['user-1', 'user-2'],
       dependencies: ['card-3'],
@@ -288,8 +282,6 @@ const demoBoard = {
       columnId: 'col-progress',
       priority: 'MEDIUM' as const,
       labels: ['feature', 'customization'],
-      startDate: '2025-10-28',
-      endDate: '2025-11-10',
       estimatedHours: 16,
       assignedUserIds: ['user-3'],
     },
@@ -380,27 +372,14 @@ export default function App() {
 
   // Apply filters to cards
   const filteredAndSortedCards = useMemo(() => {
-    const result = filters.applyFilters(board.board.cards)
-    console.log('🔍 FILTER APPLIED:', {
-      totalCards: board.board.cards.length,
-      filteredCards: result.length,
-      activeFilter: filters.filters.dateFilter,
-      cardDates: board.board.cards.map(c => ({
-        id: c.id,
-        title: c.title,
-        dueDate: c.dueDate,
-        endDate: c.endDate
-      })),
-      filteredCardIds: result.map(c => c.id)
-    })
-    return result
+    return filters.applyFilters(board.board.cards)
   }, [board.board.cards, filters.filters, filters.sort, filters.applyFilters])
 
   // Create board with filtered cards AND updated column cardIds
   const filteredBoard = useMemo(() => {
     const filteredCardIds = new Set(filteredAndSortedCards.map(c => c.id))
 
-    const result = {
+    return {
       ...board.board,
       cards: filteredAndSortedCards,
       columns: board.board.columns.map(col => ({
@@ -408,18 +387,6 @@ export default function App() {
         cardIds: col.cardIds.filter(id => filteredCardIds.has(id))
       }))
     }
-
-    console.log('📊 FILTERED BOARD:', {
-      totalCards: result.cards.length,
-      columns: result.columns.map(col => ({
-        id: col.id,
-        title: col.title,
-        originalCardIds: board.board.columns.find(c => c.id === col.id)?.cardIds,
-        filteredCardIds: col.cardIds
-      }))
-    })
-
-    return result
   }, [board.board, filteredAndSortedCards])
 
   // Multi-select functionality
@@ -465,45 +432,17 @@ export default function App() {
 
   // Handler for card click - open detail modal
   const handleCardClick = (card: Card) => {
-    console.log('🎯 Card clicked:', card.id, card.title)
-    console.log('📍 Setting selectedCard:', card)
     setSelectedCard(card)
-    console.log('🚪 Opening modal, setting isOpen to true')
     setIsCardDetailModalOpen(true)
   }
 
   // Handler for card update from modal
   const handleCardUpdateFromModal = (cardId: string, updates: Partial<Card>) => {
-    console.log('🔄 Updating card from modal:', cardId, updates)
-
-    // FIX: Date picker timezone correction
-    // When user selects a date, the input returns it correctly but due to
-    // timezone handling somewhere in the chain, it gets offset by +1 day
-    // This intercepts date updates and ensures they're stored correctly
-    const correctedUpdates = { ...updates }
-
-    if (updates.endDate || updates.dueDate) {
-      const now = new Date()
-      const systemDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`
-
-      console.log('🚨 DATE UPDATE INTERCEPTED 🚨')
-      console.log('System current date:', systemDate)
-      console.log('System current time:', now.toString())
-      console.log('Date in update (endDate):', updates.endDate)
-      console.log('Date in update (dueDate):', updates.dueDate)
-
-      // The date should already be correct from the input, just pass it through
-      // But log it so we can see what's happening
-      console.log('Passing through unchanged')
-      console.log('🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨')
-    }
-
-    board.callbacks.onCardUpdate?.(cardId, correctedUpdates)
+    board.callbacks.onCardUpdate?.(cardId, updates)
     // Update selected card to reflect changes
     if (selectedCard && selectedCard.id === cardId) {
-      const updatedCard = { ...selectedCard, ...correctedUpdates }
+      const updatedCard = { ...selectedCard, ...updates }
       setSelectedCard(updatedCard)
-      console.log('✅ Card updated successfully:', updatedCard)
     }
   }
 
