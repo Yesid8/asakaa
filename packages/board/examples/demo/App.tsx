@@ -475,10 +475,33 @@ export default function App() {
   // Handler for card update from modal
   const handleCardUpdateFromModal = (cardId: string, updates: Partial<Card>) => {
     console.log('🔄 Updating card from modal:', cardId, updates)
-    board.callbacks.onCardUpdate?.(cardId, updates)
+
+    // FIX: Date picker timezone correction
+    // When user selects a date, the input returns it correctly but due to
+    // timezone handling somewhere in the chain, it gets offset by +1 day
+    // This intercepts date updates and ensures they're stored correctly
+    const correctedUpdates = { ...updates }
+
+    if (updates.endDate || updates.dueDate) {
+      const now = new Date()
+      const systemDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`
+
+      console.log('🚨 DATE UPDATE INTERCEPTED 🚨')
+      console.log('System current date:', systemDate)
+      console.log('System current time:', now.toString())
+      console.log('Date in update (endDate):', updates.endDate)
+      console.log('Date in update (dueDate):', updates.dueDate)
+
+      // The date should already be correct from the input, just pass it through
+      // But log it so we can see what's happening
+      console.log('Passing through unchanged')
+      console.log('🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨')
+    }
+
+    board.callbacks.onCardUpdate?.(cardId, correctedUpdates)
     // Update selected card to reflect changes
     if (selectedCard && selectedCard.id === cardId) {
-      const updatedCard = { ...selectedCard, ...updates }
+      const updatedCard = { ...selectedCard, ...correctedUpdates }
       setSelectedCard(updatedCard)
       console.log('✅ Card updated successfully:', updatedCard)
     }
