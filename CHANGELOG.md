@@ -81,6 +81,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Vanilla JS Examples**: Direct DOM integration examples
 - **Migration Path**: 100% backwards compatible with existing React code
 
+### Fixed - Date Filters & Timezone Issues
+
+#### Date Picker Timezone Fix
+- **Root Cause**: DateRangePicker's "Today" button was using `.toISOString()` which converts to UTC
+  - In UTC-5 timezone (Colombia), 8:50 PM Oct 20 becomes Oct 21 in UTC
+  - User selects "Today" but gets "Tomorrow" assigned
+- **Solution**: Changed to format dates in LOCAL timezone instead of UTC
+  - New `formatLocalDate()` helper function
+  - All quick date buttons (Today, Tomorrow, This Week) now work correctly in any timezone
+- **Impact**: Date assignment now matches user expectations across all timezones
+
+#### Filter System Improvements
+- **Fixed Filter Memoization**: React useMemo now properly re-runs when filters change
+  - Changed dependencies from `filters` object to `filters.filters`, `filters.sort`, `filters.applyFilters`
+  - Filters now update immediately when changed
+- **Fixed Column CardIds Synchronization**: KanbanBoard columns now show correct filtered cards
+  - When filtering, both `board.cards` and `column.cardIds` are synchronized
+  - Prevents cards from disappearing when filter changes
+- **Fixed Quick Filters**: Quick filters (My Tasks, Overdue, High Priority) now reset all other filters first
+  - Changed from partial updates to full state reset before applying new filter
+  - Ensures clean filter state without interference from previous filters
+
+#### Demo Data Cleanup
+- **Removed Hardcoded Dates**: All demo cards now start without pre-assigned dates
+  - Users can test date assignment without interference from default dates
+  - Cleaner testing experience for date filtering features
+
 ### Fixed - Dropdown Positioning & Theme Contrast
 
 #### Dropdown Menu Positioning
