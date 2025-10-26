@@ -107,7 +107,9 @@ html[data-theme="neutral"] .date-picker-menu *,
 html[data-theme="neutral"] .user-selector-menu,
 html[data-theme="neutral"] .user-selector-menu *,
 html[data-theme="neutral"] .dependencies-selector-menu,
-html[data-theme="neutral"] .dependencies-selector-menu * {
+html[data-theme="neutral"] .dependencies-selector-menu *,
+html[data-theme="neutral"] .column-manager-menu,
+html[data-theme="neutral"] .column-manager-menu * {
   filter: none !important;
 }
 
