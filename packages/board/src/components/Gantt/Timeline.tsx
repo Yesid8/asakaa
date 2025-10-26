@@ -396,6 +396,9 @@ export function Timeline({
           const { x, width } = getTaskPosition(task);
           const y = HEADER_HEIGHT + index * ROW_HEIGHT + 12;
 
+          // Container phase (has subtasks): render as bracket bar
+          const isContainer = task.subtasks && task.subtasks.length > 0 && !task.isMilestone;
+
           if (task.isMilestone) {
             return (
               <Milestone
@@ -406,6 +409,54 @@ export function Timeline({
                 theme={theme}
                 onClick={onTaskClick}
               />
+            );
+          }
+
+          if (isContainer) {
+            // Render container as bracket bar
+            return (
+              <g key={task.id} onClick={() => onTaskClick?.(task)} style={{ cursor: 'pointer' }}>
+                {/* Top bracket line */}
+                <line
+                  x1={x}
+                  y1={y}
+                  x2={x + width}
+                  y2={y}
+                  stroke={theme.borderLight}
+                  strokeWidth={2}
+                  opacity={0.6}
+                />
+                {/* Left vertical */}
+                <line
+                  x1={x}
+                  y1={y}
+                  x2={x}
+                  y2={y + 32}
+                  stroke={theme.borderLight}
+                  strokeWidth={2}
+                  opacity={0.6}
+                />
+                {/* Right vertical */}
+                <line
+                  x1={x + width}
+                  y1={y}
+                  x2={x + width}
+                  y2={y + 32}
+                  stroke={theme.borderLight}
+                  strokeWidth={2}
+                  opacity={0.6}
+                />
+                {/* Bottom bracket line */}
+                <line
+                  x1={x}
+                  y1={y + 32}
+                  x2={x + width}
+                  y2={y + 32}
+                  stroke={theme.borderLight}
+                  strokeWidth={2}
+                  opacity={0.6}
+                />
+              </g>
             );
           }
 

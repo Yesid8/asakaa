@@ -45,6 +45,11 @@ export function TaskBar({
   const height = 32;
   const borderRadius = 8;
 
+  // Detect task states for neutral theme visualization
+  const isOverdue = task.endDate && task.endDate < new Date() && task.progress < 100;
+  const isAtRisk = task.isCriticalPath;  // Critical path tasks are "at risk"
+  const isNeutralTheme = theme.name === 'neutral' || theme.today === '#1C1917';  // Detect neutral theme
+
   // Dynamic resize zones based on bar width for better UX
   const getResizeZone = (barWidth: number): number => {
     if (barWidth >= 80) return 20;      // Large bars: 20px zones
@@ -490,6 +495,42 @@ export function TaskBar({
         opacity={1}
         style={{ pointerEvents: 'none' }}
       />
+
+      {/* Neutral Theme: State visualization without color */}
+      {isNeutralTheme && (isOverdue || isAtRisk) && (
+        <>
+          {/* At Risk: Dotted border */}
+          {isAtRisk && !isOverdue && (
+            <rect
+              x={displayX}
+              y={y}
+              width={displayWidth}
+              height={height}
+              rx={borderRadius}
+              fill="none"
+              stroke={theme.border}
+              strokeWidth={2}
+              strokeDasharray="4 4"
+              opacity={0.8}
+              style={{ pointerEvents: 'none' }}
+            />
+          )}
+
+          {/* Overdue: Diagonal stripes pattern */}
+          {isOverdue && (
+            <rect
+              x={displayX}
+              y={y}
+              width={displayWidth}
+              height={height}
+              rx={borderRadius}
+              fill="url(#diagonal-stripes)"
+              opacity={0.3}
+              style={{ pointerEvents: 'none' }}
+            />
+          )}
+        </>
+      )}
 
       {/* Task Name Text */}
       {displayWidth > 60 && (
