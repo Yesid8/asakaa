@@ -301,29 +301,53 @@ import {
 
 ## 🎨 Themes
 
-ASAKAA comes with 3 professionally designed themes:
+ASAKAA comes with 3 professionally designed themes that work seamlessly across both Gantt and Kanban views:
 
 ### Dark Theme (Enhanced)
 > Optimized for developer productivity and long coding sessions
 
-<!-- SCREENSHOT: Gantt Dark Theme -->
+**Gantt View:**
+
+![ASAKAA Gantt Dark Theme](./.github/screenshots/gantt-dark-theme.png)
+
+**Kanban View:**
+
+![ASAKAA Kanban Dark Theme](./.github/screenshots/kanban-dark.png)
+
+---
 
 ### Light Theme (Standard)
 > WCAG AAA compliant with 7:1 contrast ratios for accessibility
 
-<!-- SCREENSHOT: Gantt Light Theme -->
+**Gantt View:**
+
+![ASAKAA Gantt Light Theme](./.github/screenshots/gantt-light-theme.png)
+
+**Kanban View:**
+
+![ASAKAA Kanban Light Theme](./.github/screenshots/theme-light.png)
+
+---
 
 ### Neutral Theme (Zen Mode)
 > Pure monochrome for distraction-free focus
 
-<!-- SCREENSHOT: Gantt Neutral Theme -->
+**Gantt View:**
 
-**Switching themes:**
+![ASAKAA Gantt Neutral Theme](./.github/screenshots/gantt-neutral-theme.png)
+
+**Kanban View:**
+
+![ASAKAA Kanban Neutral Theme](./.github/screenshots/theme-neutral.png)
+
+---
+
+**Switching themes is instant:**
 ```tsx
 import { ThemeSwitcher } from '@asakaa/board'
 
 function App() {
-  return <ThemeSwitcher /> // Done!
+  return <ThemeSwitcher /> // One click, instant switch!
 }
 ```
 
