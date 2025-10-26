@@ -34,11 +34,50 @@ export {
   DEFAULT_TEMPLATES,
   ExportImportModal,
   FilterBar,
-  // GanttView,
-  // GanttTimeline,
   ConfigMenu,
   ThemeModal,
+  LazyLoadWrapper,
+  withLazyLoad,
 } from './components'
+
+// Skeleton Loaders
+export {
+  Skeleton,
+  BoardSkeleton,
+  ColumnSkeleton,
+  CardSkeleton,
+  ChartSkeleton,
+  ModalSkeleton,
+  TableSkeleton,
+} from './components/Skeleton'
+
+// Gantt Components (v0.8.0)
+export {
+  GanttBoard,
+  GanttToolbar,
+  TaskGrid,
+  Timeline,
+  TaskBar,
+  DependencyLine,
+  Milestone as GanttMilestone,
+  ColumnManager,
+  ContextMenu,
+  MenuIcons,
+  themes as ganttThemes,
+  cardToGanttTask,
+  ganttTaskToCardUpdate,
+  cardsToGanttTasks,
+} from './components/Gantt'
+export type {
+  Task as GanttTask,
+  TimeScale,
+  Theme as GanttTheme,
+  GanttConfig as GanttBoardConfig,
+  GanttColumn,
+  ColumnType as GanttColumnType,
+  Assignee as GanttAssignee,
+  GanttTheme as GanttThemeConfig,
+} from './components/Gantt'
 
 // v0.6.0: Smart Card Stacking
 export { CardStack } from './components/CardStack/CardStack'
@@ -82,7 +121,10 @@ export type {
   // GanttTimelineProps,
   ConfigMenuProps,
   ThemeModalProps,
+  LazyLoadWrapperProps,
 } from './components'
+
+export type { SkeletonProps } from './components/Skeleton'
 
 // AI Components
 export { GeneratePlanModal, AIUsageDashboard } from './components/AI'
