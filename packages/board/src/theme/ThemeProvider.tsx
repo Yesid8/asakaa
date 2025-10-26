@@ -7,7 +7,7 @@ import { createContext, useContext, useEffect, useState, useCallback, type React
 import type { ThemeName, ThemeContextValue } from './types'
 import { themes, defaultTheme } from './themes'
 
-const ThemeContext = createContext<ThemeContextValue | undefined>(undefined)
+export const ThemeContext = createContext<ThemeContextValue | undefined>(undefined)
 
 const STORAGE_KEY = 'asakaa-theme'
 

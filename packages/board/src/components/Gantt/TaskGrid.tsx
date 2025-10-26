@@ -307,7 +307,12 @@ export function TaskGrid({
                     color: theme.textPrimary,
                     fontFamily: 'Inter, sans-serif',
                     fontSize: level === 0 ? '14px' : level === 1 ? '13px' : '12px',
-                    fontWeight: level === 0 ? 600 : level === 1 ? 500 : 400,
+                    // World-class hierarchy: Containers (with subtasks) have more weight
+                    fontWeight: task.isMilestone
+                      ? 600  // Milestones: Semibold (most important)
+                      : (task.subtasks && task.subtasks.length > 0)
+                      ? 500  // Containers: Medium (guide the eye)
+                      : 400,  // Regular tasks: Normal
                     opacity: level === 0 ? 1 : level === 1 ? 0.95 : 0.88,
                   }}
                 >
@@ -751,11 +756,13 @@ export function TaskGrid({
             className="flex items-center border-b cursor-pointer group"
             style={{
               height: `${ROW_HEIGHT}px`,
-              borderColor: isSelected ? theme.accent : theme.borderLight,
+              borderTop: `1px solid ${isSelected ? theme.accent : theme.borderLight}`,
+              borderRight: `1px solid ${isSelected ? theme.accent : theme.borderLight}`,
+              borderBottom: `1px solid ${isSelected ? theme.accent : theme.borderLight}`,
+              borderLeft: isSelected ? `3px solid ${theme.accent}` : '3px solid transparent',
               backgroundColor: isSelected
                 ? theme.accentLight
                 : (index % 2 === 0 ? theme.bgPrimary : theme.bgGrid),
-              borderLeft: isSelected ? `3px solid ${theme.accent}` : '3px solid transparent',
             }}
             onMouseEnter={() => setHoveredTaskId(task.id)}
             onMouseLeave={() => setHoveredTaskId(null)}

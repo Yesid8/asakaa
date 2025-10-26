@@ -57,9 +57,18 @@ export function deriveThemeFromCSS(themeName: 'dark' | 'light' | 'neutral' = 'da
     criticalPath: getVar('--theme-error', themes[themeName].criticalPath),
     criticalPathLight: getVar('--theme-error', themes[themeName].criticalPathLight),
 
-    // Special Elements
-    today: getVar('--theme-error', themes[themeName].today),
-    todayLight: getVar('--theme-error', themes[themeName].todayLight),
+    // Special Elements - Theme-specific today indicator
+    // Light: uses accent (blue), Neutral: uses text primary (black), Dark: custom
+    today: themeName === 'light'
+      ? getVar('--theme-accent-primary', themes[themeName].today)
+      : themeName === 'neutral'
+      ? getVar('--theme-text-primary', themes[themeName].today)
+      : getVar('--theme-error', themes[themeName].today),
+    todayLight: themeName === 'light'
+      ? getVar('--theme-accent-primary', themes[themeName].todayLight)
+      : themeName === 'neutral'
+      ? getVar('--theme-text-primary', themes[themeName].todayLight)
+      : getVar('--theme-error', themes[themeName].todayLight),
     milestone: getVar('--theme-warning', themes[themeName].milestone),
     milestoneLight: getVar('--theme-warning', themes[themeName].milestoneLight),
 

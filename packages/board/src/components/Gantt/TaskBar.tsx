@@ -454,7 +454,7 @@ export function TaskBar({
         />
       )}
 
-      {/* Main Task Bar */}
+      {/* Main Task Bar - Background (light for contrast with progress) */}
       <motion.rect
         x={displayX}
         y={y}
@@ -464,7 +464,7 @@ export function TaskBar({
         fill={theme.taskBarPrimary}
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{
-          opacity: isDragging && !isConnecting ? 0.6 : isHovered ? 0.85 : 0.7,
+          opacity: isDragging && !isConnecting ? 0.15 : isHovered ? 0.25 : 0.2,  // Much lighter background
           scale: isHovered && !isDragging ? 1.02 : 1,
         }}
         transition={{
@@ -478,7 +478,8 @@ export function TaskBar({
         }}
       />
 
-      {/* Progress Fill */}
+      {/* Progress Fill - Solid color for instant visual scanning */}
+      {/* Eye processes shape/color faster than text */}
       <rect
         x={displayX}
         y={y}
@@ -486,7 +487,7 @@ export function TaskBar({
         height={height}
         rx={borderRadius}
         fill={theme.taskBarProgress}
-        opacity={0.95}
+        opacity={1}
         style={{ pointerEvents: 'none' }}
       />
 

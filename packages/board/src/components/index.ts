@@ -50,8 +50,8 @@ export { ConfigMenu } from './ConfigMenu'
 export { ThemeModal } from './ThemeModal'
 
 // Lazy Load Wrapper
-export { LazyLoadWrapper, withLazyLoad } from './LazyLoadWrapper'
-export type { LazyLoadWrapperProps } from './LazyLoadWrapper'
+// export { LazyLoadWrapper, withLazyLoad } from './LazyLoadWrapper'
+// export type { LazyLoadWrapperProps } from './LazyLoadWrapper'
 export type { ConfigMenuProps } from './ConfigMenu'
 export type { ThemeModalProps } from './ThemeModal'
 

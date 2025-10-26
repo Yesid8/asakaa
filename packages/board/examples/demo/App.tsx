@@ -6,6 +6,7 @@
 import { useState, useMemo } from 'react'
 import {
   KanbanBoard,
+  GanttBoard,
   useBoard,
   useFilters,
   FilterBar,
@@ -46,6 +47,7 @@ import {
   type CardTemplate,
   type ImportResult,
   type CardRelationship,
+  type Task,
 } from '@asakaa/board'
 import '@asakaa/board/styles.css'
 
@@ -329,6 +331,9 @@ const demoBoard = {
 }
 
 export default function App() {
+  // View Mode State
+  const [viewMode, setViewMode] = useState<'kanban' | 'gantt'>('kanban')
+
   // AI Modal States
   const [isGeneratePlanModalOpen, setIsGeneratePlanModalOpen] = useState(false)
   const [isAIUsageDashboardOpen, setIsAIUsageDashboardOpen] = useState(false)
@@ -349,6 +354,157 @@ export default function App() {
   const [isHistoryViewOpen, setIsHistoryViewOpen] = useState(false)
   const [isGraphViewOpen, setIsGraphViewOpen] = useState(false)
   const [historySelectedCard, setHistorySelectedCard] = useState<Card | null>(null)
+
+  // Gantt Tasks State
+  const [ganttTasks, setGanttTasks] = useState<Task[]>([
+    {
+      id: 'task-1',
+      name: 'Project Planning Phase',
+      startDate: new Date('2025-10-20'),
+      endDate: new Date('2025-10-27'),
+      progress: 100,
+      dependencies: [],
+      assignedUsers: ['user-1', 'user-2'],
+      status: 'completed',
+      isMilestone: false,
+      subtasks: [
+        {
+          id: 'task-1-1',
+          name: 'Define project scope',
+          startDate: new Date('2025-10-20'),
+          endDate: new Date('2025-10-22'),
+          progress: 100,
+          dependencies: [],
+          status: 'completed',
+        },
+        {
+          id: 'task-1-2',
+          name: 'Create initial timeline',
+          startDate: new Date('2025-10-23'),
+          endDate: new Date('2025-10-25'),
+          progress: 100,
+          dependencies: ['task-1-1'],
+          status: 'completed',
+        },
+      ],
+    },
+    {
+      id: 'task-2',
+      name: 'Design Phase',
+      startDate: new Date('2025-10-27'),
+      endDate: new Date('2025-11-10'),
+      progress: 75,
+      dependencies: ['task-1'],
+      assignedUsers: ['user-2', 'user-4'],
+      status: 'in-progress',
+      priority: 'HIGH',
+      subtasks: [
+        {
+          id: 'task-2-1',
+          name: 'UI/UX mockups',
+          startDate: new Date('2025-10-27'),
+          endDate: new Date('2025-11-03'),
+          progress: 100,
+          dependencies: [],
+          status: 'completed',
+        },
+        {
+          id: 'task-2-2',
+          name: 'Design system',
+          startDate: new Date('2025-11-03'),
+          endDate: new Date('2025-11-10'),
+          progress: 50,
+          dependencies: ['task-2-1'],
+          status: 'in-progress',
+          priority: 'HIGH',
+        },
+      ],
+    },
+    {
+      id: 'task-3',
+      name: 'Development Sprint 1',
+      startDate: new Date('2025-11-10'),
+      endDate: new Date('2025-11-24'),
+      progress: 30,
+      dependencies: ['task-2'],
+      assignedUsers: ['user-1', 'user-3', 'user-5'],
+      status: 'in-progress',
+      priority: 'URGENT',
+      subtasks: [
+        {
+          id: 'task-3-1',
+          name: 'Setup project structure',
+          startDate: new Date('2025-11-10'),
+          endDate: new Date('2025-11-12'),
+          progress: 100,
+          dependencies: [],
+          status: 'completed',
+        },
+        {
+          id: 'task-3-2',
+          name: 'Implement core features',
+          startDate: new Date('2025-11-12'),
+          endDate: new Date('2025-11-20'),
+          progress: 40,
+          dependencies: ['task-3-1'],
+          status: 'in-progress',
+          priority: 'URGENT',
+        },
+        {
+          id: 'task-3-3',
+          name: 'Unit testing',
+          startDate: new Date('2025-11-20'),
+          endDate: new Date('2025-11-24'),
+          progress: 0,
+          dependencies: ['task-3-2'],
+          status: 'todo',
+        },
+      ],
+    },
+    {
+      id: 'milestone-1',
+      name: 'MVP Launch',
+      startDate: new Date('2025-11-24'),
+      endDate: new Date('2025-11-24'),
+      progress: 0,
+      dependencies: ['task-3'],
+      isMilestone: true,
+      status: 'todo',
+      priority: 'URGENT',
+    },
+    {
+      id: 'task-4',
+      name: 'Testing & QA',
+      startDate: new Date('2025-11-24'),
+      endDate: new Date('2025-12-05'),
+      progress: 0,
+      dependencies: ['milestone-1'],
+      assignedUsers: ['user-2', 'user-4'],
+      status: 'todo',
+      priority: 'HIGH',
+    },
+    {
+      id: 'task-5',
+      name: 'Documentation',
+      startDate: new Date('2025-11-17'),
+      endDate: new Date('2025-12-01'),
+      progress: 10,
+      dependencies: ['task-3'],
+      assignedUsers: ['user-4'],
+      status: 'in-progress',
+    },
+    {
+      id: 'milestone-2',
+      name: 'Production Release',
+      startDate: new Date('2025-12-05'),
+      endDate: new Date('2025-12-05'),
+      progress: 0,
+      dependencies: ['task-4', 'task-5'],
+      isMilestone: true,
+      status: 'todo',
+      priority: 'URGENT',
+    },
+  ])
 
   // v0.4.0: Simplified API with useBoard hook
   const board = useBoard({
@@ -616,6 +772,30 @@ export default function App() {
                   </p>
                 </div>
 
+                {/* View Mode Toggle */}
+                <div className="flex items-center gap-2 px-1 py-1 rounded-lg" style={{ backgroundColor: 'var(--theme-bg-secondary)', border: '1px solid var(--theme-border-primary)' }}>
+                  <button
+                    onClick={() => setViewMode('kanban')}
+                    className="px-3 py-1.5 rounded text-sm font-medium transition-all"
+                    style={{
+                      backgroundColor: viewMode === 'kanban' ? 'var(--theme-accent-primary)' : 'transparent',
+                      color: viewMode === 'kanban' ? 'white' : 'var(--theme-text-secondary)',
+                    }}
+                  >
+                    Kanban
+                  </button>
+                  <button
+                    onClick={() => setViewMode('gantt')}
+                    className="px-3 py-1.5 rounded text-sm font-medium transition-all"
+                    style={{
+                      backgroundColor: viewMode === 'gantt' ? 'var(--theme-accent-primary)' : 'transparent',
+                      color: viewMode === 'gantt' ? 'white' : 'var(--theme-text-secondary)',
+                    }}
+                  >
+                    Gantt
+                  </button>
+                </div>
+
                 {/* v0.5.0: Theme Switcher */}
                 <ThemeSwitcher compact showLabels={false} />
               </div>
@@ -830,7 +1010,29 @@ export default function App() {
 
       {/* Board Container with horizontal scroll */}
       <div className="pb-12">
-        {groupBy === 'none' ? (
+        {viewMode === 'gantt' ? (
+          <GanttBoard
+            tasks={ganttTasks}
+            onTasksChange={setGanttTasks}
+            availableUsers={sampleUsers}
+            config={{
+              defaultView: 'week',
+              showWeekends: true,
+              enableDependencies: true,
+              enableSubtasks: true,
+              visibleColumns: {
+                name: true,
+                assignees: false,
+                startDate: false,
+                endDate: false,
+                duration: false,
+                progress: false,
+                status: false,
+                priority: false,
+              },
+            }}
+          />
+        ) : groupBy === 'none' ? (
           <KanbanBoard
             board={filteredBoard}
             availableUsers={board.props.availableUsers}

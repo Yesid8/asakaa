@@ -205,6 +205,11 @@ export function Timeline({
           <filter id="shadow">
             <feDropShadow dx="0" dy="1" stdDeviation="2" floodOpacity="0.1" />
           </filter>
+
+          {/* Neutral theme: Diagonal stripes pattern for critical/overdue tasks */}
+          <pattern id="diagonal-stripes" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+            <line x1="0" y1="0" x2="0" y2="8" stroke={theme.border} strokeWidth="2" />
+          </pattern>
         </defs>
 
         {/* Full SVG Background */}
@@ -270,9 +275,10 @@ export function Timeline({
           );
         })}
 
-        {/* Today Line */}
+        {/* Today Line - Solid, prominent indicator */}
         {todayX >= 0 && todayX <= timelineWidth && (
           <g>
+            {/* Solid line - more prominent */}
             <line
               x1={todayX}
               y1={HEADER_HEIGHT}
@@ -280,9 +286,9 @@ export function Timeline({
               y2={flatTasks.length * ROW_HEIGHT + HEADER_HEIGHT}
               stroke={theme.today}
               strokeWidth={2}
-              opacity={0.8}
+              opacity={1}
             />
-            <circle cx={todayX} cy={HEADER_HEIGHT - 10} r={6} fill={theme.today} />
+            <circle cx={todayX} cy={HEADER_HEIGHT - 10} r={6} fill={theme.today} opacity={1} />
           </g>
         )}
 
