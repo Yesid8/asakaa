@@ -1,5 +1,5 @@
 {
-  "buildCommand": "npm run build:core && cd packages/board && npm install && npm run build && cd examples/demo && npm install && npm run build",
+  "buildCommand": "npm run build:core && npm run build:board && cd packages/board/examples/demo && npm install && npm run build",
   "outputDirectory": "packages/board/examples/demo/dist",
   "installCommand": "npm install",
   "framework": null,
