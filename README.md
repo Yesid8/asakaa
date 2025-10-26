@@ -1,424 +1,621 @@
 <div align="center">
 
-# 🎯 ASAKAA
+<img src="./.github/logo.png" alt="ASAKAA Logo" width="120" height="120">
 
-### Production-Ready React Kanban Board Component
+# 🚀 ASAKAA Board
 
-*Modern, TypeScript-first Kanban board for React applications*
+### **The Ultimate Project Management Library for React**
 
+**Kanban + Gantt + AI** • Production-Ready • TypeScript-First • Zero Configuration
+
+[![NPM Version](https://img.shields.io/npm/v/@asakaa/board?color=blue&logo=npm)](https://www.npmjs.com/package/@asakaa/board)
 [![License: BSL 1.1](https://img.shields.io/badge/license-BSL%201.1-blue.svg)](./LICENSE)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.6-blue?logo=typescript)](https://www.typescriptlang.org/)
 [![React](https://img.shields.io/badge/React-18+-61dafb?logo=react)](https://reactjs.org/)
-[![Version](https://img.shields.io/badge/version-0.6.0-green)](https://github.com/Yesid8/asakaa)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](./CONTRIBUTING.md)
+[![Bundle Size](https://img.shields.io/bundlephobia/minzip/@asakaa/board?label=gzip&color=success)](https://bundlephobia.com/package/@asakaa/board)
+[![Downloads](https://img.shields.io/npm/dm/@asakaa/board?color=success)](https://www.npmjs.com/package/@asakaa/board)
 [![Stars](https://img.shields.io/github/stars/Yesid8/asakaa?style=social)](https://github.com/Yesid8/asakaa/stargazers)
 
-[🚀 Live Demo](https://asakaa-kanban.vercel.app/) • [Documentation](#installation) • [Examples](#usage) • [Contributing](./CONTRIBUTING.md)
-
-</div>
+[🎮 Live Demo](https://asakaa-kanban.vercel.app/) • [📖 Documentation](#quick-start) • [💡 Examples](#usage) • [🤝 Contributing](./packages/board/CHANGELOG.md)
 
 ---
 
-## 🚀 Why ASAKAA?
+</div>
 
-**Stop wrestling with low-level drag-and-drop libraries.** ASAKAA gives you a complete, production-ready Kanban board in minutes, not weeks.
+## 🎯 Why ASAKAA?
 
-### ✨ All-in-One Solution
-- ✅ **Drag & Drop** - Smooth 60fps animations powered by @dnd-kit
-- ✅ **3 Beautiful Themes** - Dark, Light, and Neutral (Zen mode)
-- ✅ **Advanced Filtering** - Search, filter by assignee, labels, priority, dates
-- ✅ **Virtual Scrolling** - Handle 10,000+ cards without performance issues
-- ✅ **TypeScript First** - Complete type definitions out of the box
-- ✅ **Keyboard Shortcuts** - Power users rejoice (Cmd+K, undo/redo, bulk ops)
-- ✅ **Export/Import** - JSON, CSV, PDF exports built-in
-- ✅ **Plugin System** - 15+ lifecycle hooks for customization
-- ✅ **Accessibility** - WCAG AAA compliant (7:1 contrast ratios)
+**Stop patching together 5 different libraries.** Get a complete, production-ready project management solution in one package.
 
-### 📦 vs. Competitors
+```bash
+npm install @asakaa/board
+# That's it. You're done. 🎉
+```
 
-| Feature | ASAKAA | react-beautiful-dnd | @dnd-kit/sortable | react-dnd |
-|---------|--------|---------------------|-------------------|-----------|
-| **Kanban UI included** | ✅ Built-in | ❌ DIY | ❌ DIY | ❌ DIY |
-| **Themes** | ✅ 3 themes | ❌ None | ❌ None | ❌ None |
-| **Filtering** | ✅ Advanced | ❌ None | ❌ None | ❌ None |
-| **TypeScript** | ✅ Full | ⚠️ Partial | ✅ Full | ✅ Full |
-| **Maintained** | ✅ Active | ❌ Deprecated | ✅ Active | ✅ Active |
-| **Bundle size** | 198 KB | ~40 KB* | ~20 KB* | ~45 KB* |
-| **Learning curve** | 5 min | 2-3 days | 2-3 days | 3-4 days |
+### ⚡ What Makes ASAKAA Different?
 
-*\*Without UI, theming, filtering, virtualization, or keyboard shortcuts*
+<table>
+<tr>
+<td width="33%" align="center">
 
-**ASAKAA = Everything you need, nothing you don't.**
+### 🎨 **2-in-1 Views**
+**Kanban + Gantt** in the same component. Switch views instantly. Same data, different perspectives.
+
+</td>
+<td width="33%" align="center">
+
+### 🧠 **Smart by Default**
+Circular dependency detection, date validation, undo/redo (50 levels). **Your users won't break things.**
+
+</td>
+<td width="33%" align="center">
+
+### 🎯 **5-Minute Setup**
+No configuration hell. Import, render, done. Comes with themes, keyboard shortcuts, and accessibility **out of the box**.
+
+</td>
+</tr>
+</table>
 
 ---
 
 ## 📸 See It In Action
 
-> **Note**: Demo GIF coming soon! For now, run the demo locally:
-> ```bash
-> git clone https://github.com/Yesid8/asakaa.git
-> cd asakaa/packages/board/examples/demo
-> npm install && npm run dev
-> # Open http://localhost:3000
-> ```
+### **Gantt Chart View** - Professional Project Planning
 
-### Three Themes, Instant Switching
+> **NEW in v0.8.0:** Complete Gantt chart with dependencies, milestones, and intelligent validation
 
-## Three Beautiful Themes
+<!-- REPLACE THIS WITH YOUR SCREENSHOT -->
+![ASAKAA Gantt Chart Dark Theme](./.github/screenshots/gantt-dark-hero.png)
 
-ASAKAA v0.6.0 introduces a Enhanced design system with three carefully crafted themes:
+<details>
+<summary><strong>✨ Gantt Features (Click to expand)</strong></summary>
 
-### Dark Theme (Enhanced)
-> Speed, efficiency, focus - optimized for developer productivity
+<br>
 
-![ASAKAA Dark Theme](./.github/screenshots/theme-dark.png)
+**🎯 Core Capabilities:**
+- ✅ **Drag & Drop Scheduling** - Move and resize task bars with pixel-perfect precision
+- ✅ **Dependency Management** - Visual arrows showing task relationships
+- ✅ **Circular Dependency Detection** - Prevents invalid workflows with smart validation
+- ✅ **Milestone Markers** - Diamonds (not bars) for key deliverables
+- ✅ **Progress Tracking** - Inline progress bars with percentages
+- ✅ **Today Indicator** - Red vertical line showing current date
+- ✅ **Hierarchical Tasks** - Unlimited nested subtasks with visual indentation
+- ✅ **Click-to-Create** - Click any date in timeline to schedule tasks
 
-### Light Theme (Standard)
-> Clarity, legibility, professionalism - WCAG AAA compliant
+**🧠 Intelligent Features:**
+- ✅ **Date Validation** - Can't create tasks shorter than 1 day or with start > end
+- ✅ **Undo/Redo System** - 50 levels of history with Ctrl+Z/Ctrl+Y
+- ✅ **Auto-Scroll Timeline** - Horizontal scroll for extended project timelines
+- ✅ **Smart Icons** - Diamonds for milestones, circles for tasks, dots for subtasks
 
-![ASAKAA Light Theme](./.github/screenshots/theme-light.png)
+**⚙️ Views & Controls:**
+- ✅ **3 Time Scales** - Day, Week (default), Month views
+- ✅ **Column Manager** - Show/hide: Status, Assignees, Progress, Dates
+- ✅ **3 Themes** - Dark, Light, Neutral with instant switching
+- ✅ **Keyboard Shortcuts** - Tab (indent), Shift+Tab (outdent), F2 (rename), Delete
 
-### Neutral Theme (Zen Mode)
-> Minimalism, calm technology, maximum concentration - pure monochrome
+**📊 Professional Features:**
+- ✅ **Critical Path Highlighting** - Visual emphasis on blocking tasks
+- ✅ **Context Menus** - Right-click for quick actions
+- ✅ **Resizable Panels** - Adjust task list / timeline ratio
 
-![ASAKAA Neutral Theme](./.github/screenshots/theme-neutral.png)
+</details>
 
-## ✨ What's New in v0.6.0
+---
 
-**Enhanced Design Refinements:**
-- Three polished themes: Dark (Enhanced), Light (Standard), Neutral (Zen)
-- Pure text labels without background noise
-- Simplified column indicators
-- 100% grayscale enforcement in Neutral theme
-- SVG icons in theme switcher for better UX
-- Enhanced visual hierarchy: content is king, metadata is secondary
+### **Kanban Board View** - Agile Workflow Management
 
-**Theme Philosophy:**
-- **Dark**: Enhanced for speed and focus
-- **Light**: High contrast (7:1) for accessibility
-- **Neutral**: Absolute monochrome for distraction-free work
+<!-- REPLACE THIS WITH YOUR SCREENSHOT -->
+![ASAKAA Kanban Dark Theme](./.github/screenshots/kanban-dark.png)
 
-## Installation
+<details>
+<summary><strong>✨ Kanban Features (Click to expand)</strong></summary>
+
+<br>
+
+**🎯 Core Capabilities:**
+- ✅ **Smooth Drag & Drop** - 60fps animations powered by @dnd-kit
+- ✅ **Advanced Filtering** - Search, filter by assignee, labels, priority, dates
+- ✅ **Virtual Scrolling** - Handle 10,000+ cards without lag
+- ✅ **Keyboard Shortcuts** - Cmd+K command palette, arrow navigation
+- ✅ **Bulk Operations** - Multi-select with Shift/Ctrl
+- ✅ **Export/Import** - JSON, CSV, PDF exports built-in
+
+**🎨 Themes:**
+- ✅ **Dark Theme** - Speed, focus, and developer productivity
+- ✅ **Light Theme** - WCAG AAA compliant (7:1 contrast)
+- ✅ **Neutral Theme** - Minimalist grayscale for distraction-free work
+
+</details>
+
+---
+
+## 🚀 Quick Start
+
+### Installation
 
 ```bash
 npm install @asakaa/board
-```
-
-Or with other package managers:
-
-```bash
+# or
 yarn add @asakaa/board
+# or
 pnpm add @asakaa/board
 ```
 
-## Usage
+### Basic Usage - Gantt Chart
 
 ```tsx
-import { KanbanBoard, ThemeProvider } from '@asakaa/board'
+import { GanttBoard } from '@asakaa/board'
+import '@asakaa/board/styles.css'
+
+function App() {
+  const tasks = [
+    {
+      id: '1',
+      name: 'Project Setup',
+      startDate: new Date('2025-01-01'),
+      endDate: new Date('2025-01-05'),
+      progress: 100,
+      status: 'completed'
+    },
+    {
+      id: '2',
+      name: 'Development',
+      startDate: new Date('2025-01-06'),
+      endDate: new Date('2025-01-20'),
+      progress: 60,
+      status: 'in-progress',
+      dependencies: ['1'] // Depends on task 1
+    },
+    {
+      id: '3',
+      name: 'Launch',
+      startDate: new Date('2025-01-21'),
+      endDate: new Date('2025-01-21'),
+      isMilestone: true,
+      dependencies: ['2']
+    }
+  ]
+
+  return (
+    <GanttBoard
+      tasks={tasks}
+      config={{
+        theme: 'dark',
+        timeScale: 'week',
+        onTaskUpdate: (updatedTask) => {
+          console.log('Task updated:', updatedTask)
+        }
+      }}
+    />
+  )
+}
+```
+
+### Basic Usage - Kanban Board
+
+```tsx
+import { KanbanBoard } from '@asakaa/board'
 import '@asakaa/board/styles.css'
 
 function App() {
   return (
-    <ThemeProvider defaultTheme="dark">
-      <KanbanBoard
-        columns={[
-          { id: 'todo', title: 'To Do', cards: [] },
-          { id: 'in-progress', title: 'In Progress', cards: [] },
-          { id: 'done', title: 'Done', cards: [] }
-        ]}
-      />
-    </ThemeProvider>
+    <KanbanBoard
+      columns={[
+        { id: 'todo', title: 'To Do', cards: [] },
+        { id: 'in-progress', title: 'In Progress', cards: [] },
+        { id: 'done', title: 'Done', cards: [] }
+      ]}
+      onUpdate={(columns) => console.log('Board updated:', columns)}
+    />
   )
 }
 ```
 
-### Theme Switching
-
-```tsx
-import { ThemeSwitcher, useTheme } from '@asakaa/board'
-
-function MyApp() {
-  const { theme, setTheme } = useTheme()
-
-  return (
-    <div>
-      {/* Quick switcher component */}
-      <ThemeSwitcher />
-
-      {/* Or programmatic control */}
-      <button onClick={() => setTheme('neutral')}>
-        Zen Mode
-      </button>
-    </div>
-  )
-}
-```
-
-## Technical Specifications
-
-### @asakaa/board (v0.6.0)
-
-**Core Features:**
-- Drag-and-drop functionality via @dnd-kit
-- Virtual scrolling for lists with 1000+ items (@tanstack/react-virtual)
-- TypeScript-first architecture with complete type definitions
-- Plugin system with 15+ lifecycle hooks
-- Command palette with keyboard shortcuts (Cmd/Ctrl+K)
-- Undo/Redo with command pattern implementation
-- Bulk operations API
-- Real-time performance monitoring
-- **NEW**: Three professionally designed themes with instant switching
-- **NEW**: Enhanced design refinements
-
-**Architecture:**
-- State management: Jotai atoms
-- Animation: Framer Motion
-- Styling: CSS variables with Design System v2.0
-- Build: tsup (ESM + CJS)
-- Testing: Vitest with 75% coverage
-
-**Bundle Size:**
-- ESM: 150.99 KB
-- CJS: 163.44 KB
-- CSS: 41.05 KB
-- Tree-shakeable
-
-**Performance:**
-- Virtual scrolling handles 10,000+ cards
-- 60fps drag-and-drop animations
-- Debounced search with 300ms delay
-- Optimized re-renders with React.memo
-
-**Browser Support:**
-- Chrome/Edge 90+
-- Firefox 88+
-- Safari 14+
-
-## Project Structure
-
-```
-asakaa/
-├── packages/
-│   └── board/              # @asakaa/board package
-│       ├── src/
-│       │   ├── components/ # React components
-│       │   ├── hooks/      # Custom React hooks
-│       │   ├── stores/     # Jotai state stores
-│       │   ├── types/      # TypeScript definitions
-│       │   ├── utils/      # Utility functions
-│       │   ├── theme/      # Theme system (v0.6.0)
-│       │   └── styles/     # CSS with Design System v2.0
-│       ├── examples/       # Demo applications
-│       └── dist/           # Build output
-└── pnpm-workspace.yaml     # Monorepo configuration
-```
-
-## Development
-
-This monorepo uses pnpm workspaces.
-
-**Setup:**
-```bash
-# Install dependencies
-pnpm install
-
-# Build packages
-pnpm run build
-
-# Run tests
-pnpm test
-
-# Type checking
-pnpm run typecheck
-```
-
-**Development Workflow:**
-```bash
-# Start dev server for demo
-cd packages/board/examples/demo
-npm run dev
-
-# Run tests in watch mode
-pnpm run test:watch
-
-# Generate API documentation
-pnpm run docs
-```
-
-## API Reference
-
-### Board Component
-
-```tsx
-interface KanbanBoardProps {
-  columns: Column[]
-  onUpdate?: (columns: Column[]) => void
-  config?: BoardConfig
-  plugins?: Plugin[]
-}
-```
-
-### Theme System (v0.6.0)
-
-```tsx
-import { ThemeProvider, useTheme, ThemeSwitcher, ThemeModal } from '@asakaa/board'
-
-// Theme Provider
-<ThemeProvider defaultTheme="dark">
-  <App />
-</ThemeProvider>
-
-// useTheme hook
-const { theme, setTheme, themes } = useTheme()
-
-// Available themes
-type ThemeName = 'dark' | 'light' | 'neutral'
-```
-
-### Plugin System
-
-```tsx
-interface Plugin {
-  name: string
-  version: string
-  hooks: {
-    onCardCreate?: (card: Card) => void
-    onCardUpdate?: (card: Card) => void
-    onCardDelete?: (cardId: string) => void
-    // ... 12 more hooks
-  }
-}
-```
-
-### Hook Examples
-
-```tsx
-import { useBoard, useSelection, useUndo } from '@asakaa/board'
-
-// Access board state
-const { data, updateCard } = useBoard()
-
-// Selection state
-const { selectedCards, selectCard } = useSelection()
-
-// Undo/Redo
-const { undo, redo, canUndo, canRedo } = useUndo()
-```
-
-## Design System v2.0
-
-The board component uses a CSS variables-based design system:
-
-```css
-/* Typography Scale */
---font-2xs: 10px
---font-xs: 12px
---font-sm: 14px
---font-base: 16px
---font-lg: 20px
---font-xl: 24px
---font-2xl: 32px
---font-3xl: 48px
-
-/* Spacing Scale (4px grid) */
---space-1: 4px
---space-2: 8px
---space-3: 12px
---space-4: 16px
-/* ... up to --space-16: 64px */
-
-/* Opacity Scale */
---opacity-subtle: 0.05
---opacity-faint: 0.10
---opacity-light: 0.20
---opacity-medium: 0.40
---opacity-strong: 0.60
---opacity-opaque: 0.80
---opacity-full: 1.0
-
-/* Theme Colors (v0.6.0) */
---color-bg-primary: var(--theme-bg-primary)
---color-bg-secondary: var(--theme-bg-secondary)
---color-text-primary: var(--theme-text-primary)
---color-text-secondary: var(--theme-text-secondary)
---color-text-tertiary: var(--theme-text-tertiary)
-```
-
-## Testing
-
-```bash
-# Run all tests
-pnpm test
-
-# Coverage report
-pnpm run test:coverage
-
-# UI mode
-pnpm run test:ui
-```
-
-Current test coverage: 75%
-
-## Building
-
-```bash
-# Build all packages
-pnpm run build
-
-# Build specific package
-cd packages/board
-pnpm run build
-```
-
-Output formats:
-- ESM: `dist/index.js`
-- CJS: `dist/index.cjs`
-- Types: `dist/index.d.ts` + `dist/index.d.cts`
-- CSS: `dist/styles.css`
-
-## Screenshots Guide
-
-To update screenshots for this README:
-
-1. **Take screenshots** of each theme at `http://localhost:3000`:
-   - Dark theme → `theme-dark.png`
-   - Light theme → `theme-light.png`
-   - Neutral theme → `theme-neutral.png`
-
-2. **Save to** `.github/screenshots/`
-
-3. **Specifications**:
-   - Format: PNG
-   - Width: 1600px (ideal)
-   - Quality: High resolution, < 500KB each
-   - Content: Show 3+ columns with cards containing labels
-
-4. **Commit and push**:
-```bash
-git add .github/screenshots/
-git commit -m "docs: Update theme screenshots for v0.6.0"
-git push
-```
-
-## Changelog
-
-See [CHANGELOG.md](./CHANGELOG.md) for version history and release notes.
-
-## License
-
-Business Source License 1.1 - See [LICENSE](./LICENSE) for details.
-
-**TLDR**: Free for non-production use (development, testing, evaluation). Converts to Apache 2.0 on 2027-10-12.
-
-## Packages
-
-| Package | Version | Status |
-|---------|---------|--------|
-| [@asakaa/board](./packages/board) | 0.6.0 | Production |
-| @asakaa/todo | - | Planned |
-| @asakaa/gantt | - | Planned |
-| @asakaa/calendar | - | Planned |
+**That's it!** 🎉 You now have a fully functional Gantt/Kanban board with:
+- ✅ Drag & drop
+- ✅ Theme switching
+- ✅ Keyboard shortcuts
+- ✅ Undo/redo
+- ✅ And 50+ other features
 
 ---
 
-Built with TypeScript, React, and love for clean interfaces.
+## 💎 Feature Comparison
+
+### vs. Other Solutions
+
+| Feature | ASAKAA | react-beautiful-dnd | @dnd-kit | Jira/Asana |
+|---------|--------|---------------------|----------|------------|
+| **Ready-to-use UI** | ✅ | ❌ (DIY) | ❌ (DIY) | ✅ |
+| **Gantt + Kanban** | ✅ Both | ❌ | ❌ | 💰 Paid |
+| **Dependency Management** | ✅ Built-in | ❌ | ❌ | ✅ |
+| **Circular Dependency Detection** | ✅ | ❌ | ❌ | ⚠️ Basic |
+| **Undo/Redo (50 levels)** | ✅ | ❌ | ❌ | ⚠️ Limited |
+| **Date Validation** | ✅ Smart | ❌ | ❌ | ✅ |
+| **Themes** | ✅ 3 | ❌ | ❌ | ⚠️ 2 |
+| **TypeScript** | ✅ Full | ⚠️ Partial | ✅ | N/A |
+| **Bundle Size** | 328 KB | ~40 KB* | ~20 KB* | N/A |
+| **Learning Curve** | **5 min** | 2-3 days | 2-3 days | Weeks |
+| **Price** | **Free*** | Free | Free | $7-15/user/mo |
+| **Self-hosted** | ✅ | ✅ | ✅ | ❌ |
+
+*\*Without UI, themes, filtering, or features*
+*\*\*Free for non-production use. Converts to Apache 2.0 in 2027. See [License](#license)*
+
+---
+
+## 📦 What's Included
+
+### Gantt Chart Features (v0.8.0)
+
+```tsx
+import {
+  GanttBoard,          // Main Gantt component
+  useGanttKeyboard,    // Keyboard shortcuts hook
+  useUndoRedo,         // Undo/redo system
+  cardToGanttTask,     // Convert Kanban cards to Gantt tasks
+  ganttTaskToCard      // Convert Gantt tasks to Kanban cards
+} from '@asakaa/board'
+```
+
+**Components:**
+- `GanttBoard` - Complete Gantt chart with timeline
+- `GanttToolbar` - Theme switcher, view controls
+- `TaskGrid` - Hierarchical task list with inline editing
+- `Timeline` - Visual timeline with drag-drop task bars
+- `DependencyLine` - Curved arrows showing dependencies
+- `Milestone` - Diamond markers for key deliverables
+- `ColumnManager` - Toggle visibility of columns
+- `ContextMenu` - Right-click actions
+
+**Hooks:**
+- `useUndoRedo<T>` - 50-level history management
+- `useGanttUndoRedoKeys` - Ctrl+Z/Y keyboard shortcuts
+- `useGanttKeyboard` - Arrow navigation, shortcuts
+- `useGanttSelection` - Multi-select with Shift/Ctrl
+
+**Utilities:**
+- Circular dependency detection (DFS algorithm)
+- Date validation (min 1 day, start < end)
+- Hierarchy operations (indent, outdent, move, duplicate)
+- Type adapters (Kanban ↔ Gantt conversion)
+
+---
+
+### Kanban Board Features
+
+```tsx
+import {
+  KanbanBoard,         // Main Kanban component
+  ThemeProvider,       // Theme context
+  useTheme,            // Theme hook
+  useBoard,            // Board state hook
+  useFilters,          // Advanced filtering
+  useSelection,        // Multi-select
+  useUndo              // Undo/redo
+} from '@asakaa/board'
+```
+
+---
+
+## 🎨 Themes
+
+ASAKAA comes with 3 professionally designed themes:
+
+### Dark Theme (Enhanced)
+> Optimized for developer productivity and long coding sessions
+
+<!-- SCREENSHOT: Gantt Dark Theme -->
+
+### Light Theme (Standard)
+> WCAG AAA compliant with 7:1 contrast ratios for accessibility
+
+<!-- SCREENSHOT: Gantt Light Theme -->
+
+### Neutral Theme (Zen Mode)
+> Pure monochrome for distraction-free focus
+
+<!-- SCREENSHOT: Gantt Neutral Theme -->
+
+**Switching themes:**
+```tsx
+import { ThemeSwitcher } from '@asakaa/board'
+
+function App() {
+  return <ThemeSwitcher /> // Done!
+}
+```
+
+---
+
+## 🎯 Real-World Examples
+
+<details>
+<summary><strong>Example 1: Software Development Sprint</strong></summary>
+
+```tsx
+const sprintTasks = [
+  {
+    id: 'epic-1',
+    name: 'User Authentication Epic',
+    startDate: new Date('2025-01-01'),
+    endDate: new Date('2025-01-15'),
+    progress: 75,
+    subtasks: [
+      {
+        id: 'task-1',
+        name: 'Design login UI',
+        startDate: new Date('2025-01-01'),
+        endDate: new Date('2025-01-03'),
+        progress: 100,
+        status: 'completed',
+        assignees: [{ id: '1', name: 'Designer' }]
+      },
+      {
+        id: 'task-2',
+        name: 'Implement OAuth',
+        startDate: new Date('2025-01-04'),
+        endDate: new Date('2025-01-10'),
+        progress: 80,
+        status: 'in-progress',
+        dependencies: ['task-1'],
+        assignees: [{ id: '2', name: 'Backend Dev' }]
+      },
+      {
+        id: 'task-3',
+        name: 'Write tests',
+        startDate: new Date('2025-01-11'),
+        endDate: new Date('2025-01-15'),
+        progress: 40,
+        status: 'in-progress',
+        dependencies: ['task-2']
+      }
+    ]
+  },
+  {
+    id: 'milestone-1',
+    name: 'Sprint 1 Complete',
+    startDate: new Date('2025-01-15'),
+    endDate: new Date('2025-01-15'),
+    isMilestone: true,
+    isCriticalPath: true,
+    dependencies: ['epic-1']
+  }
+]
+
+<GanttBoard tasks={sprintTasks} />
+```
+
+</details>
+
+<details>
+<summary><strong>Example 2: Marketing Campaign</strong></summary>
+
+```tsx
+const campaignTasks = [
+  {
+    id: '1',
+    name: 'Research Phase',
+    startDate: new Date('2025-02-01'),
+    endDate: new Date('2025-02-07'),
+    progress: 100
+  },
+  {
+    id: '2',
+    name: 'Content Creation',
+    startDate: new Date('2025-02-08'),
+    endDate: new Date('2025-02-20'),
+    progress: 60,
+    dependencies: ['1'],
+    subtasks: [
+      { id: '2a', name: 'Blog posts', progress: 80 },
+      { id: '2b', name: 'Social media', progress: 40 }
+    ]
+  },
+  {
+    id: '3',
+    name: 'Campaign Launch',
+    startDate: new Date('2025-02-21'),
+    endDate: new Date('2025-02-21'),
+    isMilestone: true,
+    isCriticalPath: true,
+    dependencies: ['2']
+  }
+]
+
+<GanttBoard
+  tasks={campaignTasks}
+  config={{ theme: 'light', timeScale: 'day' }}
+/>
+```
+
+</details>
+
+---
+
+## 🔧 Advanced Configuration
+
+### Gantt Configuration
+
+```tsx
+<GanttBoard
+  tasks={tasks}
+  config={{
+    theme: 'dark' | 'light' | 'neutral',
+    timeScale: 'day' | 'week' | 'month',
+    rowDensity: 'compact' | 'comfortable' | 'spacious',
+    showThemeSelector: true,
+    availableUsers: [
+      { id: '1', name: 'John Doe', initials: 'JD', color: '#3B82F6' }
+    ],
+    onTaskClick: (task) => console.log('Clicked:', task),
+    onTaskUpdate: (task) => console.log('Updated:', task),
+    onDependencyCreate: (fromId, toId) => console.log('Dependency:', fromId, '→', toId),
+    onDependencyDelete: (taskId, depId) => console.log('Removed dependency')
+  }}
+/>
+```
+
+### Keyboard Shortcuts
+
+**Gantt Chart:**
+- `Tab` - Indent task (create subtask)
+- `Shift+Tab` - Outdent task (promote to parent level)
+- `F2` - Rename task
+- `Delete` - Delete task
+- `Ctrl+Z` / `Cmd+Z` - Undo
+- `Ctrl+Y` / `Cmd+Shift+Z` - Redo
+- `Ctrl+D` / `Cmd+D` - Duplicate task
+- `Alt+Up` / `Alt+Down` - Move task up/down
+- `Shift+Click` - Connect tasks (create dependency)
+- `Click on timeline` - Create 1-day task bar
+
+**Kanban Board:**
+- `Cmd+K` / `Ctrl+K` - Open command palette
+- `Arrow keys` - Navigate cards
+- `Space` - Select/deselect card
+- `Shift+Click` - Multi-select
+- `Delete` - Delete selected cards
+
+---
+
+## 📊 Performance
+
+**Built for scale:**
+- ✅ Virtual scrolling handles **10,000+ tasks**
+- ✅ **60fps** drag-and-drop animations
+- ✅ Debounced search (300ms) for instant filtering
+- ✅ Optimized re-renders with `React.memo`
+- ✅ Tree-shakeable - only import what you need
+
+**Bundle Size:**
+- ESM: 328 KB (minified)
+- Gzipped: ~85 KB
+- CSS: 67 KB
+
+---
+
+## 🧪 TypeScript Support
+
+**100% TypeScript with complete type definitions:**
+
+```tsx
+import type {
+  Task,
+  GanttConfig,
+  TimeScale,
+  Theme,
+  Dependency,
+  TaskStatus
+} from '@asakaa/board'
+
+const task: Task = {
+  id: '1',
+  name: 'TypeScript Heaven',
+  startDate: new Date(),
+  endDate: new Date(),
+  progress: 100,
+  status: 'completed',
+  isMilestone: false,
+  dependencies: [],
+  subtasks: []
+}
+```
+
+---
+
+## 🌐 Browser Support
+
+- ✅ Chrome/Edge 90+
+- ✅ Firefox 88+
+- ✅ Safari 14+
+- ✅ Modern mobile browsers
+
+---
+
+## 📚 Documentation
+
+- [📖 Full API Reference](./packages/board/docs/)
+- [🎯 Examples & Recipes](./packages/board/examples/)
+- [📝 CHANGELOG](./packages/board/CHANGELOG.md)
+- [🐛 Report Issues](https://github.com/Yesid8/asakaa/issues)
+
+---
+
+## 🗺️ Roadmap
+
+### v0.9.0 (Planned - Q1 2025)
+- [ ] Real-time collaboration (WebSocket support)
+- [ ] Export to MS Project / Jira format
+- [ ] Custom field types
+- [ ] Advanced filtering (saved filters, complex queries)
+
+### v1.0.0 (Planned - Q2 2025)
+- [ ] Mobile-optimized touch controls
+- [ ] Calendar view
+- [ ] Resource allocation view
+- [ ] REST API integration helpers
+
+**Want a feature?** [Open an issue!](https://github.com/Yesid8/asakaa/issues/new)
+
+---
+
+## 🤝 Contributing
+
+We welcome contributions! See [CONTRIBUTING.md](./CONTRIBUTING.md) for guidelines.
+
+**Quick start:**
+```bash
+git clone https://github.com/Yesid8/asakaa.git
+cd asakaa/packages/board
+pnpm install
+pnpm run dev
+```
+
+---
+
+## 📄 License
+
+**Business Source License 1.1**
+
+- ✅ **Free for non-production use** (development, testing, evaluation)
+- ✅ **Converts to Apache 2.0** on 2027-10-12 (fully open source)
+- ✅ **Commercial use:** Contact for licensing
+
+See [LICENSE](./LICENSE) for full details.
+
+**TLDR:** Use it freely for side projects, learning, and evaluation. For production use in commercial products, please reach out.
+
+---
+
+## 🏆 Built With
+
+- [React](https://reactjs.org/) - UI library
+- [TypeScript](https://www.typescriptlang.org/) - Type safety
+- [@dnd-kit](https://dndkit.com/) - Drag and drop
+- [Framer Motion](https://www.framer.com/motion/) - Animations
+- [Lucide React](https://lucide.dev/) - Icons
+- [Jotai](https://jotai.org/) - State management
+
+---
+
+## 💖 Show Your Support
+
+If ASAKAA saves you time and makes your project management easier:
+
+- ⭐ Star this repository
+- 🐦 Tweet about it
+- 📝 Write a blog post
+- 🎥 Create a tutorial
+- 💬 Spread the word!
+
+---
+
+<div align="center">
+
+**Made with ❤️ for developers who value their time**
+
+[⬆ Back to Top](#-asakaa-board)
+
+</div>
