@@ -1,12 +1,13 @@
-import { useState, useRef, useEffect, memo, useCallback, useMemo } from 'react';
-import { Task, TimeScale, Theme, GanttConfig, GanttColumn, ColumnType, GanttTheme, RowDensity } from './types';
-import { themes } from './themes';
+import { useState, useRef, useEffect, memo, useCallback, useMemo, useContext } from 'react';
+import { Task, TimeScale, Theme, GanttConfig, GanttColumn, ColumnType, RowDensity } from './types';
+import { deriveThemeFromCSS } from './deriveThemeFromCSS';
 import { GanttToolbar } from './GanttToolbar';
 import { TaskGrid } from './TaskGrid';
 import { Timeline } from './Timeline';
 import { motion } from 'framer-motion';
 import { useUndoRedo } from './useUndoRedo';
 import { useGanttUndoRedoKeys } from './useGanttUndoRedoKeys';
+import { ThemeContext } from '../../theme/ThemeProvider';
 import {
   indentTasks,
   outdentTasks,
@@ -40,7 +41,7 @@ const getRowHeight = (density: RowDensity): number => {
 
 export const GanttBoard = memo<GanttBoardProps>(function GanttBoard({ tasks, config = {} }) {
   const {
-    theme: initialTheme = 'dark',
+    theme: initialTheme,
     timeScale: initialTimeScale = 'week',
     rowDensity: initialRowDensity = 'comfortable',
     showThemeSelector = true,
@@ -51,13 +52,25 @@ export const GanttBoard = memo<GanttBoardProps>(function GanttBoard({ tasks, con
     onDependencyDelete,
   } = config;
 
-  const [currentTheme, setCurrentTheme] = useState<Theme>(initialTheme);
+  // Try to get global theme from ThemeProvider (will return undefined if not in ThemeProvider)
+  const themeContext = useContext(ThemeContext);
+  const globalTheme = themeContext?.theme as Theme | undefined;
+
+  // Use global theme if available, otherwise fall back to initialTheme or 'dark'
+  const [currentTheme, setCurrentTheme] = useState<Theme>(globalTheme || initialTheme || 'dark');
   const [timeScale, setTimeScale] = useState<TimeScale>(initialTimeScale);
   const [rowDensity, setRowDensity] = useState<RowDensity>(initialRowDensity);
   const [zoom, setZoom] = useState(1);
   const [scrollTop, setScrollTop] = useState(0);
   const [isResizing, setIsResizing] = useState(false);
   const [gridWidthOverride, setGridWidthOverride] = useState<number | null>(null);
+
+  // Sync with global theme changes
+  useEffect(() => {
+    if (globalTheme && globalTheme !== currentTheme) {
+      setCurrentTheme(globalTheme);
+    }
+  }, [globalTheme]);
 
   // Use undo/redo hook for task management
   const {
@@ -93,7 +106,10 @@ export const GanttBoard = memo<GanttBoardProps>(function GanttBoard({ tasks, con
   const gridScrollRef = useRef<HTMLDivElement>(null);
   const timelineScrollRef = useRef<HTMLDivElement>(null);
 
-  const theme = (themes[currentTheme] ?? themes.dark) as GanttTheme;
+  // Derivar theme desde CSS variables si hay ThemeProvider, sino usar theme estático
+  const theme = useMemo(() => {
+    return deriveThemeFromCSS(currentTheme);
+  }, [currentTheme]);
 
   // Calculate row height based on density
   const rowHeight = getRowHeight(rowDensity);

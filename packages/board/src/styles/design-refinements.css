@@ -150,15 +150,22 @@ html[data-theme="neutral"] .dependencies-selector-menu * {
   border-color: var(--color-text-tertiary) !important;
 }
 
-/* Remove ALL SVG colors - force grayscale */
-[data-theme="neutral"] svg {
+/* Remove ALL SVG colors - force grayscale (EXCEPT Gantt chart) */
+[data-theme="neutral"] svg:not([data-gantt-chart] svg) {
   filter: grayscale(100%) !important;
   opacity: 0.8;
 }
 
-[data-theme="neutral"] svg * {
+[data-theme="neutral"] svg *:not([data-gantt-chart] svg *) {
   fill: currentColor !important;
   stroke: currentColor !important;
+}
+
+/* Gantt chart: exclude from grayscale filters to preserve theme colors */
+[data-theme="neutral"] [data-gantt-chart] svg,
+[data-theme="neutral"] [data-gantt-chart] svg * {
+  filter: none !important;
+  opacity: 1 !important;
 }
 
 /* Remove color from buttons and interactive elements */

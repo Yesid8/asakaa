@@ -196,7 +196,7 @@ export function Timeline({
   }, [startDate, dayWidth, zoom]);
 
   return (
-    <div className="flex-1 overflow-auto" style={{ backgroundColor: theme.bgPrimary }}>
+    <div className="flex-1 overflow-auto" data-gantt-chart style={{ backgroundColor: theme.bgPrimary }}>
       <svg
         width={Math.max(timelineWidth, 1000)}
         height={Math.max(flatTasks.length * ROW_HEIGHT + HEADER_HEIGHT, 600)}
@@ -206,6 +206,15 @@ export function Timeline({
             <feDropShadow dx="0" dy="1" stdDeviation="2" floodOpacity="0.1" />
           </filter>
         </defs>
+
+        {/* Full SVG Background */}
+        <rect
+          x={0}
+          y={0}
+          width={Math.max(timelineWidth, 1000)}
+          height={Math.max(flatTasks.length * ROW_HEIGHT + HEADER_HEIGHT, 600)}
+          fill={theme.bgPrimary}
+        />
 
         {/* Header Background */}
         <rect
@@ -283,15 +292,15 @@ export function Timeline({
 
           return (
             <g key={`row-group-${task.id}`}>
-              {/* Background stripe */}
+              {/* Background stripe - alternating rows for better readability */}
               <rect
                 key={`row-${task.id}`}
                 x={0}
                 y={HEADER_HEIGHT + index * ROW_HEIGHT}
                 width={timelineWidth}
                 height={ROW_HEIGHT}
-                fill={index % 2 === 0 ? 'transparent' : theme.bgGrid}
-                opacity={0.3}
+                fill={index % 2 === 0 ? 'transparent' : theme.bgSecondary}
+                opacity={1}
                 style={{ pointerEvents: 'none' }}
               />
 
