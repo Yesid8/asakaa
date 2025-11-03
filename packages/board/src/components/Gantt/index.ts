@@ -19,7 +19,14 @@ export type {
   ColumnType,
   Assignee,
   GanttTheme,
+  GanttTemplates, // v0.8.0
 } from './types';
+
+// Imperative API (v0.8.0)
+export type { GanttBoardRef } from './GanttBoardRef';
+
+// Utilities (v0.8.0)
+export { ganttUtils } from './ganttUtils';
 
 // Themes
 export { themes } from './themes';

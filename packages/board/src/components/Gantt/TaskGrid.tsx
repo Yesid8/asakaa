@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { ChevronDown, ChevronRight, Keyboard, Plus, Edit3 } from 'lucide-react';
-import { Task, GanttColumn, ColumnType } from './types';
+import { Task, GanttColumn, ColumnType, GanttTemplates } from './types';
 import { motion } from 'framer-motion';
 import { ColumnManager } from './ColumnManager';
 import { ContextMenu, ContextMenuItem, MenuIcons } from './ContextMenu';
@@ -17,11 +17,14 @@ interface TaskGridProps {
   theme: any;
   rowHeight: number;
   availableUsers?: Array<{ id: string; name: string; initials: string; color: string }>;
+  templates: Required<GanttTemplates>; // v0.8.0
   onTaskClick?: (task: Task) => void;
+  onTaskDblClick?: (task: Task) => void; // v0.8.0
+  onTaskContextMenu?: (task: Task, event: React.MouseEvent) => void; // v0.8.0
   onTaskToggle?: (taskId: string) => void;
   scrollTop: number;
   columns: GanttColumn[];
-  onToggleColumn: (columnId: ColumnType) => void;
+  onToggleColumn: (columnType: ColumnType) => void;
   onTaskUpdate?: (taskId: string, updates: Partial<Task>) => void;
   onTaskDelete?: (taskId: string) => void;
 
@@ -42,7 +45,10 @@ export function TaskGrid({
   theme,
   rowHeight: ROW_HEIGHT,
   availableUsers = [],
+  templates: _templates, // TODO: Use templates for custom rendering
   onTaskClick,
+  onTaskDblClick, // v0.8.0
+  onTaskContextMenu, // v0.8.0
   onTaskToggle,
   scrollTop: _scrollTop,
   columns,
@@ -778,6 +784,11 @@ export function TaskGrid({
               // Also trigger the regular click handler
               onTaskClick?.(task);
             }}
+            onDoubleClick={(e) => {
+              // v0.8.0: Double-click event
+              e.stopPropagation();
+              onTaskDblClick?.(task);
+            }}
             onContextMenu={(e) => {
               e.preventDefault();
               setContextMenu({
@@ -787,6 +798,9 @@ export function TaskGrid({
                 type: 'task',
                 task,
               });
+
+              // v0.8.0: Context menu event
+              onTaskContextMenu?.(task, e);
             }}
             whileHover={{
               backgroundColor: isSelected ? theme.accentLight : theme.hoverBg,

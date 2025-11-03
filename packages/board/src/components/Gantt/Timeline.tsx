@@ -1,5 +1,5 @@
 import { useMemo, useCallback } from 'react';
-import { TimeScale, Task } from './types';
+import { TimeScale, Task, GanttTemplates } from './types';
 import { TaskBar } from './TaskBar';
 import { DependencyLine } from './DependencyLine';
 import { Milestone } from './Milestone';
@@ -12,7 +12,10 @@ interface TimelineProps {
   startDate: Date;
   endDate: Date;
   zoom: number;
+  templates: Required<GanttTemplates>; // v0.8.0
   onTaskClick?: (task: Task) => void;
+  onTaskDblClick?: (task: Task) => void; // v0.8.0
+  onTaskContextMenu?: (task: Task, event: React.MouseEvent) => void; // v0.8.0
   onTaskDateChange?: (task: Task, newStart: Date, newEnd: Date) => void;
   onDependencyCreate?: (fromTask: Task, toTaskId: string) => void;
   onDependencyDelete?: (taskId: string, dependencyId: string) => void;
@@ -34,7 +37,10 @@ export function Timeline({
   startDate,
   endDate,
   zoom,
+  templates,
   onTaskClick,
+  onTaskDblClick, // v0.8.0
+  onTaskContextMenu, // v0.8.0
   onTaskDateChange,
   onDependencyCreate,
   onDependencyDelete,
@@ -470,7 +476,10 @@ export function Timeline({
               theme={theme}
               dayWidth={dayWidth * zoom}
               startDate={startDate}
+              templates={templates}
               onClick={onTaskClick}
+              onDoubleClick={onTaskDblClick} // v0.8.0
+              onContextMenu={onTaskContextMenu} // v0.8.0
               onDateChange={onTaskDateChange}
               onDependencyCreate={onDependencyCreate}
               allTaskPositions={taskPositions}

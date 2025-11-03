@@ -67,6 +67,7 @@ export {
   cardToGanttTask,
   ganttTaskToCardUpdate,
   cardsToGanttTasks,
+  ganttUtils, // v0.8.0 - Public utilities
 } from './components/Gantt'
 export type {
   Task as GanttTask,
@@ -77,6 +78,8 @@ export type {
   ColumnType as GanttColumnType,
   Assignee as GanttAssignee,
   GanttTheme as GanttThemeConfig,
+  GanttBoardRef, // v0.8.0 - Imperative API
+  GanttTemplates, // v0.8.0 - Customizable templates
 } from './components/Gantt'
 
 // v0.6.0: Smart Card Stacking

@@ -1,6 +1,6 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Task } from './types';
+import { Task, GanttTemplates } from './types';
 import { TaskPosition } from './Timeline';
 
 interface TaskBarProps {
@@ -11,7 +11,10 @@ interface TaskBarProps {
   theme: any;
   dayWidth: number;
   startDate: Date;
+  templates: Required<GanttTemplates>; // v0.8.0
   onClick?: (task: Task) => void;
+  onDoubleClick?: (task: Task) => void; // v0.8.0
+  onContextMenu?: (task: Task, event: React.MouseEvent) => void; // v0.8.0
   onDateChange?: (task: Task, newStart: Date, newEnd: Date) => void;
   onDependencyCreate?: (fromTask: Task, toTaskId: string) => void;
   allTaskPositions?: TaskPosition[];
@@ -27,7 +30,10 @@ export function TaskBar({
   theme,
   dayWidth,
   startDate,
+  templates,
   onClick,
+  onDoubleClick, // v0.8.0
+  onContextMenu, // v0.8.0
   onDateChange,
   onDependencyCreate,
   allTaskPositions = []
@@ -338,6 +344,11 @@ export function TaskBar({
   const displayX = isDragging && !isConnecting ? ghostX : x;
   const displayWidth = isDragging && !isConnecting ? ghostWidth : width;
 
+  // v0.8.0: Generate tooltip and custom class using templates
+  const tooltipContent = templates.taskTooltip(task);
+  const tooltipText = typeof tooltipContent === 'string' ? tooltipContent : '';
+  const customClass = templates.taskClass(task);
+
   return (
     <g
       ref={svgRef}
@@ -349,7 +360,21 @@ export function TaskBar({
         }
       }}
       onClick={() => !isDragging && onClick?.(task)}
+      onDoubleClick={(e) => {
+        // v0.8.0: Double-click event
+        if (!isDragging) {
+          e.stopPropagation();
+          onDoubleClick?.(task);
+        }
+      }}
+      onContextMenu={(e) => {
+        // v0.8.0: Context menu event
+        e.preventDefault();
+        onContextMenu?.(task, e as any);
+      }}
     >
+      {/* v0.8.0: Tooltip using taskTooltip template */}
+      {tooltipText && <title dangerouslySetInnerHTML={{ __html: tooltipText }} />}
       {/* Zone Indicators with hover feedback */}
       {isHovered && !isDragging && !isSmallBar && (
         <>
@@ -459,7 +484,7 @@ export function TaskBar({
         />
       )}
 
-      {/* Main Task Bar - Background (light for contrast with progress) */}
+      {/* Main Task Bar - Background (light for contrast with progress) - v0.8.0: With custom class */}
       <motion.rect
         x={displayX}
         y={y}
@@ -467,6 +492,7 @@ export function TaskBar({
         height={height}
         rx={borderRadius}
         fill={theme.taskBarPrimary}
+        data-task-class={customClass}
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{
           opacity: isDragging && !isConnecting ? 0.15 : isHovered ? 0.25 : 0.2,  // Much lighter background
@@ -532,23 +558,29 @@ export function TaskBar({
         </>
       )}
 
-      {/* Task Name Text */}
-      {displayWidth > 60 && (
-        <text
-          x={displayX + 12}
-          y={y + height / 2}
-          dominantBaseline="middle"
-          fill="#FFFFFF"
-          fontSize="13"
-          fontWeight="500"
-          fontFamily="Inter, sans-serif"
-          style={{ pointerEvents: 'none', userSelect: 'none' }}
-        >
-          {task.name.length > Math.floor(displayWidth / 8)
-            ? `${task.name.substring(0, Math.floor(displayWidth / 8))}...`
-            : task.name}
-        </text>
-      )}
+      {/* Task Name Text - v0.8.0: Using taskLabel template */}
+      {displayWidth > 60 && (() => {
+        const label = templates.taskLabel(task);
+        const labelText = typeof label === 'string' ? label : task.name;
+        const truncated = labelText.length > Math.floor(displayWidth / 8)
+          ? `${labelText.substring(0, Math.floor(displayWidth / 8))}...`
+          : labelText;
+
+        return (
+          <text
+            x={displayX + 12}
+            y={y + height / 2}
+            dominantBaseline="middle"
+            fill="#FFFFFF"
+            fontSize="13"
+            fontWeight="500"
+            fontFamily="Inter, sans-serif"
+            style={{ pointerEvents: 'none', userSelect: 'none' }}
+          >
+            {truncated}
+          </text>
+        );
+      })()}
 
       {/* Progress Percentage */}
       {displayWidth > 100 && task.progress > 0 && task.progress < 100 && !isDragging && (
