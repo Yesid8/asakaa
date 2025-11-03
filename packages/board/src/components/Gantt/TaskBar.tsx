@@ -1,7 +1,8 @@
-import { useState, useRef, useCallback, useEffect } from 'react';
+import { useRef, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Task, GanttTemplates } from './types';
 import { TaskPosition } from './Timeline';
+import { useDragState } from './hooks/useDragState';
 
 interface TaskBarProps {
   task: Task;
@@ -38,15 +39,27 @@ export function TaskBar({
   onDependencyCreate,
   allTaskPositions = []
 }: TaskBarProps) {
-  const [isHovered, setIsHovered] = useState(false);
-  const [dragMode, setDragMode] = useState<DragMode>('none');
-  const [dragOffset, setDragOffset] = useState(0);
-  const [ghostX, setGhostX] = useState(x);
-  const [ghostWidth, setGhostWidth] = useState(width);
-  const [connectionLine, setConnectionLine] = useState<{ x: number; y: number } | null>(null);
-  const [hoveredTaskId, setHoveredTaskId] = useState<string | null>(null);
-  const [activeZone, setActiveZone] = useState<'move' | 'resize-start' | 'resize-end' | null>(null);
+  // v0.8.1: Centralized drag state management for better modularity
+  const dragState = useDragState(x, width);
   const svgRef = useRef<SVGGElement>(null);
+
+  // Destructure for easier access (keeps existing code readable)
+  const {
+    dragMode, setDragMode,
+    dragOffset, setDragOffset,
+    ghostX, setGhostX,
+    ghostWidth, setGhostWidth,
+    connectionLine, setConnectionLine,
+    hoveredTaskId, setHoveredTaskId,
+    activeZone, setActiveZone,
+    draggedSegmentIndex, setDraggedSegmentIndex,
+    draggedSegmentStartX, setDraggedSegmentStartX,
+    segmentDragOffsetX, setSegmentDragOffsetX,
+    hoveredSegmentIndex, setHoveredSegmentIndex,
+    isHovered, setIsHovered,
+    isDragging, isResizing, isConnecting,
+    resetDragState
+  } = dragState;
 
   const height = 32;
   const borderRadius = 8;
@@ -134,7 +147,8 @@ export function TaskBar({
   // };
 
   // Handle mouse down for dragging
-  const handleMouseDown = useCallback((e: React.MouseEvent, mode?: DragMode) => {
+  // v0.8.1: Added segmentX parameter for split tasks - allows segments to calculate their own offset
+  const handleMouseDown = useCallback((e: React.MouseEvent, mode?: DragMode, segmentX?: number) => {
     e.stopPropagation();
 
     const svgElement = svgRef.current?.ownerSVGElement;
@@ -145,10 +159,13 @@ export function TaskBar({
     point.y = e.clientY;
     const svgPoint = point.matrixTransform(svgElement.getScreenCTM()?.inverse());
 
+    // v0.8.1: Use segment position if provided (for split tasks), otherwise use global x
+    const effectiveX = segmentX !== undefined ? segmentX : x;
+
     // Determine mode based on click position if not specified
     let actualMode = mode;
     if (!actualMode) {
-      const relativeX = svgPoint.x - x;
+      const relativeX = svgPoint.x - effectiveX;
 
       // Keyboard modifiers for forced modes
       if (e.shiftKey) {
@@ -196,14 +213,15 @@ export function TaskBar({
     setActiveZone(null); // Clear active zone
 
     if (actualMode === 'move') {
-      setDragOffset(svgPoint.x - x);
+      // v0.8.1: Use effectiveX (segment position for split tasks, global x otherwise)
+      setDragOffset(svgPoint.x - effectiveX);
     } else if (actualMode === 'connect') {
       setConnectionLine({ x: x + width, y: y + height / 2 });
     } else {
       setDragOffset(0);
     }
 
-    setGhostX(x);
+    setGhostX(effectiveX);
     setGhostWidth(width);
   }, [x, width, y, height]);
 
@@ -227,11 +245,17 @@ export function TaskBar({
       const targetTaskId = findTaskAtPoint(svgPoint.x, svgPoint.y);
       setHoveredTaskId(targetTaskId);
     } else if (dragMode === 'move') {
-      // Move entire bar
+      // Move entire bar (or all segments if split task)
       const rawNewX = svgPoint.x - dragOffset;
       const snappedX = snapToDay(rawNewX);
       setGhostX(snappedX);
       setGhostWidth(width);
+
+      // v0.8.1: For split tasks, calculate offset relative to the DRAGGED SEGMENT position
+      if (task.segments && task.segments.length > 0 && draggedSegmentIndex !== null) {
+        const segmentOffset = snappedX - draggedSegmentStartX; // Use saved segment position
+        setSegmentDragOffsetX(segmentOffset);
+      }
     } else if (dragMode === 'resize-start') {
       // Resize from start
       const rawNewStart = svgPoint.x;
@@ -254,7 +278,7 @@ export function TaskBar({
         setGhostWidth(newWidth);
       }
     }
-  }, [dragMode, x, width, dayWidth, dragOffset]);
+  }, [dragMode, x, width, dayWidth, dragOffset, task, snapToDay, draggedSegmentIndex, draggedSegmentStartX, findTaskAtPoint, setHoveredTaskId, setConnectionLine, setGhostX, setGhostWidth, setSegmentDragOffsetX]);
 
   // Handle mouse up to finish dragging
   const handleMouseUp = useCallback(() => {
@@ -277,6 +301,34 @@ export function TaskBar({
         // Calculate new dates maintaining duration
         newStartDate = pixelToDate(ghostX);
         newEndDate = new Date(newStartDate.getTime() + taskDuration);
+
+        // v0.8.1: Bryntum-style - Update ONLY the dragged segment (independent movement)
+        if (task.segments && task.segments.length > 0 && draggedSegmentIndex !== null) {
+          const dayOffset = Math.round(segmentDragOffsetX / dayWidth);
+          const updatedSegments = task.segments.map((seg, idx) => {
+            // Only update the segment that was dragged
+            if (idx === draggedSegmentIndex) {
+              const newSegStart = new Date(seg.startDate);
+              const newSegEnd = new Date(seg.endDate);
+              newSegStart.setDate(newSegStart.getDate() + dayOffset);
+              newSegEnd.setDate(newSegEnd.getDate() + dayOffset);
+              return { startDate: newSegStart, endDate: newSegEnd };
+            }
+            // Keep other segments unchanged
+            return seg;
+          });
+
+          // Calculate new overall task dates (from all segments)
+          const allDates = updatedSegments.flatMap(s => [s.startDate, s.endDate]);
+          const newTaskStart = new Date(Math.min(...allDates.map(d => d.getTime())));
+          const newTaskEnd = new Date(Math.max(...allDates.map(d => d.getTime())));
+
+          // Update task with new segments
+          onDateChange?.({ ...task, segments: updatedSegments }, newTaskStart, newTaskEnd);
+          // v0.8.1: Use centralized reset function from useDragState hook
+          resetDragState(x, width);
+          return; // Exit early since we handled the update
+        }
       } else if (dragMode === 'resize-start') {
         // Change start date, keep end date
         newStartDate = pixelToDate(ghostX);
@@ -315,12 +367,9 @@ export function TaskBar({
       }
     }
 
-    setDragMode('none');
-    setConnectionLine(null);
-    setHoveredTaskId(null);
-    setGhostX(x);
-    setGhostWidth(width);
-  }, [dragMode, ghostX, ghostWidth, task, onDateChange, hoveredTaskId, onDependencyCreate, x, width, dayWidth, pixelToDate]);
+    // v0.8.1: Use centralized reset function from useDragState hook
+    resetDragState(x, width);
+  }, [dragMode, ghostX, ghostWidth, task, onDateChange, hoveredTaskId, onDependencyCreate, x, width, dayWidth, pixelToDate, segmentDragOffsetX, draggedSegmentIndex, resetDragState]);
 
   // Setup global mouse listeners for smooth dragging
   useEffect(() => {
@@ -338,9 +387,7 @@ export function TaskBar({
     };
   }, [dragMode, handleMouseMove, handleMouseUp]);
 
-  const isDragging = dragMode !== 'none';
-  const isResizing = dragMode === 'resize-start' || dragMode === 'resize-end';
-  const isConnecting = dragMode === 'connect';
+  // v0.8.1: isDragging, isResizing, isConnecting now provided by useDragState hook
   const displayX = isDragging && !isConnecting ? ghostX : x;
   const displayWidth = isDragging && !isConnecting ? ghostWidth : width;
 
@@ -375,8 +422,8 @@ export function TaskBar({
     >
       {/* v0.8.0: Tooltip using taskTooltip template */}
       {tooltipText && <title dangerouslySetInnerHTML={{ __html: tooltipText }} />}
-      {/* Zone Indicators with hover feedback */}
-      {isHovered && !isDragging && !isSmallBar && (
+      {/* Zone Indicators with hover feedback - v0.8.1: Disabled for split tasks (segments are independent) */}
+      {isHovered && !isDragging && !isSmallBar && !task.segments && (
         <>
           {/* Left resize zone with subtle highlight on hover */}
           <rect
@@ -465,16 +512,17 @@ export function TaskBar({
       )}
 
       {/* Ghost/Preview Bar (shown while dragging) */}
-      {isDragging && !isConnecting && (
+      {/* v0.8.1: Hide ghost bar for split tasks - segments handle their own visualization */}
+      {isDragging && !isConnecting && !task.segments && (
         <motion.rect
           x={ghostX}
           y={y}
           width={ghostWidth}
           height={height}
           rx={borderRadius}
-          fill={theme.taskBarPrimary}
+          fill={task.isCriticalPath ? '#DC2626' : theme.taskBarPrimary}
           opacity={0.3}
-          stroke={theme.accent}
+          stroke={task.isCriticalPath ? '#EF4444' : theme.accent}
           strokeWidth={2}
           strokeDasharray="4 4"
           initial={{ opacity: 0 }}
@@ -485,45 +533,112 @@ export function TaskBar({
       )}
 
       {/* Main Task Bar - Background (light for contrast with progress) - v0.8.0: With custom class */}
-      <motion.rect
-        x={displayX}
-        y={y}
-        width={displayWidth}
-        height={height}
-        rx={borderRadius}
-        fill={theme.taskBarPrimary}
-        data-task-class={customClass}
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{
-          opacity: isDragging && !isConnecting ? 0.15 : isHovered ? 0.25 : 0.2,  // Much lighter background
-          scale: isHovered && !isDragging ? 1.02 : 1,
-        }}
-        transition={{
-          duration: 0.2,
-          ease: [0.4, 0, 0.2, 1],
-        }}
-        onMouseDown={(e) => handleMouseDown(e as any)}
-        style={{
-          cursor: isDragging ? (isConnecting ? 'crosshair' : isResizing ? 'ew-resize' : 'grabbing') : 'grab',
-          pointerEvents: 'all'
-        }}
-      />
+      {/* v0.8.1: Hide main bar when task has segments (split task) */}
+      {!task.segments && (
+        <motion.rect
+          x={displayX}
+          y={y}
+          width={displayWidth}
+          height={height}
+          rx={borderRadius}
+          fill={task.isCriticalPath ? '#DC2626' : theme.taskBarPrimary}
+          data-task-class={customClass}
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{
+            opacity: isDragging && !isConnecting ? 0.15 : isHovered ? 0.25 : 0.2,  // Much lighter background
+            scale: isHovered && !isDragging ? 1.02 : 1,
+          }}
+          transition={{
+            duration: 0.2,
+            ease: [0.4, 0, 0.2, 1],
+          }}
+          onMouseDown={(e) => handleMouseDown(e as any)}
+          style={{
+            cursor: isDragging ? (isConnecting ? 'crosshair' : isResizing ? 'ew-resize' : 'grabbing') : 'grab',
+            pointerEvents: 'all'
+          }}
+        />
+      )}
 
       {/* Progress Fill - Solid color for instant visual scanning */}
       {/* Eye processes shape/color faster than text */}
-      <rect
-        x={displayX}
-        y={y}
-        width={displayWidth * (task.progress / 100)}
-        height={height}
-        rx={borderRadius}
-        fill={theme.taskBarProgress}
-        opacity={1}
-        style={{ pointerEvents: 'none' }}
-      />
+      {!task.segments && (
+        <rect
+          x={displayX}
+          y={y}
+          width={displayWidth * (task.progress / 100)}
+          height={height}
+          rx={borderRadius}
+          fill={theme.taskBarProgress}
+          opacity={1}
+          style={{ pointerEvents: 'none' }}
+        />
+      )}
+
+      {/* v0.8.1: Render segments if task is split (has gaps) - Bryntum-style independent segments */}
+      {task.segments && task.segments.map((segment, idx) => {
+        const segmentStartX = ((segment.startDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)) * dayWidth;
+        const segmentEndX = ((segment.endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)) * dayWidth;
+        const segmentWidth = segmentEndX - segmentStartX + dayWidth;
+
+        // v0.8.1: Only apply drag offset to the specific segment being dragged
+        const isThisSegmentDragging = isDragging && dragMode === 'move' && draggedSegmentIndex === idx;
+        const isThisSegmentHovered = hoveredSegmentIndex === idx;
+        const displaySegmentX = isThisSegmentDragging ? segmentStartX + segmentDragOffsetX : segmentStartX;
+
+        return (
+          <g
+            key={`segment-${idx}`}
+            onMouseEnter={() => !isDragging && setHoveredSegmentIndex(idx)}
+            onMouseLeave={() => !isDragging && setHoveredSegmentIndex(null)}
+          >
+            {/* Segment background - interactive */}
+            <motion.rect
+              x={displaySegmentX}
+              y={y}
+              width={segmentWidth}
+              height={height}
+              rx={borderRadius}
+              fill={task.isCriticalPath ? '#DC2626' : theme.taskBarPrimary}
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{
+                opacity: isThisSegmentDragging ? 0.6 : isThisSegmentHovered ? 0.9 : 0.8,
+                scale: isThisSegmentHovered && !isDragging ? 1.02 : 1,
+              }}
+              transition={{
+                duration: 0.2,
+                ease: [0.4, 0, 0.2, 1],
+              }}
+              onMouseDown={(e) => {
+                // v0.8.1: Capture which segment is being dragged and pass its position
+                e.stopPropagation();
+                setDraggedSegmentIndex(idx);
+                setDraggedSegmentStartX(segmentStartX); // Save original position for offset calculation
+                handleMouseDown(e as any, undefined, segmentStartX);
+              }}
+              style={{
+                cursor: isDragging ? (isConnecting ? 'crosshair' : isResizing ? 'ew-resize' : 'grabbing') : 'grab',
+                pointerEvents: 'all'
+              }}
+            />
+            {/* Segment progress */}
+            <rect
+              x={displaySegmentX}
+              y={y}
+              width={segmentWidth * (task.progress / 100)}
+              height={height}
+              rx={borderRadius}
+              fill={theme.taskBarProgress}
+              opacity={1}
+              style={{ pointerEvents: 'none' }}
+            />
+          </g>
+        );
+      })}
 
       {/* Neutral Theme: State visualization without color */}
-      {isNeutralTheme && (isOverdue || isAtRisk) && (
+      {/* v0.8.1: Hide state visualization for split tasks (shown on segments instead) */}
+      {isNeutralTheme && (isOverdue || isAtRisk) && !task.segments && (
         <>
           {/* At Risk: Dotted border */}
           {isAtRisk && !isOverdue && (
@@ -559,7 +674,8 @@ export function TaskBar({
       )}
 
       {/* Task Name Text - v0.8.0: Using taskLabel template */}
-      {displayWidth > 60 && (() => {
+      {/* v0.8.1: Hide text for split tasks to avoid blocking segment clicks */}
+      {displayWidth > 60 && !task.segments && (() => {
         const label = templates.taskLabel(task);
         const labelText = typeof label === 'string' ? label : task.name;
         const truncated = labelText.length > Math.floor(displayWidth / 8)
@@ -583,7 +699,8 @@ export function TaskBar({
       })()}
 
       {/* Progress Percentage */}
-      {displayWidth > 100 && task.progress > 0 && task.progress < 100 && !isDragging && (
+      {/* v0.8.1: Hide progress text for split tasks to avoid blocking segment clicks */}
+      {displayWidth > 100 && task.progress > 0 && task.progress < 100 && !isDragging && !task.segments && (
         <text
           x={displayX + displayWidth - 12}
           y={y + height / 2}
@@ -600,7 +717,8 @@ export function TaskBar({
       )}
 
       {/* Status Indicator Badge */}
-      {task.status && displayWidth > 80 && !isDragging && (
+      {/* v0.8.1: Hide status badge for split tasks to avoid blocking segment clicks */}
+      {task.status && displayWidth > 80 && !isDragging && !task.segments && (
         <g style={{ pointerEvents: 'none' }}>
           {task.status === 'completed' && (
             <circle
@@ -627,7 +745,8 @@ export function TaskBar({
       )}
 
       {/* Enhanced Resize Handles (larger, easier to grab) */}
-      {(isHovered || isResizing) && !isConnecting && (
+      {/* v0.8.1: Hide resize handles for split tasks */}
+      {(isHovered || isResizing) && !isConnecting && !task.segments && (
         <>
           {/* Start Handle - Adaptive positioning for small bars */}
           <g style={{ pointerEvents: 'all' }}>
@@ -705,9 +824,9 @@ export function TaskBar({
         </>
       )}
 
-      {/* Connection Handle (right side, Shift+Click) */}
+      {/* Connection Handle (right side, Shift+Click) - v0.8.1: Disabled for split tasks (segments are independent) */}
       <AnimatePresence>
-        {isHovered && !isDragging && (
+        {isHovered && !isDragging && !task.segments && (
           <motion.g
             style={{ pointerEvents: 'all' }}
             initial={{ opacity: 0 }}
@@ -799,8 +918,8 @@ export function TaskBar({
         </g>
       )}
 
-      {/* Hover Glow Effect */}
-      {(isHovered || isDragging) && !isConnecting && (
+      {/* Hover Glow Effect - v0.8.1: Disabled for split tasks (segments are independent) */}
+      {(isHovered || isDragging) && !isConnecting && !task.segments && (
         <motion.rect
           x={displayX - 2}
           y={y - 2}
@@ -846,9 +965,9 @@ export function TaskBar({
         </>
       )}
 
-      {/* Enhanced Detailed Tooltip (shown on hover, hidden while dragging) */}
+      {/* Enhanced Detailed Tooltip (shown on hover, hidden while dragging) - v0.8.1: Disabled for split tasks (segments are independent) */}
       <AnimatePresence>
-        {isHovered && !isDragging && (
+        {isHovered && !isDragging && !task.segments && (
           <motion.g
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
