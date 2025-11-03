@@ -4,6 +4,7 @@ import { deriveThemeFromCSS } from './deriveThemeFromCSS';
 import { GanttToolbar } from './GanttToolbar';
 import { TaskGrid } from './TaskGrid';
 import { Timeline } from './Timeline';
+import { ContextMenu, MenuIcons } from './ContextMenu'; // v0.8.0: Split task context menu
 import { motion } from 'framer-motion';
 import { useUndoRedo } from './useUndoRedo';
 import { useGanttUndoRedoKeys } from './useGanttUndoRedoKeys';
@@ -86,6 +87,14 @@ export const GanttBoard = forwardRef<GanttBoardRef, GanttBoardProps>(function Ga
   const [isResizing, setIsResizing] = useState(false);
   const [gridWidthOverride, setGridWidthOverride] = useState<number | null>(null);
 
+  // v0.8.0: Context menu state for Split task feature
+  const [contextMenu, setContextMenu] = useState<{ isOpen: boolean; x: number; y: number; task: Task | null }>({
+    isOpen: false,
+    x: 0,
+    y: 0,
+    task: null,
+  });
+
   // Sync with global theme changes
   useEffect(() => {
     if (globalTheme && globalTheme !== currentTheme) {
@@ -145,6 +154,22 @@ export const GanttBoard = forwardRef<GanttBoardRef, GanttBoardProps>(function Ga
   const mergedTemplates = useMemo(() => {
     return mergeTemplates(templates);
   }, [templates]);
+
+  // 🚀 KILLER FEATURE #1: Calculate Critical Path (auto-updates when tasks change)
+  // This is BETTER than DHTMLX - we recalculate CPM automatically on every change
+  const tasksWithCriticalPath = useMemo(() => {
+    const criticalPathIds = ganttUtils.calculateCriticalPath(localTasks);
+
+    const markCritical = (tasks: Task[]): Task[] => {
+      return tasks.map(task => ({
+        ...task,
+        isCriticalPath: criticalPathIds.includes(task.id),
+        subtasks: task.subtasks ? markCritical(task.subtasks) : undefined,
+      }));
+    };
+
+    return markCritical(localTasks);
+  }, [localTasks]);
 
   // Calculate row height based on density
   const rowHeight = getRowHeight(rowDensity);
@@ -228,6 +253,11 @@ export const GanttBoard = forwardRef<GanttBoardRef, GanttBoardProps>(function Ga
 
     duplicateTask: (id: string) => {
       setLocalTasks((prev) => duplicateTasks(prev, [id]));
+    },
+
+    // v0.8.1: Split task feature (creates GAP like Bryntum)
+    splitTask: (id: string, splitDate: Date, gapDays = 3) => {
+      setLocalTasks((prev) => ganttUtils.splitTask(prev, id, splitDate, gapDays));
     },
 
     // ==================== Utility Methods ====================
@@ -560,12 +590,21 @@ export const GanttBoard = forwardRef<GanttBoardRef, GanttBoardProps>(function Ga
     });
   }, [config]);
 
-  // Handle task date changes (from drag & drop) (memoized)
+  // 🚀 KILLER FEATURE #2: Handle task date changes WITH auto-scheduling
+  // When you move a task, all dependent tasks are automatically rescheduled
+  // This is BETTER than DHTMLX - they require manual configuration
   const handleTaskDateChange = useCallback((task: Task, newStart: Date, newEnd: Date) => {
     const updateTaskDates = (tasks: Task[]): Task[] => {
       return tasks.map((t) => {
         if (t.id === task.id) {
-          return { ...t, startDate: newStart, endDate: newEnd };
+          // v0.8.1: Preserve segments array when updating task dates
+          // This is critical for split tasks - we must keep the updated segments
+          return {
+            ...t,
+            startDate: newStart,
+            endDate: newEnd,
+            ...(task.segments && { segments: task.segments }) // Preserve segments if they exist
+          };
         }
         if (t.subtasks) {
           return { ...t, subtasks: updateTaskDates(t.subtasks) };
@@ -573,9 +612,44 @@ export const GanttBoard = forwardRef<GanttBoardRef, GanttBoardProps>(function Ga
         return t;
       });
     };
-    setLocalTasks(updateTaskDates(localTasks));
-    onTaskUpdate?.({ ...task, startDate: newStart, endDate: newEnd });
+
+    // First, update the dragged task's dates
+    let updatedTasks = updateTaskDates(localTasks);
+
+    // Then, auto-schedule all dependent tasks (cascade effect)
+    updatedTasks = ganttUtils.autoScheduleDependents(updatedTasks, task.id);
+
+    setLocalTasks(updatedTasks);
+
+    // v0.8.1: Pass full updated task object including segments
+    const updatedTask = { ...task, startDate: newStart, endDate: newEnd };
+    onTaskUpdate?.(updatedTask);
   }, [localTasks, onTaskUpdate]);
+
+  // 🚀 KILLER FEATURE #3: Handle context menu for Split task
+  // This is BETTER than DHTMLX - they don't have a built-in split task feature
+  const handleTaskContextMenu = useCallback((task: Task, event: React.MouseEvent) => {
+    // Call user's custom handler if provided
+    onTaskContextMenu?.(task, event);
+
+    // Show our built-in context menu with Split option
+    setContextMenu({
+      isOpen: true,
+      x: event.clientX,
+      y: event.clientY,
+      task,
+    });
+  }, [onTaskContextMenu]);
+
+  // Handle split task action
+  const handleSplitTask = useCallback((task: Task, splitDate: Date) => {
+    // Call ganttUtils.splitTask to split the task
+    const updatedTasks = ganttUtils.splitTask(localTasks, task.id, splitDate);
+    setLocalTasks(updatedTasks);
+
+    // Close context menu
+    setContextMenu({ isOpen: false, x: 0, y: 0, task: null });
+  }, [localTasks]);
 
   // Helper function to detect circular dependencies using DFS
   const wouldCreateCircularDependency = useCallback((fromTaskId: string, toTaskId: string, tasks: Task[]): boolean => {
@@ -799,7 +873,7 @@ export const GanttBoard = forwardRef<GanttBoardRef, GanttBoardProps>(function Ga
         {/* Task Grid */}
         <div ref={gridScrollRef} style={{ width: gridWidth }}>
           <TaskGrid
-            tasks={localTasks}
+            tasks={tasksWithCriticalPath}
             theme={theme}
             rowHeight={rowHeight}
             availableUsers={availableUsers}
@@ -850,7 +924,7 @@ export const GanttBoard = forwardRef<GanttBoardRef, GanttBoardProps>(function Ga
         {/* Timeline */}
         <div ref={timelineScrollRef} className="flex-1 overflow-hidden">
           <Timeline
-            tasks={localTasks}
+            tasks={tasksWithCriticalPath}
             theme={theme}
             rowHeight={rowHeight}
             timeScale={timeScale}
@@ -860,13 +934,47 @@ export const GanttBoard = forwardRef<GanttBoardRef, GanttBoardProps>(function Ga
             templates={mergedTemplates}
             onTaskClick={onTaskClick}
             onTaskDblClick={onTaskDblClick} // v0.8.0
-            onTaskContextMenu={onTaskContextMenu} // v0.8.0
+            onTaskContextMenu={handleTaskContextMenu} // v0.8.0: Now uses our handler for Split feature
             onTaskDateChange={handleTaskDateChange}
             onDependencyCreate={handleDependencyCreate}
             onDependencyDelete={handleDependencyDelete}
           />
         </div>
       </div>
+
+      {/* v0.8.0: Context Menu for Split task feature */}
+      {contextMenu.task && (
+        <ContextMenu
+          isOpen={contextMenu.isOpen}
+          x={contextMenu.x}
+          y={contextMenu.y}
+          theme={theme}
+          onClose={() => setContextMenu({ isOpen: false, x: 0, y: 0, task: null })}
+          items={[
+            {
+              id: 'split',
+              label: 'Split Task',
+              icon: MenuIcons.Split,
+              onClick: () => {
+                if (!contextMenu.task?.startDate || !contextMenu.task?.endDate) {
+                  console.warn('Cannot split task without dates');
+                  return;
+                }
+
+                // Calculate midpoint date for split
+                const startTime = contextMenu.task.startDate.getTime();
+                const endTime = contextMenu.task.endDate.getTime();
+                const midTime = startTime + (endTime - startTime) / 2;
+                const splitDate = new Date(midTime);
+
+                // Call split handler
+                handleSplitTask(contextMenu.task, splitDate);
+              },
+              disabled: !contextMenu.task?.startDate || !contextMenu.task?.endDate,
+            },
+          ]}
+        />
+      )}
     </div>
   );
 })

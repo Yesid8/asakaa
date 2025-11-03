@@ -51,3 +51,7 @@ storybook-static/
 
 # Generated docs
 docs/api/
+
+# Internal documentation (development only)
+docs/
+**/__tests__/
