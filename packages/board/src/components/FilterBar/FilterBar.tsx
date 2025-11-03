@@ -57,7 +57,7 @@ export function FilterBar({
   groupBy = 'none',
   onGroupByChange,
 }: FilterBarProps) {
-  const [isCollapsed, setIsCollapsed] = useState(false)
+  const [isCollapsed, setIsCollapsed] = useState(true)
 
   const handleSearchChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -94,12 +94,7 @@ export function FilterBar({
 
   return (
     <div
-      className={`filter-bar ${compact ? 'filter-bar--compact' : ''}`}
-      style={{
-        padding: isCollapsed ? '6px 12px' : undefined,
-        minHeight: isCollapsed ? 'auto' : undefined,
-        border: isCollapsed ? '1px solid var(--theme-border-secondary)' : undefined,
-      }}
+      className={`filter-bar ${compact ? 'filter-bar--compact' : ''} ${isCollapsed ? 'filter-bar--collapsed' : ''}`}
     >
       <div
         className="filter-bar__header"

@@ -11,11 +11,20 @@
   border-radius: var(--radius-lg);
   border: 1px solid var(--theme-border-primary);
   margin-bottom: var(--space-4);
+  transition: all 0.2s ease;
 }
 
 .filter-bar--compact {
   padding: var(--space-3);
   gap: var(--space-2);
+}
+
+/* Collapsed state - ultra compact */
+.filter-bar--collapsed {
+  padding: 4px 12px;
+  margin-bottom: var(--space-2);
+  background: var(--theme-bg-secondary);
+  border-color: var(--theme-border-secondary);
 }
 
 /* Quick Filters */

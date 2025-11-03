@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Check } from 'lucide-react';
+import { Portal } from '../Portal';
 import { GanttColumn, ColumnType } from './types';
 
 interface ColumnManagerProps {
@@ -31,7 +32,7 @@ export function ColumnManager({ columns, onToggleColumn, theme }: ColumnManagerP
   const availableColumns = columns.filter(col => col.id !== 'name');
 
   return (
-    <div className="relative" ref={menuRef}>
+    <>
       <motion.button
         ref={buttonRef}
         onClick={() => {
@@ -58,59 +59,62 @@ export function ColumnManager({ columns, onToggleColumn, theme }: ColumnManagerP
 
       <AnimatePresence>
         {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95, y: -10 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: -10 }}
-            transition={{ duration: 0.15 }}
-            className="fixed min-w-[180px] rounded-lg shadow-xl z-[9999]"
-            style={{
-              left: `${menuPosition.x}px`,
-              top: `${menuPosition.y}px`,
-              backgroundColor: theme.bgSecondary,
-              border: `1px solid ${theme.border}`,
-            }}
-          >
-            <div className="py-1">
-              <div
-                className="px-3 py-2 text-xs uppercase tracking-wider"
-                style={{
-                  color: theme.textTertiary,
-                  fontFamily: 'Inter, sans-serif',
-                  fontWeight: 600,
-                }}
-              >
-                Add Column
-              </div>
-              {availableColumns.map((column) => (
-                <button
-                  key={column.id}
-                  onClick={() => {
-                    onToggleColumn(column.id);
-                  }}
-                  className="w-full px-3 py-2 text-left flex items-center justify-between transition-colors text-sm"
+          <Portal>
+            <motion.div
+              ref={menuRef}
+              initial={{ opacity: 0, scale: 0.95, y: -10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: -10 }}
+              transition={{ duration: 0.15 }}
+              className="column-manager-menu fixed min-w-[180px] rounded-lg shadow-xl z-[9999]"
+              style={{
+                left: `${menuPosition.x}px`,
+                top: `${menuPosition.y}px`,
+                backgroundColor: theme.bgSecondary,
+                border: `1px solid ${theme.border}`,
+              }}
+            >
+              <div className="py-1">
+                <div
+                  className="px-3 py-2 text-xs uppercase tracking-wider"
                   style={{
-                    color: theme.textPrimary,
-                    backgroundColor: 'transparent',
+                    color: theme.textTertiary,
                     fontFamily: 'Inter, sans-serif',
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = theme.hoverBg;
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = 'transparent';
+                    fontWeight: 600,
                   }}
                 >
-                  <span>{column.label}</span>
-                  {column.visible && (
-                    <Check className="w-4 h-4" style={{ color: theme.accent }} />
-                  )}
-                </button>
-              ))}
-            </div>
-          </motion.div>
+                  Add Column
+                </div>
+                {availableColumns.map((column) => (
+                  <button
+                    key={column.id}
+                    onClick={() => {
+                      onToggleColumn(column.id);
+                    }}
+                    className="w-full px-3 py-2 text-left flex items-center justify-between transition-colors text-sm"
+                    style={{
+                      color: theme.textPrimary,
+                      backgroundColor: 'transparent',
+                      fontFamily: 'Inter, sans-serif',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor = theme.hoverBg;
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = 'transparent';
+                    }}
+                  >
+                    <span>{column.label}</span>
+                    {column.visible && (
+                      <Check className="w-4 h-4" style={{ color: theme.accent }} />
+                    )}
+                  </button>
+                ))}
+              </div>
+            </motion.div>
+          </Portal>
         )}
       </AnimatePresence>
-    </div>
+    </>
   );
 }

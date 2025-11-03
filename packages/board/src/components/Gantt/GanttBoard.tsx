@@ -1,12 +1,17 @@
-import { useState, useRef, useEffect, memo, useCallback, useMemo } from 'react';
-import { Task, TimeScale, Theme, GanttConfig, GanttColumn, ColumnType, GanttTheme, RowDensity } from './types';
-import { themes } from './themes';
+import { useState, useRef, useEffect, useCallback, useMemo, useContext, forwardRef, useImperativeHandle } from 'react';
+import { Task, TimeScale, Theme, GanttConfig, GanttColumn, ColumnType, RowDensity } from './types';
+import { deriveThemeFromCSS } from './deriveThemeFromCSS';
 import { GanttToolbar } from './GanttToolbar';
 import { TaskGrid } from './TaskGrid';
 import { Timeline } from './Timeline';
 import { motion } from 'framer-motion';
 import { useUndoRedo } from './useUndoRedo';
 import { useGanttUndoRedoKeys } from './useGanttUndoRedoKeys';
+import { ThemeContext } from '../../theme/ThemeProvider';
+import { GanttBoardRef } from './GanttBoardRef';
+import { ganttUtils } from './ganttUtils';
+import { mergeTemplates } from './defaultTemplates';
+import html2canvas from 'html2canvas';
 import {
   indentTasks,
   outdentTasks,
@@ -22,6 +27,7 @@ import {
 interface GanttBoardProps {
   tasks: Task[];
   config?: GanttConfig;
+  onTasksChange?: (tasks: Task[]) => void;
 }
 
 // Utility function to get row height based on density
@@ -38,26 +44,54 @@ const getRowHeight = (density: RowDensity): number => {
   }
 };
 
-export const GanttBoard = memo<GanttBoardProps>(function GanttBoard({ tasks, config = {} }) {
+export const GanttBoard = forwardRef<GanttBoardRef, GanttBoardProps>(function GanttBoard(
+  { tasks, config = {}, onTasksChange },
+  ref
+) {
   const {
-    theme: initialTheme = 'dark',
+    theme: initialTheme,
     timeScale: initialTimeScale = 'week',
     rowDensity: initialRowDensity = 'comfortable',
     showThemeSelector = true,
     availableUsers = [],
+    templates,
+    // Basic events
     onTaskClick,
+    onTaskDblClick, // v0.8.0
+    onTaskContextMenu, // v0.8.0
     onTaskUpdate,
+    onProgressChange, // v0.8.0
+    // Dependency events
     onDependencyCreate,
     onDependencyDelete,
+    // Lifecycle events (v0.8.0)
+    onBeforeTaskAdd,
+    onAfterTaskAdd,
+    onBeforeTaskUpdate,
+    onAfterTaskUpdate,
+    onBeforeTaskDelete,
+    onAfterTaskDelete,
   } = config;
 
-  const [currentTheme, setCurrentTheme] = useState<Theme>(initialTheme);
+  // Try to get global theme from ThemeProvider (will return undefined if not in ThemeProvider)
+  const themeContext = useContext(ThemeContext);
+  const globalTheme = themeContext?.theme as Theme | undefined;
+
+  // Use global theme if available, otherwise fall back to initialTheme or 'dark'
+  const [currentTheme, setCurrentTheme] = useState<Theme>(globalTheme || initialTheme || 'dark');
   const [timeScale, setTimeScale] = useState<TimeScale>(initialTimeScale);
   const [rowDensity, setRowDensity] = useState<RowDensity>(initialRowDensity);
   const [zoom, setZoom] = useState(1);
   const [scrollTop, setScrollTop] = useState(0);
   const [isResizing, setIsResizing] = useState(false);
   const [gridWidthOverride, setGridWidthOverride] = useState<number | null>(null);
+
+  // Sync with global theme changes
+  useEffect(() => {
+    if (globalTheme && globalTheme !== currentTheme) {
+      setCurrentTheme(globalTheme);
+    }
+  }, [globalTheme]);
 
   // Use undo/redo hook for task management
   const {
@@ -67,7 +101,15 @@ export const GanttBoard = memo<GanttBoardProps>(function GanttBoard({ tasks, con
     redo,
     canUndo,
     canRedo,
+    clearHistory,
   } = useUndoRedo<Task[]>(tasks, 50);
+
+  // Sync local tasks with parent when they change
+  useEffect(() => {
+    if (onTasksChange) {
+      onTasksChange(localTasks);
+    }
+  }, [localTasks, onTasksChange]);
 
   // Column configuration - Default: Only show task name
   const [columns, setColumns] = useState<GanttColumn[]>([
@@ -92,8 +134,17 @@ export const GanttBoard = memo<GanttBoardProps>(function GanttBoard({ tasks, con
 
   const gridScrollRef = useRef<HTMLDivElement>(null);
   const timelineScrollRef = useRef<HTMLDivElement>(null);
+  const ganttContainerRef = useRef<HTMLDivElement>(null);
 
-  const theme = (themes[currentTheme] ?? themes.dark) as GanttTheme;
+  // Derivar theme desde CSS variables si hay ThemeProvider, sino usar theme estático
+  const theme = useMemo(() => {
+    return deriveThemeFromCSS(currentTheme);
+  }, [currentTheme]);
+
+  // Merge user templates with defaults
+  const mergedTemplates = useMemo(() => {
+    return mergeTemplates(templates);
+  }, [templates]);
 
   // Calculate row height based on density
   const rowHeight = getRowHeight(rowDensity);
@@ -106,6 +157,263 @@ export const GanttBoard = memo<GanttBoardProps>(function GanttBoard({ tasks, con
     canRedo,
     enabled: true,
   });
+
+  // Expose imperative API via ref (similar to DHTMLX gantt.* methods)
+  useImperativeHandle(ref, () => ({
+    // ==================== CRUD Methods ====================
+    getTask: (id: string) => ganttUtils.findTaskById(localTasks, id),
+
+    addTask: (task: Task, parentId?: string) => {
+      setLocalTasks((prev) => {
+        if (!parentId) {
+          // Add as root-level task
+          return [...prev, { ...task, level: 0 }];
+        }
+
+        // Add as subtask
+        const addToParent = (tasks: Task[]): Task[] => {
+          return tasks.map((t) => {
+            if (t.id === parentId) {
+              return {
+                ...t,
+                subtasks: [...(t.subtasks || []), { ...task, parentId, level: (t.level || 0) + 1 }],
+                isExpanded: true,
+              };
+            }
+            if (t.subtasks) {
+              return { ...t, subtasks: addToParent(t.subtasks) };
+            }
+            return t;
+          });
+        };
+        return addToParent(prev);
+      });
+    },
+
+    updateTask: (id: string, updates: Partial<Task>) => {
+      setLocalTasks((prev) => {
+        const update = (tasks: Task[]): Task[] => {
+          return tasks.map((task) => {
+            if (task.id === id) {
+              return { ...task, ...updates };
+            }
+            if (task.subtasks) {
+              return { ...task, subtasks: update(task.subtasks) };
+            }
+            return task;
+          });
+        };
+        return update(prev);
+      });
+    },
+
+    deleteTask: (id: string) => {
+      setLocalTasks((prev) => {
+        const remove = (tasks: Task[]): Task[] => {
+          return tasks.filter((task) => {
+            if (task.id === id) return false;
+            if (task.subtasks) {
+              task.subtasks = remove(task.subtasks);
+            }
+            return true;
+          });
+        };
+        return remove(prev);
+      });
+    },
+
+    deleteTasks: (ids: string[]) => {
+      setLocalTasks((prev) => deleteTasks(prev, ids));
+    },
+
+    duplicateTask: (id: string) => {
+      setLocalTasks((prev) => duplicateTasks(prev, [id]));
+    },
+
+    // ==================== Utility Methods ====================
+    calculateEndDate: ganttUtils.calculateEndDate,
+    calculateDuration: ganttUtils.calculateDuration,
+    validateDependency: (fromTaskId: string, toTaskId: string) => {
+      return !ganttUtils.validateDependencies(localTasks, fromTaskId, toTaskId);
+    },
+
+    // ==================== Data Methods ====================
+    getAllTasks: () => ganttUtils.flattenTasks(localTasks),
+
+    getTasksByStatus: (status: 'todo' | 'in-progress' | 'completed') => {
+      return ganttUtils.flattenTasks(localTasks).filter((t) => t.status === status);
+    },
+
+    getTasksByParent: (parentId?: string) => {
+      if (!parentId) {
+        // Return root-level tasks
+        return localTasks.filter((t) => !t.parentId);
+      }
+      const parent = ganttUtils.findTaskById(localTasks, parentId);
+      return parent?.subtasks || [];
+    },
+
+    getCriticalPath: () => {
+      return ganttUtils.flattenTasks(localTasks).filter((t) => t.isCriticalPath);
+    },
+
+    // ==================== Hierarchy Methods ====================
+    indentTask: (taskId: string) => {
+      setLocalTasks((prev) => indentTasks(prev, [taskId]));
+    },
+
+    outdentTask: (taskId: string) => {
+      setLocalTasks((prev) => outdentTasks(prev, [taskId]));
+    },
+
+    moveTask: (taskId: string, direction: 'up' | 'down') => {
+      setLocalTasks((prev) => moveTasks(prev, [taskId], direction));
+    },
+
+    createSubtask: (parentId: string) => {
+      setLocalTasks((prev) => {
+        const { tasks } = createSubtask(prev, parentId);
+        return tasks;
+      });
+    },
+
+    // ==================== UI Methods ====================
+    scrollToTask: (id: string) => {
+      // Find task index in flattened list
+      const flatTasks = ganttUtils.flattenTasks(localTasks);
+      const index = flatTasks.findIndex((t) => t.id === id);
+
+      if (index !== -1 && gridScrollRef.current) {
+        const scrollTop = index * rowHeight;
+        gridScrollRef.current.scrollTo({ top: scrollTop, behavior: 'smooth' });
+        if (timelineScrollRef.current) {
+          timelineScrollRef.current.scrollTo({ top: scrollTop, behavior: 'smooth' });
+        }
+      }
+    },
+
+    highlightTask: (id: string, duration = 2000) => {
+      // TODO: Implement visual highlighting
+      console.log(`Highlighting task ${id} for ${duration}ms`);
+    },
+
+    expandTask: (id: string) => {
+      setLocalTasks((prev) => {
+        const expand = (tasks: Task[]): Task[] => {
+          return tasks.map((task) => {
+            if (task.id === id) {
+              return { ...task, isExpanded: true };
+            }
+            if (task.subtasks) {
+              return { ...task, subtasks: expand(task.subtasks) };
+            }
+            return task;
+          });
+        };
+        return expand(prev);
+      });
+    },
+
+    collapseTask: (id: string) => {
+      setLocalTasks((prev) => {
+        const collapse = (tasks: Task[]): Task[] => {
+          return tasks.map((task) => {
+            if (task.id === id) {
+              return { ...task, isExpanded: false };
+            }
+            if (task.subtasks) {
+              return { ...task, subtasks: collapse(task.subtasks) };
+            }
+            return task;
+          });
+        };
+        return collapse(prev);
+      });
+    },
+
+    expandAll: () => {
+      setLocalTasks((prev) => {
+        const expandAll = (tasks: Task[]): Task[] => {
+          return tasks.map((task) => ({
+            ...task,
+            isExpanded: true,
+            subtasks: task.subtasks ? expandAll(task.subtasks) : undefined,
+          }));
+        };
+        return expandAll(prev);
+      });
+    },
+
+    collapseAll: () => {
+      setLocalTasks((prev) => {
+        const collapseAll = (tasks: Task[]): Task[] => {
+          return tasks.map((task) => ({
+            ...task,
+            isExpanded: false,
+            subtasks: task.subtasks ? collapseAll(task.subtasks) : undefined,
+          }));
+        };
+        return collapseAll(prev);
+      });
+    },
+
+    // ==================== Undo/Redo ====================
+    undo,
+    redo,
+    canUndo: () => canUndo,
+    canRedo: () => canRedo,
+    clearHistory,
+
+    // ==================== Export/Import ====================
+    exportToPNG: async () => {
+      if (!ganttContainerRef.current) {
+        throw new Error('Gantt container not found');
+      }
+
+      const canvas = await html2canvas(ganttContainerRef.current, {
+        backgroundColor: theme.bgPrimary,
+        scale: 2, // Higher quality
+      });
+
+      return new Promise<Blob>((resolve, reject) => {
+        canvas.toBlob((blob) => {
+          if (blob) {
+            resolve(blob);
+          } else {
+            reject(new Error('Failed to create blob from canvas'));
+          }
+        }, 'image/png');
+      });
+    },
+
+    exportToPDF: async (filename?: string) => {
+      await ganttUtils.exportToPDF(localTasks, filename);
+    },
+
+    exportToExcel: async (filename?: string) => {
+      await ganttUtils.exportToExcel(localTasks, filename);
+    },
+
+    exportToJSON: () => ganttUtils.exportToJSON(localTasks),
+    exportToCSV: () => ganttUtils.exportToCSV(localTasks),
+
+    importFromJSON: (json: string) => {
+      const imported = ganttUtils.importFromJSON(json);
+      setLocalTasks(imported);
+    },
+
+    // ==================== State Methods ====================
+    getTasks: () => localTasks,
+
+    refresh: () => {
+      // Force re-render by creating a new reference
+      setLocalTasks((prev) => [...prev]);
+    },
+
+    clearAll: () => {
+      setLocalTasks([]);
+    },
+  }), [localTasks, undo, redo, canUndo, canRedo, clearHistory, theme, rowHeight]);
 
   // Handle column toggle (memoized)
   const handleToggleColumn = useCallback((columnId: ColumnType) => {
@@ -124,6 +432,18 @@ export const GanttBoard = memo<GanttBoardProps>(function GanttBoard({ tasks, con
 
   // Handle task updates from context menu (memoized)
   const handleTaskUpdate = useCallback((taskId: string, updates: Partial<Task>) => {
+    // v0.8.0: Before event (cancelable)
+    if (onBeforeTaskUpdate) {
+      const shouldContinue = onBeforeTaskUpdate(taskId, updates);
+      if (shouldContinue === false) {
+        return; // Cancel the update
+      }
+    }
+
+    // Find current task to detect progress change
+    const currentTask = ganttUtils.findTaskById(localTasks, taskId);
+    const oldProgress = currentTask?.progress;
+
     const updateTask = (tasks: Task[]): Task[] => {
       return tasks.map((task) => {
         if (task.id === taskId) {
@@ -136,11 +456,32 @@ export const GanttBoard = memo<GanttBoardProps>(function GanttBoard({ tasks, con
       });
     };
     setLocalTasks(updateTask(localTasks));
-    onTaskUpdate?.(localTasks.find(t => t.id === taskId)!);
-  }, [localTasks, onTaskUpdate]);
+
+    // Call callback events
+    const updatedTask = ganttUtils.findTaskById(updateTask(localTasks), taskId);
+    if (updatedTask) {
+      onTaskUpdate?.(updatedTask);
+
+      // v0.8.0: After event
+      onAfterTaskUpdate?.(updatedTask);
+
+      // v0.8.0: Progress change event
+      if (updates.progress !== undefined && oldProgress !== undefined && updates.progress !== oldProgress) {
+        onProgressChange?.(taskId, oldProgress, updates.progress);
+      }
+    }
+  }, [localTasks, onTaskUpdate, onBeforeTaskUpdate, onAfterTaskUpdate, onProgressChange]);
 
   // Handle task deletion (memoized)
   const handleTaskDelete = useCallback((taskId: string) => {
+    // v0.8.0: Before event (cancelable)
+    if (onBeforeTaskDelete) {
+      const shouldContinue = onBeforeTaskDelete(taskId);
+      if (shouldContinue === false) {
+        return; // Cancel the deletion
+      }
+    }
+
     const deleteTask = (tasks: Task[]): Task[] => {
       return tasks.filter(task => {
         if (task.id === taskId) return false;
@@ -151,7 +492,10 @@ export const GanttBoard = memo<GanttBoardProps>(function GanttBoard({ tasks, con
       });
     };
     setLocalTasks(deleteTask(localTasks));
-  }, [localTasks]);
+
+    // v0.8.0: After event
+    onAfterTaskDelete?.(taskId);
+  }, [localTasks, onBeforeTaskDelete, onAfterTaskDelete]);
 
   // Hierarchy handlers
   const handleTaskIndent = useCallback((taskIds: string[]) => {
@@ -185,10 +529,23 @@ export const GanttBoard = memo<GanttBoardProps>(function GanttBoard({ tasks, con
   const handleTaskCreate = useCallback((afterTaskId: string, direction: 'above' | 'below') => {
     setLocalTasks((prev) => {
       const { tasks, newTask } = createTask(prev, afterTaskId, direction);
+
+      // v0.8.0: Before event (cancelable)
+      if (onBeforeTaskAdd) {
+        const shouldContinue = onBeforeTaskAdd(newTask);
+        if (shouldContinue === false) {
+          return prev; // Cancel the addition, return unchanged tasks
+        }
+      }
+
       config.onTaskCreate?.(newTask.parentId, newTask.position || 0);
+
+      // v0.8.0: After event
+      onAfterTaskAdd?.(newTask);
+
       return tasks;
     });
-  }, [config]);
+  }, [config, onBeforeTaskAdd, onAfterTaskAdd]);
 
   const handleTaskRename = useCallback((taskId: string, newName: string) => {
     setLocalTasks((prev) => renameTask(prev, taskId, newName));
@@ -416,6 +773,7 @@ export const GanttBoard = memo<GanttBoardProps>(function GanttBoard({ tasks, con
 
   return (
     <div
+      ref={ganttContainerRef}
       className="flex flex-col h-screen overflow-hidden"
       style={{
         backgroundColor: theme.bgPrimary,
@@ -445,7 +803,10 @@ export const GanttBoard = memo<GanttBoardProps>(function GanttBoard({ tasks, con
             theme={theme}
             rowHeight={rowHeight}
             availableUsers={availableUsers}
+            templates={mergedTemplates}
             onTaskClick={onTaskClick}
+            onTaskDblClick={onTaskDblClick} // v0.8.0
+            onTaskContextMenu={onTaskContextMenu} // v0.8.0
             onTaskToggle={handleTaskToggle}
             scrollTop={scrollTop}
             columns={columns}
@@ -496,7 +857,10 @@ export const GanttBoard = memo<GanttBoardProps>(function GanttBoard({ tasks, con
             startDate={startDate}
             endDate={endDate}
             zoom={zoom}
+            templates={mergedTemplates}
             onTaskClick={onTaskClick}
+            onTaskDblClick={onTaskDblClick} // v0.8.0
+            onTaskContextMenu={onTaskContextMenu} // v0.8.0
             onTaskDateChange={handleTaskDateChange}
             onDependencyCreate={handleDependencyCreate}
             onDependencyDelete={handleDependencyDelete}

@@ -1,5 +1,5 @@
 import { useMemo, useCallback } from 'react';
-import { TimeScale, Task } from './types';
+import { TimeScale, Task, GanttTemplates } from './types';
 import { TaskBar } from './TaskBar';
 import { DependencyLine } from './DependencyLine';
 import { Milestone } from './Milestone';
@@ -12,7 +12,10 @@ interface TimelineProps {
   startDate: Date;
   endDate: Date;
   zoom: number;
+  templates: Required<GanttTemplates>; // v0.8.0
   onTaskClick?: (task: Task) => void;
+  onTaskDblClick?: (task: Task) => void; // v0.8.0
+  onTaskContextMenu?: (task: Task, event: React.MouseEvent) => void; // v0.8.0
   onTaskDateChange?: (task: Task, newStart: Date, newEnd: Date) => void;
   onDependencyCreate?: (fromTask: Task, toTaskId: string) => void;
   onDependencyDelete?: (taskId: string, dependencyId: string) => void;
@@ -34,7 +37,10 @@ export function Timeline({
   startDate,
   endDate,
   zoom,
+  templates,
   onTaskClick,
+  onTaskDblClick, // v0.8.0
+  onTaskContextMenu, // v0.8.0
   onTaskDateChange,
   onDependencyCreate,
   onDependencyDelete,
@@ -196,7 +202,7 @@ export function Timeline({
   }, [startDate, dayWidth, zoom]);
 
   return (
-    <div className="flex-1 overflow-auto" style={{ backgroundColor: theme.bgPrimary }}>
+    <div className="flex-1 overflow-auto" data-gantt-chart style={{ backgroundColor: theme.bgPrimary }}>
       <svg
         width={Math.max(timelineWidth, 1000)}
         height={Math.max(flatTasks.length * ROW_HEIGHT + HEADER_HEIGHT, 600)}
@@ -205,7 +211,21 @@ export function Timeline({
           <filter id="shadow">
             <feDropShadow dx="0" dy="1" stdDeviation="2" floodOpacity="0.1" />
           </filter>
+
+          {/* Neutral theme: Diagonal stripes pattern for critical/overdue tasks */}
+          <pattern id="diagonal-stripes" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+            <line x1="0" y1="0" x2="0" y2="8" stroke={theme.border} strokeWidth="2" />
+          </pattern>
         </defs>
+
+        {/* Full SVG Background */}
+        <rect
+          x={0}
+          y={0}
+          width={Math.max(timelineWidth, 1000)}
+          height={Math.max(flatTasks.length * ROW_HEIGHT + HEADER_HEIGHT, 600)}
+          fill={theme.bgPrimary}
+        />
 
         {/* Header Background */}
         <rect
@@ -261,9 +281,10 @@ export function Timeline({
           );
         })}
 
-        {/* Today Line */}
+        {/* Today Line - Solid, prominent indicator */}
         {todayX >= 0 && todayX <= timelineWidth && (
           <g>
+            {/* Solid line - more prominent */}
             <line
               x1={todayX}
               y1={HEADER_HEIGHT}
@@ -271,9 +292,9 @@ export function Timeline({
               y2={flatTasks.length * ROW_HEIGHT + HEADER_HEIGHT}
               stroke={theme.today}
               strokeWidth={2}
-              opacity={0.8}
+              opacity={1}
             />
-            <circle cx={todayX} cy={HEADER_HEIGHT - 10} r={6} fill={theme.today} />
+            <circle cx={todayX} cy={HEADER_HEIGHT - 10} r={6} fill={theme.today} opacity={1} />
           </g>
         )}
 
@@ -283,15 +304,15 @@ export function Timeline({
 
           return (
             <g key={`row-group-${task.id}`}>
-              {/* Background stripe */}
+              {/* Background stripe - alternating rows for better readability */}
               <rect
                 key={`row-${task.id}`}
                 x={0}
                 y={HEADER_HEIGHT + index * ROW_HEIGHT}
                 width={timelineWidth}
                 height={ROW_HEIGHT}
-                fill={index % 2 === 0 ? 'transparent' : theme.bgGrid}
-                opacity={0.3}
+                fill={index % 2 === 0 ? 'transparent' : theme.bgSecondary}
+                opacity={1}
                 style={{ pointerEvents: 'none' }}
               />
 
@@ -381,6 +402,9 @@ export function Timeline({
           const { x, width } = getTaskPosition(task);
           const y = HEADER_HEIGHT + index * ROW_HEIGHT + 12;
 
+          // Container phase (has subtasks): render as bracket bar
+          const isContainer = task.subtasks && task.subtasks.length > 0 && !task.isMilestone;
+
           if (task.isMilestone) {
             return (
               <Milestone
@@ -394,6 +418,54 @@ export function Timeline({
             );
           }
 
+          if (isContainer) {
+            // Render container as bracket bar
+            return (
+              <g key={task.id} onClick={() => onTaskClick?.(task)} style={{ cursor: 'pointer' }}>
+                {/* Top bracket line */}
+                <line
+                  x1={x}
+                  y1={y}
+                  x2={x + width}
+                  y2={y}
+                  stroke={theme.borderLight}
+                  strokeWidth={2}
+                  opacity={0.6}
+                />
+                {/* Left vertical */}
+                <line
+                  x1={x}
+                  y1={y}
+                  x2={x}
+                  y2={y + 32}
+                  stroke={theme.borderLight}
+                  strokeWidth={2}
+                  opacity={0.6}
+                />
+                {/* Right vertical */}
+                <line
+                  x1={x + width}
+                  y1={y}
+                  x2={x + width}
+                  y2={y + 32}
+                  stroke={theme.borderLight}
+                  strokeWidth={2}
+                  opacity={0.6}
+                />
+                {/* Bottom bracket line */}
+                <line
+                  x1={x}
+                  y1={y + 32}
+                  x2={x + width}
+                  y2={y + 32}
+                  stroke={theme.borderLight}
+                  strokeWidth={2}
+                  opacity={0.6}
+                />
+              </g>
+            );
+          }
+
           return (
             <TaskBar
               key={task.id}
@@ -404,7 +476,10 @@ export function Timeline({
               theme={theme}
               dayWidth={dayWidth * zoom}
               startDate={startDate}
+              templates={templates}
               onClick={onTaskClick}
+              onDoubleClick={onTaskDblClick} // v0.8.0
+              onContextMenu={onTaskContextMenu} // v0.8.0
               onDateChange={onTaskDateChange}
               onDependencyCreate={onDependencyCreate}
               allTaskPositions={taskPositions}

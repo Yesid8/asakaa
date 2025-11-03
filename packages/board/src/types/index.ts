@@ -56,6 +56,8 @@ export interface Card {
   estimatedTime?: number
   /** Manual progress override (0-100%) */
   progress?: number
+  /** Cover image URL */
+  coverImage?: string
   /** Custom metadata */
   metadata?: Record<string, unknown>
 
