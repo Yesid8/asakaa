@@ -6,12 +6,11 @@ interface DependencyLineProps {
   y1: number;
   x2: number;
   y2: number;
-  isCriticalPath?: boolean;
   theme: any;
   onDelete?: () => void;
 }
 
-export function DependencyLine({ x1, y1, x2, y2, isCriticalPath = false, theme, onDelete }: DependencyLineProps) {
+export function DependencyLine({ x1, y1, x2, y2, theme, onDelete }: DependencyLineProps) {
   const [isHovered, setIsHovered] = useState(false);
 
   // Calculate control points for smooth Bézier curve
@@ -30,35 +29,14 @@ export function DependencyLine({ x1, y1, x2, y2, isCriticalPath = false, theme, 
   const arrowX2 = x2 - arrowSize * Math.cos(angle + Math.PI / 6);
   const arrowY2 = y2 - arrowSize * Math.sin(angle + Math.PI / 6);
 
-  const lineColor = isCriticalPath ? theme.criticalPath : theme.dependency;
-  // const lineHoverColor = isCriticalPath ? theme.criticalPath : theme.dependencyHover;
+  // Dependencies are always gray - critical path only affects TASK BARS, not dependency lines
+  const lineColor = theme.dependency;
 
   return (
     <g
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      {/* Glow effect for critical path */}
-      {isCriticalPath && (
-        <motion.path
-          d={path}
-          fill="none"
-          stroke={theme.criticalPathLight}
-          strokeWidth={isHovered ? 12 : 8}
-          strokeLinecap="round"
-          opacity={0.4}
-          initial={{ pathLength: 0 }}
-          animate={{ 
-            pathLength: 1,
-            strokeWidth: isHovered ? 12 : 8,
-          }}
-          transition={{ 
-            pathLength: { duration: 0.5, ease: 'easeInOut' },
-            strokeWidth: { duration: 0.2 },
-          }}
-        />
-      )}
-
       {/* Invisible wider path for easier hover detection */}
       <path
         d={path}
@@ -74,14 +52,13 @@ export function DependencyLine({ x1, y1, x2, y2, isCriticalPath = false, theme, 
         d={path}
         fill="none"
         stroke={lineColor}
-        strokeWidth={isCriticalPath ? 2.5 : 2}
+        strokeWidth={2}
         strokeLinecap="round"
-        strokeDasharray={isCriticalPath ? '0' : '0'}
         initial={{ pathLength: 0, opacity: 0 }}
         animate={{
           pathLength: 1,
-          opacity: isHovered ? 1 : (isCriticalPath ? 0.9 : 0.6),
-          strokeWidth: isHovered ? (isCriticalPath ? 3 : 2.5) : (isCriticalPath ? 2.5 : 2),
+          opacity: isHovered ? 1 : 0.6,
+          strokeWidth: isHovered ? 2.5 : 2,
         }}
         transition={{
           pathLength: { duration: 0.5, ease: 'easeInOut' },
@@ -95,13 +72,13 @@ export function DependencyLine({ x1, y1, x2, y2, isCriticalPath = false, theme, 
         d={`M ${x2} ${y2} L ${arrowX} ${arrowY} M ${x2} ${y2} L ${arrowX2} ${arrowY2}`}
         fill="none"
         stroke={lineColor}
-        strokeWidth={isCriticalPath ? 2.5 : 2}
+        strokeWidth={2}
         strokeLinecap="round"
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{
-          opacity: isHovered ? 1 : (isCriticalPath ? 0.9 : 0.6),
+          opacity: isHovered ? 1 : 0.6,
           scale: isHovered ? 1.1 : 1,
-          strokeWidth: isHovered ? (isCriticalPath ? 3 : 2.5) : (isCriticalPath ? 2.5 : 2),
+          strokeWidth: isHovered ? 2.5 : 2,
         }}
         transition={{ duration: 0.2 }}
       />

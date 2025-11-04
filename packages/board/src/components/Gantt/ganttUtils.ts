@@ -1,4 +1,4 @@
-import { Task } from './types';
+import { Task, TaskSegment } from './types';
 
 /**
  * Public utility functions for Gantt operations
@@ -492,62 +492,92 @@ export const ganttUtils = {
    * @returns Promise<void>
    */
   exportToPDF: async (tasks: Task[], filename = 'gantt-chart.pdf'): Promise<void> => {
-    const { jsPDF } = await import('jspdf');
-    await import('jspdf-autotable');
+    try {
+      // v0.8.1: Validation
+      console.log('[PDF Export] Starting export...');
+      console.log('[PDF Export] Tasks count:', tasks?.length || 0);
 
-    const doc = new jsPDF() as any;
-    const flat = ganttUtils.flattenTasks(tasks);
+      if (!tasks || tasks.length === 0) {
+        console.warn('[PDF Export] No tasks provided');
+        alert('No tasks available to export to PDF');
+        return;
+      }
 
-    // Title
-    doc.setFontSize(16);
-    doc.text('Gantt Chart - Task List', 14, 20);
+      // v0.8.1: FIXED - Use correct jspdf-autotable v5.0 API
+      // Breaking change in v5.0: autoTable is now imported as a function, not auto-applied to jsPDF
+      const { jsPDF } = await import('jspdf');
+      const { default: autoTable } = await import('jspdf-autotable');
+      console.log('[PDF Export] Modules loaded');
 
-    // Table data
-    const headers = [['Task Name', 'Start Date', 'End Date', 'Duration', 'Progress', 'Status']];
-    const data = flat.map(task => {
-      const duration = task.startDate && task.endDate
-        ? ganttUtils.calculateDuration(task.startDate, task.endDate)
-        : 0;
+      const doc = new jsPDF();
+      const flat = ganttUtils.flattenTasks(tasks);
 
-      return [
-        task.name,
-        task.startDate ? ganttUtils.formatDate(task.startDate) : 'N/A',
-        task.endDate ? ganttUtils.formatDate(task.endDate) : 'N/A',
-        duration > 0 ? `${duration} days` : 'N/A',
-        `${task.progress}%`,
-        task.status || 'N/A',
-      ];
-    });
+      console.log('[PDF Export] Flattened tasks count:', flat.length);
 
-    // Generate table
-    doc.autoTable({
-      head: headers,
-      body: data,
-      startY: 30,
-      styles: {
-        fontSize: 9,
-        cellPadding: 3,
-      },
-      headStyles: {
-        fillColor: [66, 139, 202],
-        textColor: 255,
-        fontStyle: 'bold',
-      },
-      alternateRowStyles: {
-        fillColor: [245, 245, 245],
-      },
-      columnStyles: {
-        0: { cellWidth: 60 }, // Task Name
-        1: { cellWidth: 30 }, // Start Date
-        2: { cellWidth: 30 }, // End Date
-        3: { cellWidth: 25 }, // Duration
-        4: { cellWidth: 20 }, // Progress
-        5: { cellWidth: 25 }, // Status
-      },
-    });
+      if (flat.length === 0) {
+        console.warn('[PDF Export] No tasks after flattening');
+        alert('No tasks found to export');
+        return;
+      }
 
-    // Save the PDF
-    doc.save(filename);
+      // Title
+      doc.setFontSize(16);
+      doc.text('Gantt Chart - Task List', 14, 20);
+
+      // Table data
+      const headers = [['Task Name', 'Start Date', 'End Date', 'Duration', 'Progress', 'Status']];
+      const data = flat.map(task => {
+        const duration = task.startDate && task.endDate
+          ? ganttUtils.calculateDuration(task.startDate, task.endDate)
+          : 0;
+
+        return [
+          task.name,
+          task.startDate ? ganttUtils.formatDate(task.startDate) : 'N/A',
+          task.endDate ? ganttUtils.formatDate(task.endDate) : 'N/A',
+          duration > 0 ? `${duration} days` : 'N/A',
+          `${task.progress}%`,
+          task.status || 'N/A',
+        ];
+      });
+
+      // v0.8.1: Use autoTable function (v5.0 API) instead of doc.autoTable() (old API)
+      console.log('[PDF Export] Generating table with autoTable function...');
+      autoTable(doc, {
+        head: headers,
+        body: data,
+        startY: 30,
+        styles: {
+          fontSize: 9,
+          cellPadding: 3,
+        },
+        headStyles: {
+          fillColor: [66, 139, 202],
+          textColor: 255,
+          fontStyle: 'bold',
+        },
+        alternateRowStyles: {
+          fillColor: [245, 245, 245],
+        },
+        columnStyles: {
+          0: { cellWidth: 60 }, // Task Name
+          1: { cellWidth: 30 }, // Start Date
+          2: { cellWidth: 30 }, // End Date
+          3: { cellWidth: 25 }, // Duration
+          4: { cellWidth: 20 }, // Progress
+          5: { cellWidth: 25 }, // Status
+        },
+      });
+      console.log('[PDF Export] Table generated successfully');
+
+      // Save the PDF
+      console.log('[PDF Export] Saving PDF:', filename);
+      doc.save(filename);
+      console.log('[PDF Export] PDF saved successfully');
+    } catch (error) {
+      console.error('Error exporting to PDF:', error);
+      throw error;
+    }
   },
 
   /**
@@ -608,5 +638,271 @@ export const ganttUtils = {
 
     // Save the file
     XLSX.writeFile(workbook, filename);
+  },
+
+  /**
+   * Calculate Critical Path Method (CPM) - identifies tasks with zero slack
+   * @param tasks - All tasks
+   * @returns Array of task IDs on the critical path
+   */
+  calculateCriticalPath: (tasks: Task[]): string[] => {
+    const flat = ganttUtils.flattenTasks(tasks);
+    const tasksWithDates = flat.filter(t => t.startDate && t.endDate);
+
+    if (tasksWithDates.length === 0) return [];
+
+    // Step 1: Calculate Early Start (ES) and Early Finish (EF) - Forward Pass
+    const earlyDates = new Map<string, { es: number; ef: number }>();
+
+    const calculateEarlyDates = (task: Task): void => {
+      if (earlyDates.has(task.id)) return;
+
+      const duration = task.startDate && task.endDate
+        ? ganttUtils.calculateDuration(task.startDate, task.endDate)
+        : 0;
+
+      let es = 0;
+
+      // If task has dependencies, ES = max(EF of all predecessors)
+      if (task.dependencies && task.dependencies.length > 0) {
+        for (const depId of task.dependencies) {
+          const depTask = flat.find(t => t.id === depId);
+          if (depTask) {
+            calculateEarlyDates(depTask);
+            const depEF = earlyDates.get(depId)?.ef || 0;
+            es = Math.max(es, depEF);
+          }
+        }
+      }
+
+      const ef = es + duration;
+      earlyDates.set(task.id, { es, ef });
+    };
+
+    tasksWithDates.forEach(calculateEarlyDates);
+
+    // Step 2: Find project end date (max EF)
+    const projectEnd = Math.max(...Array.from(earlyDates.values()).map(d => d.ef));
+
+    // Step 3: Calculate Late Start (LS) and Late Finish (LF) - Backward Pass
+    const lateDates = new Map<string, { ls: number; lf: number }>();
+
+    const calculateLateDates = (task: Task): void => {
+      if (lateDates.has(task.id)) return;
+
+      const duration = task.startDate && task.endDate
+        ? ganttUtils.calculateDuration(task.startDate, task.endDate)
+        : 0;
+
+      // Find all tasks that depend on this task
+      const successors = flat.filter(t =>
+        t.dependencies && t.dependencies.includes(task.id)
+      );
+
+      let lf = projectEnd;
+
+      // If task has successors, LF = min(LS of all successors)
+      if (successors.length > 0) {
+        for (const successor of successors) {
+          calculateLateDates(successor);
+          const succLS = lateDates.get(successor.id)?.ls || 0;
+          lf = Math.min(lf, succLS);
+        }
+      }
+
+      const ls = lf - duration;
+      lateDates.set(task.id, { ls, lf });
+    };
+
+    tasksWithDates.forEach(calculateLateDates);
+
+    // Step 4: Calculate Slack (Float) = LS - ES = LF - EF
+    // Tasks with slack = 0 are on the critical path
+    const criticalPath: string[] = [];
+
+    for (const task of tasksWithDates) {
+      const early = earlyDates.get(task.id);
+      const late = lateDates.get(task.id);
+
+      if (early && late) {
+        const slack = late.ls - early.es;
+        if (Math.abs(slack) < 0.01) { // Float point comparison
+          criticalPath.push(task.id);
+        }
+      }
+    }
+
+    return criticalPath;
+  },
+
+  /**
+   * Calculate slack (float) time for a task
+   * @param tasks - All tasks
+   * @param taskId - Task ID to calculate slack for
+   * @returns Slack in days, or null if cannot be calculated
+   */
+  calculateSlack: (tasks: Task[], taskId: string): number | null => {
+    const task = ganttUtils.findTaskById(tasks, taskId);
+    if (!task || !task.startDate || !task.endDate) return null;
+
+    const criticalPath = ganttUtils.calculateCriticalPath(tasks);
+
+    // If on critical path, slack is 0
+    if (criticalPath.includes(taskId)) return 0;
+
+    // Otherwise calculate slack using CPM algorithm
+    // This is simplified - in production would use full CPM
+    // For now, we approximate: slack = time until next dependent task
+    const dependents = ganttUtils.getDependentTasks(tasks, taskId);
+
+    if (dependents.length === 0) {
+      // No dependents = float until project end
+      const projectEnd = ganttUtils.getLatestEndDate(tasks);
+      if (!projectEnd) return null;
+
+      const daysToEnd = ganttUtils.calculateDuration(task.endDate, projectEnd);
+      return Math.max(0, daysToEnd);
+    }
+
+    // Find earliest dependent
+    const earliestDepStart = dependents
+      .filter(d => d.startDate)
+      .map(d => d.startDate!.getTime())
+      .sort((a, b) => a - b)[0];
+
+    if (!earliestDepStart) return null;
+
+    const slack = ganttUtils.calculateDuration(
+      task.endDate,
+      new Date(earliestDepStart)
+    );
+
+    return Math.max(0, slack);
+  },
+
+  /**
+   * Check if a task is on the critical path
+   * @param tasks - All tasks
+   * @param taskId - Task ID to check
+   * @returns True if task is on critical path
+   */
+  isOnCriticalPath: (tasks: Task[], taskId: string): boolean => {
+    const criticalPath = ganttUtils.calculateCriticalPath(tasks);
+    return criticalPath.includes(taskId);
+  },
+
+  /**
+   * Auto-schedule dependent tasks when a task changes
+   * @param tasks - All tasks
+   * @param changedTaskId - Task that was changed
+   * @returns Updated tasks with rescheduled dependencies
+   */
+  autoScheduleDependents: (tasks: Task[], changedTaskId: string): Task[] => {
+    const changedTask = ganttUtils.findTaskById(tasks, changedTaskId);
+    if (!changedTask || !changedTask.endDate) return tasks;
+
+    const dependents = ganttUtils.getDependentTasks(tasks, changedTaskId);
+    if (dependents.length === 0) return tasks;
+
+    let updatedTasks = [...tasks];
+
+    // For each dependent, shift start date to be after the changed task
+    for (const dependent of dependents) {
+      if (!dependent.startDate || !dependent.endDate) continue;
+
+      // Calculate duration of dependent task
+      const duration = ganttUtils.calculateDuration(dependent.startDate, dependent.endDate);
+
+      // New start date = changed task end date + 1 day
+      const newStartDate = new Date(changedTask.endDate);
+      newStartDate.setDate(newStartDate.getDate() + 1);
+
+      // Calculate new end date based on duration
+      const newEndDate = ganttUtils.calculateEndDate(newStartDate, duration);
+
+      // Update the task recursively in nested structure
+      const updateTaskRec = (tasks: Task[]): Task[] => {
+        return tasks.map(t => {
+          if (t.id === dependent.id) {
+            return { ...t, startDate: newStartDate, endDate: newEndDate };
+          }
+          if (t.subtasks) {
+            return { ...t, subtasks: updateTaskRec(t.subtasks) };
+          }
+          return t;
+        });
+      };
+
+      updatedTasks = updateTaskRec(updatedTasks);
+
+      // Recursively update dependents of this task
+      updatedTasks = ganttUtils.autoScheduleDependents(updatedTasks, dependent.id);
+    }
+
+    return updatedTasks;
+  },
+
+  /**
+   * 🚀 KILLER FEATURE #3: Split a task (create GAP in the middle, like Bryntum/DHTMLX)
+   * Same task, but work is paused for some days then continues
+   * Example: Jan 1-10 → Split at Jan 5 with 3 day gap → Jan 1-4 [GAP] Jan 8-13
+   * @param tasks - All tasks
+   * @param taskId - Task to split
+   * @param splitDate - Date where gap starts
+   * @param gapDays - Number of days to pause (default: 3)
+   * @returns Updated tasks with split segments
+   */
+  splitTask: (tasks: Task[], taskId: string, splitDate: Date, gapDays = 3): Task[] => {
+    const task = ganttUtils.findTaskById(tasks, taskId);
+    if (!task || !task.startDate || !task.endDate) return tasks;
+
+    // Validate split date is within task range
+    if (splitDate <= task.startDate || splitDate >= task.endDate) {
+      console.warn('Split date must be between task start and end dates');
+      return tasks;
+    }
+
+    // Calculate the split point (end of first segment)
+    const firstSegmentEnd = new Date(splitDate);
+    firstSegmentEnd.setDate(firstSegmentEnd.getDate() - 1); // Day before split
+
+    // Calculate second segment start (after gap)
+    const secondSegmentStart = new Date(splitDate);
+    secondSegmentStart.setDate(secondSegmentStart.getDate() + gapDays);
+
+    // Calculate new end date (original end + gap days to preserve work duration)
+    const newEndDate = new Date(task.endDate);
+    newEndDate.setDate(newEndDate.getDate() + gapDays);
+
+    // Create segments array
+    const segments: TaskSegment[] = [
+      {
+        startDate: new Date(task.startDate),
+        endDate: firstSegmentEnd,
+      },
+      {
+        startDate: secondSegmentStart,
+        endDate: newEndDate,
+      },
+    ];
+
+    // Update task with segments
+    const updateTaskRec = (tasksList: Task[]): Task[] => {
+      return tasksList.map(t => {
+        if (t.id === task.id) {
+          return {
+            ...t,
+            endDate: newEndDate, // Overall end date extends
+            segments, // Add segments to show gaps
+          };
+        }
+        if (t.subtasks) {
+          return { ...t, subtasks: updateTaskRec(t.subtasks) };
+        }
+        return t;
+      });
+    };
+
+    return updateTaskRec(tasks);
   },
 };

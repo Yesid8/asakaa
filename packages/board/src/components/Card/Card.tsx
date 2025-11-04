@@ -118,6 +118,22 @@ export const Card = memo<CardProps>(
           onClick?.(card)
         }}
       >
+        {/* Cover Image */}
+        {card.coverImage && (
+          <div className="asakaa-card-cover mb-3">
+            <img
+              src={card.coverImage}
+              alt={`Cover for ${card.title}`}
+              className="w-full h-32 object-cover rounded-md"
+              loading="lazy"
+              onError={(e) => {
+                // Hide image if it fails to load
+                e.currentTarget.style.display = 'none'
+              }}
+            />
+          </div>
+        )}
+
         {/* Title */}
         <h3 className="asakaa-card-title mb-2">{card.title}</h3>
 

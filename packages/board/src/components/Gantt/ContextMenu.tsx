@@ -1,12 +1,12 @@
 import { useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Plus, 
-  Minus, 
-  Edit3, 
-  Trash2, 
-  Link2, 
-  BarChart3, 
+import {
+  Plus,
+  Minus,
+  Edit3,
+  Trash2,
+  Link2,
+  BarChart3,
   ArrowUpDown,
   ArrowUp,
   ArrowDown,
@@ -14,6 +14,7 @@ import {
   Eye,
   EyeOff,
   Settings,
+  Scissors, // v0.8.0: For Split task
 } from 'lucide-react';
 
 export interface ContextMenuItem {
@@ -146,4 +147,5 @@ export const MenuIcons = {
   Hide: <EyeOff className="w-4 h-4" />,
   Show: <Eye className="w-4 h-4" />,
   Settings: <Settings className="w-4 h-4" />,
+  Split: <Scissors className="w-4 h-4" />, // v0.8.0: Split task
 };

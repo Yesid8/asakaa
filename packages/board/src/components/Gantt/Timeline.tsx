@@ -384,7 +384,6 @@ export function Timeline({
                 y1={HEADER_HEIGHT + fromIndex * ROW_HEIGHT + ROW_HEIGHT / 2}
                 x2={toPos.x}
                 y2={HEADER_HEIGHT + toIndex * ROW_HEIGHT + ROW_HEIGHT / 2}
-                isCriticalPath={task.isCriticalPath}
                 theme={theme}
                 onDelete={() => onDependencyDelete?.(task.id, depId)}
               />

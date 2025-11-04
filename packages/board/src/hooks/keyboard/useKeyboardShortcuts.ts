@@ -106,6 +106,12 @@ export const DEFAULT_SHORTCUTS: KeyboardShortcut[] = [
     action: 'deselect_all',
     description: 'Deselect all cards',
   },
+  {
+    keys: '?',
+    action: 'show_shortcuts',
+    description: 'Show keyboard shortcuts help',
+    modifiers: { shift: true },
+  },
 ]
 
 /**

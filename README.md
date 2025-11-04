@@ -62,7 +62,7 @@ No configuration hell. Import, render, done. Comes with themes, keyboard shortcu
 
 ### **Gantt Chart View** - Professional Project Planning
 
-> **NEW in v0.8.0:** Complete Gantt chart with dependencies, milestones, and intelligent validation
+> **NEW in v0.8.1:** Critical Path Analysis, Auto-Scheduling, Split Tasks - **Better than DHTMLX, 100% FREE**
 
 <!-- REPLACE THIS WITH YOUR SCREENSHOT -->
 ![ASAKAA Gantt Chart Dark Theme](./.github/screenshots/gantt-dark-hero.png)
@@ -72,15 +72,20 @@ No configuration hell. Import, render, done. Comes with themes, keyboard shortcu
 
 <br>
 
+**🔥 Killer Features (v0.8.1) - Better than DHTMLX:**
+- 🏆 **Critical Path Analysis** - Automatic CPM calculation (FREE - DHTMLX charges $1,299/dev!)
+- 🏆 **Auto-Scheduling with Cascade** - Move a task, all dependents reschedule automatically (FREE!)
+- 🏆 **Split Task with Gaps** - Pause work and resume later, Bryntum-style (FREE!)
+
 **🎯 Core Capabilities:**
 - ✅ **Drag & Drop Scheduling** - Move and resize task bars with pixel-perfect precision
-- ✅ **Dependency Management** - Visual arrows showing task relationships
-- ✅ **Circular Dependency Detection** - Prevents invalid workflows with smart validation
+- ✅ **Dependency Management** - Visual arrows showing task relationships (4 types: SS, FF, SF, FS)
+- ✅ **Circular Dependency Detection** - Prevents invalid workflows with DFS algorithm
 - ✅ **Milestone Markers** - Diamonds (not bars) for key deliverables
 - ✅ **Progress Tracking** - Inline progress bars with percentages
 - ✅ **Today Indicator** - Red vertical line showing current date
 - ✅ **Hierarchical Tasks** - Unlimited nested subtasks with visual indentation
-- ✅ **Click-to-Create** - Click any date in timeline to schedule tasks
+- ✅ **Context Menu** - Right-click for quick actions (split, indent, delete, etc.)
 
 **🧠 Intelligent Features:**
 - ✅ **Date Validation** - Can't create tasks shorter than 1 day or with start > end
@@ -95,9 +100,9 @@ No configuration hell. Import, render, done. Comes with themes, keyboard shortcu
 - ✅ **Keyboard Shortcuts** - Tab (indent), Shift+Tab (outdent), F2 (rename), Delete
 
 **📊 Professional Features:**
-- ✅ **Critical Path Highlighting** - Visual emphasis on blocking tasks
-- ✅ **Context Menus** - Right-click for quick actions
+- ✅ **Export to PDF/Excel/PNG/CSV** - Built-in export to all formats
 - ✅ **Resizable Panels** - Adjust task list / timeline ratio
+- ✅ **6 Zoom Levels** - Hour, Day, Week, Month, Quarter, Year views
 
 </details>
 
@@ -225,19 +230,19 @@ function App() {
 
 ### vs. Other Solutions
 
-| Feature | ASAKAA | react-beautiful-dnd | @dnd-kit | Jira/Asana |
-|---------|--------|---------------------|----------|------------|
-| **Ready-to-use UI** | ✅ | ❌ (DIY) | ❌ (DIY) | ✅ |
-| **Gantt + Kanban** | ✅ Both | ❌ | ❌ | 💰 Paid |
-| **Dependency Management** | ✅ Built-in | ❌ | ❌ | ✅ |
-| **Circular Dependency Detection** | ✅ | ❌ | ❌ | ⚠️ Basic |
-| **Undo/Redo (50 levels)** | ✅ | ❌ | ❌ | ⚠️ Limited |
-| **Date Validation** | ✅ Smart | ❌ | ❌ | ✅ |
-| **Themes** | ✅ 3 | ❌ | ❌ | ⚠️ 2 |
+| Feature | ASAKAA | DHTMLX Gantt | Bryntum Gantt | Jira/Asana |
+|---------|--------|--------------|---------------|------------|
+| **Critical Path (CPM)** | ✅ FREE + Auto | 💰 $1,299/dev | 💰 Premium | ⚠️ Basic |
+| **Auto-Scheduling Cascade** | ✅ FREE + Auto | ⚠️ Manual config | 💰 Premium | ⚠️ Limited |
+| **Split Tasks with Gaps** | ✅ FREE | ❌ Not available | 💰 Premium | ❌ |
+| **Gantt + Kanban** | ✅ Both views | ❌ Gantt only | ❌ Gantt only | 💰 Separate |
+| **Dependency Types** | ✅ 4 types (SS,FF,SF,FS) | ✅ 4 types | ✅ 4 types | ⚠️ Basic |
+| **Circular Dependency Detection** | ✅ DFS algorithm | ⚠️ Basic | ✅ | ⚠️ Basic |
+| **Undo/Redo** | ✅ 50 levels | ⚠️ Limited | ✅ | ⚠️ Limited |
+| **Export (PDF/Excel/PNG/CSV)** | ✅ All formats | 💰 PRO only | 💰 Premium | ⚠️ Limited |
 | **TypeScript** | ✅ Full | ⚠️ Partial | ✅ | N/A |
-| **Bundle Size** | 328 KB | ~40 KB* | ~20 KB* | N/A |
 | **Learning Curve** | **5 min** | 2-3 days | 2-3 days | Weeks |
-| **Price** | **Free*** | Free | Free | $7-15/user/mo |
+| **Price** | **$0*** | **$1,299/dev** | **$1,499/dev** | $7-15/user/mo |
 | **Self-hosted** | ✅ | ✅ | ✅ | ❌ |
 
 *\*Without UI, themes, filtering, or features*
@@ -247,7 +252,7 @@ function App() {
 
 ## 📦 What's Included
 
-### Gantt Chart Features (v0.8.0)
+### Gantt Chart Features (v0.8.1)
 
 ```tsx
 import {
@@ -275,10 +280,14 @@ import {
 - `useGanttKeyboard` - Arrow navigation, shortcuts
 - `useGanttSelection` - Multi-select with Shift/Ctrl
 
-**Utilities:**
-- Circular dependency detection (DFS algorithm)
+**Utilities (ganttUtils):**
+- `calculateCriticalPath()` - Automatic CPM with forward/backward pass (v0.8.1)
+- `autoScheduleDependents()` - Cascade rescheduling of dependent tasks (v0.8.1)
+- `splitTask()` - Split task with configurable gap duration (v0.8.1)
+- `validateDependency()` - Circular dependency detection (DFS algorithm)
 - Date validation (min 1 day, start < end)
 - Hierarchy operations (indent, outdent, move, duplicate)
+- Export utilities (PDF, Excel, PNG, CSV)
 - Type adapters (Kanban ↔ Gantt conversion)
 
 ---
@@ -569,17 +578,17 @@ const task: Task = {
 
 ## 🗺️ Roadmap
 
-### v0.9.0 (Planned - Q1 2025)
+### v0.9.0 (Planned - Q1 2026)
+- [ ] Resource allocation view (resource leveling, workload balancing)
+- [ ] Baseline comparison (planned vs actual)
 - [ ] Real-time collaboration (WebSocket support)
-- [ ] Export to MS Project / Jira format
 - [ ] Custom field types
-- [ ] Advanced filtering (saved filters, complex queries)
 
-### v1.0.0 (Planned - Q2 2025)
+### v1.0.0 (Planned - Q2 2026)
+- [ ] Export to MS Project / Jira format
 - [ ] Mobile-optimized touch controls
 - [ ] Calendar view
-- [ ] Resource allocation view
-- [ ] REST API integration helpers
+- [ ] Advanced filtering (saved filters, complex queries)
 
 **Want a feature?** [Open an issue!](https://github.com/Yesid8/asakaa/issues/new)
 
