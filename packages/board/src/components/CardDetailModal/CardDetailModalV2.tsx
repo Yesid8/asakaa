@@ -18,6 +18,9 @@
  */
 
 import { useState, useCallback, useEffect, useRef } from 'react'
+import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
+import rehypeSanitize from 'rehype-sanitize'
 import { Portal } from '../Portal'
 import type { Card, User, Comment, Activity } from '../../types'
 import './card-detail-modal-v2.css'
@@ -277,15 +280,7 @@ export function CardDetailModalV2({
     [localCard]
   )
 
-  const handleDescriptionChange = useCallback(
-    (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-      if (localCard) {
-        const updated = { ...localCard, description: e.target.value }
-        setLocalCard(updated)
-      }
-    },
-    [localCard]
-  )
+  // Note: handleDescriptionChange removed - now handled inline in MarkdownEditor
 
   const handleDescriptionBlur = useCallback(() => {
     if (localCard && card && localCard.description !== card.description) {
@@ -420,22 +415,19 @@ export function CardDetailModalV2({
     [handleSendComment]
   )
 
-  // Markdown renderer (simple implementation)
+  // Enhanced markdown renderer with GFM support
   const renderMarkdown = (text: string) => {
-    // Simple markdown rendering
-    let html = text
-      // Bold **text**
-      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-      // Italic *text*
-      .replace(/\*(.*?)\*/g, '<em>$1</em>')
-      // Code `text`
-      .replace(/`(.*?)`/g, '<code>$1</code>')
-      // Links [text](url)
-      .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank">$1</a>')
-      // Line breaks
-      .replace(/\n/g, '<br />')
-
-    return <div dangerouslySetInnerHTML={{ __html: html }} />
+    return (
+      <ReactMarkdown
+        remarkPlugins={[remarkGfm]}
+        rehypePlugins={[rehypeSanitize]}
+        components={{
+          a: ({ node, ...props }) => <a {...props} target="_blank" rel="noopener noreferrer" />,
+        }}
+      >
+        {text}
+      </ReactMarkdown>
+    )
   }
 
   // Filter activities
@@ -519,6 +511,20 @@ export function CardDetailModalV2({
               </svg>
             </button>
           </header>
+
+          {/* COVER IMAGE */}
+          {displayCard.coverImage && (
+            <div className="modal-v2-cover">
+              <img
+                src={displayCard.coverImage}
+                alt={`Cover for ${displayCard.title}`}
+                className="w-full max-h-96 object-cover"
+                onError={(e) => {
+                  e.currentTarget.style.display = 'none'
+                }}
+              />
+            </div>
+          )}
 
           {/* METADATA GRID */}
           <section className="modal-v2-metadata">
@@ -877,37 +883,19 @@ export function CardDetailModalV2({
             </div>
 
             {isEditingDescription ? (
-              <div className="modal-v2-editor">
-                <textarea
-                  ref={descriptionRef}
-                  value={displayCard.description || ''}
-                  onChange={handleDescriptionChange}
-                  onBlur={handleDescriptionBlur}
-                  className="modal-v2-textarea"
-                  placeholder="Add description..."
-                  autoFocus
-                />
-                <div className="modal-v2-editor-footer">
-                  <span className="modal-v2-hint">
-                    <svg
-                      width="14"
-                      height="14"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                    >
-                      <circle cx="12" cy="12" r="10" />
-                      <line x1="12" y1="16" x2="12" y2="12" />
-                      <line x1="12" y1="8" x2="12.01" y2="8" />
-                    </svg>
-                    Markdown supported: **bold**, *italic*, `code`, [link](url)
-                  </span>
-                  <button className="modal-v2-editor-action" onClick={handleDescriptionBlur}>
-                    Done
-                  </button>
-                </div>
-              </div>
+              <textarea
+                className="modal-v2-textarea"
+                value={displayCard.description || ''}
+                onChange={(e) => {
+                  if (localCard) {
+                    const updated: Card = { ...localCard, description: e.target.value }
+                    setLocalCard(updated)
+                  }
+                }}
+                onBlur={handleDescriptionBlur}
+                placeholder="Add a detailed description..."
+                autoFocus
+              />
             ) : (
               <div className="modal-v2-content" onClick={() => setIsEditingDescription(true)}>
                 {displayCard.description ? (

@@ -12,6 +12,7 @@ export { ContextMenu, MenuIcons } from './ContextMenu';
 // Types
 export type {
   Task,
+  TaskSegment, // v0.8.1: Split task support
   TimeScale,
   Theme,
   GanttConfig,

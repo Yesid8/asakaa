@@ -839,89 +839,6 @@ export default function App() {
 
                 {/* v0.5.0: Theme Switcher */}
                 <ThemeSwitcher compact showLabels={false} />
-
-                {/* v0.8.0: Gantt Export Buttons (only visible in Gantt view) */}
-                {viewMode === 'gantt' && (
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={async () => {
-                        if (ganttRef.current) {
-                          await ganttRef.current.exportToPDF('gantt-chart.pdf');
-                          console.log('Exported to PDF');
-                        }
-                      }}
-                      className="px-3 py-1.5 rounded text-xs font-medium transition-all hover:opacity-80"
-                      style={{
-                        backgroundColor: 'var(--theme-accent-primary)',
-                        color: 'white',
-                      }}
-                      title="Export to PDF"
-                    >
-                      📄 PDF
-                    </button>
-                    <button
-                      onClick={async () => {
-                        if (ganttRef.current) {
-                          await ganttRef.current.exportToExcel('gantt-chart.xlsx');
-                          console.log('Exported to Excel');
-                        }
-                      }}
-                      className="px-3 py-1.5 rounded text-xs font-medium transition-all hover:opacity-80"
-                      style={{
-                        backgroundColor: '#10B981',
-                        color: 'white',
-                      }}
-                      title="Export to Excel"
-                    >
-                      📊 Excel
-                    </button>
-                    <button
-                      onClick={async () => {
-                        if (ganttRef.current) {
-                          const blob = await ganttRef.current.exportToPNG();
-                          const url = URL.createObjectURL(blob);
-                          const a = document.createElement('a');
-                          a.href = url;
-                          a.download = 'gantt-chart.png';
-                          a.click();
-                          URL.revokeObjectURL(url);
-                          console.log('Exported to PNG');
-                        }
-                      }}
-                      className="px-3 py-1.5 rounded text-xs font-medium transition-all hover:opacity-80"
-                      style={{
-                        backgroundColor: '#8B5CF6',
-                        color: 'white',
-                      }}
-                      title="Export to PNG"
-                    >
-                      🖼️ PNG
-                    </button>
-                    <button
-                      onClick={() => {
-                        if (ganttRef.current) {
-                          const csv = ganttRef.current.exportToCSV();
-                          const blob = new Blob([csv], { type: 'text/csv' });
-                          const url = URL.createObjectURL(blob);
-                          const a = document.createElement('a');
-                          a.href = url;
-                          a.download = 'gantt-chart.csv';
-                          a.click();
-                          URL.revokeObjectURL(url);
-                          console.log('Exported to CSV');
-                        }
-                      }}
-                      className="px-3 py-1.5 rounded text-xs font-medium transition-all hover:opacity-80"
-                      style={{
-                        backgroundColor: '#F59E0B',
-                        color: 'white',
-                      }}
-                      title="Export to CSV"
-                    >
-                      📋 CSV
-                    </button>
-                  </div>
-                )}
               </div>
 
               {/* AI Actions & Stats */}
@@ -932,11 +849,43 @@ export default function App() {
                 onSelectTemplate={handleSelectTemplate}
               />
 
-              {/* v0.5.0: Config Menu */}
+              {/* v0.5.0: Config Menu - v0.8.1: Gantt exports integrated */}
               <ConfigMenu
+                viewMode={viewMode}
                 onOpenExport={() => setIsExportImportOpen(true)}
                 onOpenThemes={() => setIsThemeModalOpen(true)}
                 onOpenShortcuts={() => setIsKeyboardShortcutsOpen(true)}
+                onExportGanttPDF={async () => {
+                  if (ganttRef.current) {
+                    await ganttRef.current.exportToPDF('gantt-chart.pdf');
+                  }
+                }}
+                onExportGanttExcel={async () => {
+                  if (ganttRef.current) {
+                    await ganttRef.current.exportToExcel('gantt-chart.xlsx');
+                  }
+                }}
+                onExportGanttPNG={async () => {
+                  if (ganttRef.current) {
+                    const blob = await ganttRef.current.exportToPNG();
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'gantt-chart.png';
+                    a.click();
+                  }
+                }}
+                onExportGanttCSV={() => {
+                  if (ganttRef.current) {
+                    const csv = ganttRef.current.exportToCSV();
+                    const blob = new Blob([csv], { type: 'text/csv' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'gantt-chart.csv';
+                    a.click();
+                  }
+                }}
               />
 
               <div className="w-px h-10" style={{ backgroundColor: 'var(--theme-border-primary)' }} />

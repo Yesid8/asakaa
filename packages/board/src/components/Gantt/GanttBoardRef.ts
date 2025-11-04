@@ -41,6 +41,16 @@ export interface GanttBoardRef {
    */
   duplicateTask: (id: string) => void;
 
+  /**
+   * Split a task (create GAP in the middle, like Bryntum/DHTMLX) (v0.8.1)
+   * Same task, but work is paused for some days then continues
+   * Example: Jan 1-10 → Split at Jan 5 with 3 day gap → Jan 1-4 [GAP] Jan 8-13
+   * @param id - Task ID to split
+   * @param splitDate - Date where gap starts
+   * @param gapDays - Number of days to pause (default: 3)
+   */
+  splitTask: (id: string, splitDate: Date, gapDays?: number) => void;
+
   // ==================== Utility Methods ====================
 
   /**
