@@ -4,7 +4,7 @@
 
 # 🚀 ASAKAA Board
 
-### **The Ultimate Project Management Library for React**
+### **This project was transferred to: https://github.com/libxai/libxai-suite**
 
 **Kanban + Gantt + AI** • Production-Ready • TypeScript-First • Zero Configuration
 
